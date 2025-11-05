@@ -49,7 +49,7 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       position: relative;
       /* Обновленные отступы для учета новой высоты шапки */
-      padding: 7.5vmin 1.5vmin 10vmin 1.5vmin; 
+      padding: 9vmin 1.5vmin 10vmin 1.5vmin; 
       gap: 1.5vmin;
     }
     #background {
@@ -65,7 +65,7 @@ export class PromptDjMidi extends LitElement {
       top: 0;
       left: 0;
       width: 100vw; /* Полная ширина экрана */
-      height: 7.5vmin; /* Увеличена высота на 50% (было ~5vmin, стало 7.5vmin) */
+      height: 9vmin; /* Увеличена высота на 20% (было 7.5vmin, стало 9vmin) */
       display: flex;
       /* justify-content: space-between; */ /* Убрано, чтобы элементы не раздвигались */
       align-items: center;
