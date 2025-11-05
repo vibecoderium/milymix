@@ -13,9 +13,9 @@ export class ToastMessage extends LitElement {
     .toast {
       line-height: 1.6;
       position: fixed;
-      top: 20px;
+      top: 50%; /* Центрирование по вертикали */
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%); /* Центрирование по горизонтали и вертикали */
       background-color: #000;
       color: white;
       padding: 15px;
@@ -29,6 +29,7 @@ export class ToastMessage extends LitElement {
       border: 2px solid #fff;
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
       text-wrap: pretty;
+      z-index: 1000; /* Увеличил z-index, чтобы быть уверенным, что он поверх всех элементов */
     }
     button {
       border-radius: 100px;
@@ -39,7 +40,7 @@ export class ToastMessage extends LitElement {
     }
     .toast:not(.showing) {
       transition-duration: 1s;
-      transform: translate(-50%, -200%);
+      transform: translate(-50%, -200%); /* Скрываем вверх, чтобы не мешать */
     }
     a {
       color: #acacac;
