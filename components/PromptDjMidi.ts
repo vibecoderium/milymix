@@ -497,11 +497,7 @@ export class PromptDjMidi extends LitElement {
           @open-settings=${() => console.log('Settings button clicked')}
         ></profile-header>
       </div>
-      <synth-panel
-        @master-volume-changed=${this.reDispatch}
-        @balance-changed=${this.reDispatch}
-        @filter-changed=${this.reDispatch}
-      ></synth-panel>
+      <!-- Удален synth-panel -->
       <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
         ${this.renderAccordions()}
       </div>
