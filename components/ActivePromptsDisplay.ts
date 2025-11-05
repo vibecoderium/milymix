@@ -45,6 +45,14 @@ export class ActivePromptsDisplay extends LitElement {
     private handleKnobInput(e: CustomEvent<number>) {
       const promptId = (e.target as HTMLElement).getAttribute('promptId');
       if (promptId) {
+        const prompt = this.prompts.get(promptId);
+        if (prompt) {
+          this.dispatchEvent(new CustomEvent('knob-interaction', {
+            detail: { text: prompt.text },
+            bubbles: true,
+            composed: true,
+          }));
+        }
         this.dispatchEvent(new CustomEvent('weight-changed', {
           detail: { promptId, weight: e.detail },
           bubbles: true,

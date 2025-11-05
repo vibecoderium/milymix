@@ -62,6 +62,11 @@ export class VolumeEditor extends LitElement {
   @property({ type: Number }) audioLevel = 0;
 
   private onWeightInput(e: CustomEvent<number>) {
+    this.dispatchEvent(new CustomEvent('knob-interaction', {
+      detail: { text: this.text },
+      bubbles: true,
+      composed: true,
+    }));
     this.dispatchEvent(new CustomEvent('weight-changed', { detail: e.detail }));
   }
 
