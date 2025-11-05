@@ -49,7 +49,7 @@ export class PromptDjMidi extends LitElement {
       width: 100vw;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start; /* Изменено: прижимаем всё к верху */
       align-items: center;
       box-sizing: border-box;
       position: relative;
@@ -187,6 +187,7 @@ export class PromptDjMidi extends LitElement {
       flex-shrink: 0;
       z-index: 5;
       justify-content: flex-end;
+      margin-top: auto; /* Добавлено: прижимает блок к низу */
     }
     .master-controls-bottom { /* Новый класс для контейнера громкости и сохранения */
       display: flex;
