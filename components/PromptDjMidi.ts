@@ -435,8 +435,18 @@ export class PromptDjMidi extends LitElement {
   }
 
   private handleMasterVolumeChange(e: CustomEvent<number>) {
-    // Значение слайдера от 0 до 2, преобразуем в 0-1 для LiveMusicHelper
-    this.masterVolume = e.detail / 2;
+    let sliderValue = e.detail;
+    
+    // Safeguard against non-finite values from the slider
+    if (typeof sliderValue !== 'number' || isNaN(sliderValue) || !isFinite(sliderValue)) {
+      console.error('Received non-finite or invalid volume detail from slider:', e.detail);
+      sliderValue = 1.6; // Fallback to a safe default slider value (0.8 * 2)
+    }
+
+    // Convert slider's 0-2 range to LiveMusicHelper's 0-1 range
+    // And ensure it's clamped between 0 and 1
+    this.masterVolume = Math.max(0, Math.min(1, sliderValue / 2));
+    
     this.dispatchEvent(new CustomEvent('master-volume-changed', {
       detail: this.masterVolume,
       bubbles: true,
