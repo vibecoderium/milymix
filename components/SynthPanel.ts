@@ -98,40 +98,40 @@ export class SynthPanel extends LitElement {
     return html`
       <div class="panel-content">
         <div class="control-group">
-          <div class="label">Master</div>
+          <div class="label">Мастер</div>
           <div class="knobs">
             <div class="knob-container">
                <volume-knob
                 .value=${this.masterVolume * 2}
                 @input=${this.handleVolumeChange}>
               </volume-knob>
-              <span class="knob-label">Volume</span>
+              <span class="knob-label">Громкость</span>
             </div>
             <div class="knob-container">
                <volume-knob
                 .value=${this.balance + 1}
                 @input=${this.handleBalanceChange}>
               </volume-knob>
-              <span class="knob-label">Balance</span>
+              <span class="knob-label">Баланс</span>
             </div>
           </div>
         </div>
         <div class="control-group">
-          <div class="label">Filter</div>
+          <div class="label">Фильтр</div>
           <div class="knobs">
             <div class="knob-container">
               <volume-knob
                 .value=${this.lowPass}
                 @input=${(e: CustomEvent<number>) => this.handleFilterChange(e, 'lowpass')}>
               </volume-knob>
-              <span class="knob-label">Low Pass</span>
+              <span class="knob-label">НЧ-фильтр</span>
             </div>
             <div class="knob-container">
               <volume-knob
                 .value=${this.highPass}
                 @input=${(e: CustomEvent<number>) => this.handleFilterChange(e, 'highpass')}>
               </volume-knob>
-              <span class="knob-label">High Pass</span>
+              <span class="knob-label">ВЧ-фильтр</span>
             </div>
           </div>
         </div>

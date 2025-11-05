@@ -13,7 +13,7 @@ import './PlayPauseButton';
 import './PresetManager';
 import './VolumeEditor';
 import './ChatAssistant';
-// import './SynthPanel'; // Удален импорт SynthPanel
+import './SynthPanel'; // Восстановлен импорт SynthPanel
 import './ActivePromptsDisplay';
 import './MasterControls';
 // import './ProfileHeader'; // Удален импорт ProfileHeader
@@ -170,7 +170,7 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
-      min-height: 15vmin;
+      /* min-height: 15vmin; */ /* Удалена минимальная высота */
       justify-content: flex-end;
     }
     .active-prompts-wrapper { /* Новый класс для обертки активных промптов */
@@ -594,6 +594,11 @@ export class PromptDjMidi extends LitElement {
           @open-settings=${() => console.log('Settings button clicked')}
         ></profile-header> -->
       </div>
+      <synth-panel
+        @master-volume-changed=${(e: CustomEvent<number>) => this.handleMasterVolumeChange({ detail: e.detail * 2 } as CustomEvent<number>)}
+        @balance-changed=${this.reDispatch}
+        @filter-changed=${this.reDispatch}
+      ></synth-panel>
       <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
         ${this.renderAccordions()}
       </div>
