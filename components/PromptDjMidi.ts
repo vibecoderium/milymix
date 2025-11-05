@@ -13,13 +13,18 @@ import './PlayPauseButton';
 import './PresetManager';
 import './VolumeEditor';
 import './ChatAssistant';
+// import './SynthPanel'; // Удален импорт SynthPanel
 import './ActivePromptsDisplay';
 import './MasterControls';
-import './HorizontalSlider';
+// import './ProfileHeader'; // Удален импорт ProfileHeader
 import './ActivePromptKnob';
-import './AdvancedMusicSettings'; // Import the new component
+// import './WeightKnob'; // Удален импорт WeightKnob
+// import './VerticalSlider'; // Удален импорт VerticalSlider
+import './HorizontalSlider'; // Импортируем новый компонент HorizontalSlider
+// import './SaveIcon'; // Удален импорт SaveIcon
 
 import type { ChatAssistant } from './ChatAssistant';
+
 import type { Preset } from './PresetManager';
 import type { PlaybackState, Prompt } from '../types';
 import { MidiDispatcher } from '../utils/MidiDispatcher';
@@ -29,24 +34,6 @@ import { GoogleGenAI, FunctionDeclaration, Type } from '@google/genai';
 interface PromptCategory {
   name: string;
   prompts: Prompt[];
-}
-
-// Define a type for advanced settings
-interface AdvancedSettings {
-  temperature: number;
-  guidance: number;
-  topK: number;
-  density: number;
-  densityAuto: boolean;
-  brightness: number;
-  brightnessAuto: boolean;
-  seed: string;
-  bpm: string;
-  scale: string;
-  musicGenerationMode: string;
-  muteBass: boolean;
-  muteDrums: boolean;
-  onlyBassAndDrums: boolean;
 }
 
 /** The grid of prompt inputs. */
@@ -183,7 +170,7 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
-      /* min-height: 15vmin; */ /* Удалена минимальная высота */
+      min-height: 15vmin;
       justify-content: flex-end;
     }
     .active-prompts-wrapper { /* Новый класс для обертки активных промптов */
@@ -298,23 +285,6 @@ export class PromptDjMidi extends LitElement {
   @state() private activeCategory: string | null = null;
   @state() private showEqualizer = false;
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
-
-  @state() private advancedSettings: AdvancedSettings = { // New state for advanced settings
-    temperature: 1.1,
-    guidance: 4.0,
-    topK: 40,
-    density: 0.5,
-    densityAuto: true,
-    brightness: 0.5,
-    brightnessAuto: true,
-    seed: 'Auto',
-    bpm: 'Auto',
-    scale: 'Auto',
-    musicGenerationMode: 'Quality',
-    muteBass: false,
-    muteDrums: false,
-    onlyBassAndDrums: false,
-  };
 
   @property({ type: Object })
   private filteredPrompts = new Set<string>();
@@ -510,20 +480,6 @@ export class PromptDjMidi extends LitElement {
     }));
   }
 
-  private handleAdvancedSettingsChange(e: CustomEvent<{ settingName: keyof AdvancedSettings, value: any }>) {
-    const { settingName, value } = e.detail;
-    this.advancedSettings = {
-      ...this.advancedSettings,
-      [settingName]: value,
-    };
-    // Dispatch a new event for LiveMusicHelper to pick up
-    this.dispatchEvent(new CustomEvent('advanced-settings-changed', {
-      detail: this.advancedSettings,
-      bubbles: true,
-      composed: true,
-    }));
-  }
-
   private async handleAssistantPrompt(e: CustomEvent<string>) {
     const userPrompt = e.detail;
     const assistant = this.shadowRoot?.querySelector('chat-assistant');
@@ -638,25 +594,6 @@ export class PromptDjMidi extends LitElement {
           @open-settings=${() => console.log('Settings button clicked')}
         ></profile-header> -->
       </div>
-      
-      <advanced-music-settings
-        .temperature=${this.advancedSettings.temperature}
-        .guidance=${this.advancedSettings.guidance}
-        .topK=${this.advancedSettings.topK}
-        .density=${this.advancedSettings.density}
-        .densityAuto=${this.advancedSettings.densityAuto}
-        .brightness=${this.advancedSettings.brightness}
-        .brightnessAuto=${this.advancedSettings.brightnessAuto}
-        .seed=${this.advancedSettings.seed}
-        .bpm=${this.advancedSettings.bpm}
-        .scale=${this.advancedSettings.scale}
-        .musicGenerationMode=${this.advancedSettings.musicGenerationMode}
-        .muteBass=${this.advancedSettings.muteBass}
-        .muteDrums=${this.advancedSettings.muteDrums}
-        .onlyBassAndDrums=${this.advancedSettings.onlyBassAndDrums}
-        @settings-changed=${this.handleAdvancedSettingsChange}
-      ></advanced-music-settings>
-
       <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
         ${this.renderAccordions()}
       </div>

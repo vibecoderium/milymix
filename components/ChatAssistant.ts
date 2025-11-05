@@ -91,7 +91,7 @@ export class ChatAssistant extends LitElement {
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = false;
       this.recognition.interimResults = true;
-      this.recognition.lang = navigator.language;
+      this.recognition.lang = 'en-US';
 
       this.recognition.onresult = (event: any) => {
         let interimTranscript = '';

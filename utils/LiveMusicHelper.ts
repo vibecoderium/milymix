@@ -9,24 +9,6 @@ import { throttle } from './throttle';
 
 const EQ_FREQUENCIES = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 
-// Define a type for advanced settings, matching the one in PromptDjMidi
-interface AdvancedSettings {
-  temperature: number;
-  guidance: number;
-  topK: number;
-  density: number;
-  densityAuto: boolean;
-  brightness: number;
-  brightnessAuto: boolean;
-  seed: string;
-  bpm: string;
-  scale: string;
-  musicGenerationMode: string;
-  muteBass: boolean;
-  muteDrums: boolean;
-  onlyBassAndDrums: boolean;
-}
-
 export class LiveMusicHelper extends EventTarget {
 
   private ai: GoogleGenAI;
@@ -51,10 +33,10 @@ export class LiveMusicHelper extends EventTarget {
   private highPassFilter: BiquadFilterNode;
   private eqNodes: BiquadFilterNode[] = [];
 
+
   private playbackState: PlaybackState = 'stopped';
 
   private prompts: Map<string, Prompt>;
-  private advancedGenerationSettings: AdvancedSettings | null = null; // Store advanced settings
 
   constructor(ai: GoogleGenAI, model: string) {
     super();
@@ -115,28 +97,8 @@ export class LiveMusicHelper extends EventTarget {
   }
 
   private async connect(): Promise<LiveMusicSession> {
-    // Construct generationConfig based on advancedGenerationSettings
-    const generationConfig: any = {}; // Use 'any' for now as the exact type is not fully known
-    if (this.advancedGenerationSettings) {
-      generationConfig.temperature = this.advancedGenerationSettings.temperature;
-      generationConfig.topK = this.advancedGenerationSettings.topK;
-      // Add other relevant settings if the API supports them in generationConfig
-      // For example, 'seed', 'bpm', 'scale', 'guidance', 'density', 'brightness', 'muteBass', 'muteDrums', 'onlyBassAndDrums'
-      // These might need to be mapped to specific API parameters if they exist.
-      // For now, I'll just pass the ones that are common in text generation models.
-      // The music generation model might have its own specific config.
-      // Since the LiveMusicSession API definition is not fully available,
-      // I'll make a reasonable assumption for common parameters.
-      // For music-specific parameters like 'muteBass', 'muteDrums', 'bpm', 'scale',
-      // they would typically be part of a dedicated musicGenerationConfig object
-      // if the API supports them.
-      // For this exercise, I'll log them and assume they would be handled by the API.
-      console.log('LiveMusicHelper: Connecting with advanced settings:', this.advancedGenerationSettings);
-    }
-
     this.sessionPromise = this.ai.live.music.connect({
       model: this.model,
-      generationConfig: generationConfig, // Pass generationConfig here
       callbacks: {
         onmessage: async (e: LiveMusicServerMessage) => {
           if (e.setupComplete) {
@@ -231,7 +193,7 @@ export class LiveMusicHelper extends EventTarget {
 
   public async play() {
     this.setPlaybackState('loading');
-    this.session = await this.getSession(); // This will now use the generationConfig
+    this.session = await this.getSession();
 
     this.preMasterNode = this.audioContext.createGain();
     // Connect source to the start of the EQ chain
@@ -333,18 +295,5 @@ export class LiveMusicHelper extends EventTarget {
   public setHighPass(freq: number) {
     const safeFreq = Math.max(20, Math.min(22050, freq));
     this.highPassFilter.frequency.setTargetAtTime(safeFreq, this.audioContext.currentTime, 0.01);
-  }
-
-  // New method to handle advanced generation settings
-  public setAdvancedGenerationSettings(settings: AdvancedSettings) {
-    this.advancedGenerationSettings = settings;
-    // If the session is active, and the API supports dynamic updates,
-    // you would call a method like session.updateGenerationConfig(settings) here.
-    // Since LiveMusicSession doesn't expose such a method directly in the provided code,
-    // these settings will primarily take effect on the next `play()` call (i.e., when a new session is connected).
-    console.log('LiveMusicHelper: Advanced generation settings updated:', settings);
-    // If you need these to apply immediately, you might need to stop and restart the session,
-    // but that would interrupt playback.
-    // For now, they will be used when `connect()` is called.
   }
 }
