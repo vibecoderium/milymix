@@ -71,12 +71,12 @@ export class PromptDjMidi extends LitElement {
     }
     #accordions {
       width: 100%;
-      height: 100%;
+      /* height: 100%; */ /* Удалено, так как flex-grow: 1 уже управляет высотой */
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       gap: 1vmin;
-      overflow: hidden;
+      overflow-y: auto; /* Изменено с hidden на auto для прокрутки */
     }
     .accordion-item {
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -124,7 +124,7 @@ export class PromptDjMidi extends LitElement {
     .accordion-item.active .accordion-content {
       opacity: 1;
       visibility: visible;
-      max-height: 100vh;
+      max-height: 9999px; /* Изменено с 100vh на большое значение для анимации */
     }
     .accordion-grid {
       display: grid;
