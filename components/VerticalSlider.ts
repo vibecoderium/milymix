@@ -64,6 +64,7 @@ export class VerticalSlider extends LitElement {
   @property({ type: Number }) step = 0.01; // Точная регулировка
 
   private handleInput(e: Event) {
+    e.stopPropagation(); // Предотвращаем всплытие нативного события, чтобы избежать конфликта
     const newValue = parseFloat((e.target as HTMLInputElement).value);
     this.value = newValue;
     this.dispatchEvent(new CustomEvent('input', { detail: newValue }));
