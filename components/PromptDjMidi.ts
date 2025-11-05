@@ -235,11 +235,11 @@ export class PromptDjMidi extends LitElement {
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 17vmin; /* Увеличена высота подвала в 2 раза */
+      height: 17vmin; /* Высота подвала */
       display: flex;
       align-items: center;
       gap: 1.5vmin;
-      z-index: 100;
+      z-index: 100; /* Увеличиваем z-index для подвала */
       padding: 0.75vmin; /* Отступы подвала */
       box-sizing: border-box;
       background-color: rgba(20, 20, 20, 0.7);
@@ -249,10 +249,16 @@ export class PromptDjMidi extends LitElement {
       flex-shrink: 0;
     }
     #footer play-pause-button { /* Увеличена кнопка Play/Pause */
-      height: 100%; /* Занимает всю высоту подвала */
-      width: 17vmin; /* Сохраняет квадратные пропорции */
-      max-width: 100px; /* Ограничение для больших экранов */
+      position: absolute; /* Абсолютное позиционирование для перекрытия */
+      right: 0.75vmin; /* Отступ справа, как у padding подвала */
+      top: 50%; /* Центрируем по вертикали */
+      transform: translateY(-50%); /* Корректируем для точного центрирования */
+      width: 34vmin; /* В 2 раза больше текущей высоты подвала (17vmin * 2) */
+      height: 34vmin; /* В 2 раза больше текущей высоты подвала (17vmin * 2) */
+      max-width: 200px; /* Ограничение для больших экранов */
+      max-height: 200px; /* Ограничение для больших экранов */
       flex-shrink: 0;
+      z-index: 101; /* Выше, чем z-index подвала, чтобы перекрывать */
     }
     button {
       font: inherit;
