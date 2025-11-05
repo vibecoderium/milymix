@@ -17,7 +17,7 @@ const HALO_LEVEL_MODIFIER = 0.5; // Less sensitive than main knob
 export class ActivePromptKnob extends LitElement {
   static override styles = css`
     :host {
-      cursor: pointer;
+      cursor: grab; /* Изменено на grab для индикации перетаскивания */
       position: relative;
       width: 10vmin; /* Размер кружка */
       height: 10vmin;
@@ -40,6 +40,7 @@ export class ActivePromptKnob extends LitElement {
       word-break: break-word;
       line-height: 1.2;
       padding: 0.5vmin;
+      touch-action: none; /* Предотвращает прокрутку браузера при перетаскивании */
     }
     :host(:hover) {
       transform: scale(1.05);
@@ -65,7 +66,56 @@ export class ActivePromptKnob extends LitElement {
   @property({ type: String }) color = '#fff';
   @property({ type: Number }) audioLevel = 0;
 
+  private dragStartPos = 0;
+  private dragStartWeight = 0;
+  private isDragging = false;
+
+  constructor() {
+    super();
+    this.handlePointerDown = this.handlePointerDown.bind(this);
+    this.handlePointerMove = this.handlePointerMove.bind(this);
+    this.handlePointerUp = this.handlePointerUp.bind(this);
+  }
+
+  private handlePointerDown(e: PointerEvent) {
+    e.preventDefault();
+    this.isDragging = false; // Сброс флага перетаскивания
+    this.dragStartPos = e.clientY;
+    this.dragStartWeight = this.weight;
+    document.body.classList.add('dragging');
+    window.addEventListener('pointermove', this.handlePointerMove);
+    window.addEventListener('pointerup', this.handlePointerUp);
+  }
+
+  private handlePointerMove(e: PointerEvent) {
+    const delta = this.dragStartPos - e.clientY;
+    const newWeight = this.dragStartWeight + delta * 0.01;
+    this.weight = Math.max(0, Math.min(2, newWeight));
+    this.dispatchEvent(new CustomEvent<number>('weight-changed', { detail: this.weight }));
+    this.isDragging = true; // Установить флаг, если произошло движение
+  }
+
+  private handlePointerUp() {
+    window.removeEventListener('pointermove', this.handlePointerMove);
+    window.removeEventListener('pointerup', this.handlePointerUp);
+    document.body.classList.remove('dragging');
+    // Если не было перетаскивания, это был клик
+    if (!this.isDragging) {
+      this.handleClick();
+    }
+    this.isDragging = false;
+  }
+
+  private handleWheel(e: WheelEvent) {
+    e.preventDefault(); // Предотвратить прокрутку страницы
+    const delta = e.deltaY;
+    const newWeight = this.weight + delta * -0.0025;
+    this.weight = Math.max(0, Math.min(2, newWeight));
+    this.dispatchEvent(new CustomEvent<number>('weight-changed', { detail: this.weight }));
+  }
+
   private handleClick() {
+    // Открываем редактор только если не было перетаскивания
     this.dispatchEvent(new CustomEvent('edit-prompt', {
       detail: { promptId: this.promptId },
       bubbles: true,
@@ -86,7 +136,10 @@ export class ActivePromptKnob extends LitElement {
 
     return html`
       <div id="halo" style=${haloStyle}></div>
-      <span @click=${this.handleClick}>${this.text}</span>
+      <span
+        @pointerdown=${this.handlePointerDown}
+        @wheel=${this.handleWheel}
+      >${this.text}</span>
     `;
   }
 }

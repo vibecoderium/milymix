@@ -368,6 +368,25 @@ export class PromptDjMidi extends LitElement {
     this.activeCategory = this.activeCategory === categoryName ? null : categoryName;
   }
 
+  private handleActivePromptWeightChange(e: CustomEvent<number>) {
+    if (!this.editingPromptId) return; // Should not happen if we're editing
+
+    const promptId = (e.target as HTMLElement).getAttribute('promptId');
+    if (!promptId) return;
+
+    const newWeight = e.detail;
+    const prompt = this.prompts.get(promptId);
+
+    if (prompt) {
+      prompt.weight = newWeight;
+      const newPrompts = new Map(this.prompts);
+      newPrompts.set(promptId, prompt);
+      this.prompts = newPrompts;
+      this.dispatchEvent(new CustomEvent('prompts-changed', { detail: this.prompts }));
+      this.requestUpdate();
+    }
+  }
+
   private async handleAssistantPrompt(e: CustomEvent<string>) {
     const userPrompt = e.detail;
     const assistant = this.shadowRoot?.querySelector('chat-assistant');
@@ -505,8 +524,13 @@ export class PromptDjMidi extends LitElement {
         ${this.renderAccordions()}
       </div>
 
-      <div id="now-playing-container" @edit-prompt=${this.handleEditPromptRequest}>
-        <active-prompts-display .prompts=${this.prompts} .audioLevel=${this.audioLevel}></active-prompts-display>
+      <div id="now-playing-container">
+        <active-prompts-display
+          .prompts=${this.prompts}
+          .audioLevel=${this.audioLevel}
+          @edit-prompt=${this.handleEditPromptRequest}
+          @weight-changed=${this.handleActivePromptWeightChange}
+        ></active-prompts-display>
         <master-controls @eq-changed=${this.reDispatch}></master-controls>
       </div>
 
