@@ -11,7 +11,7 @@ export class CustomPromptCreator extends LitElement {
     static override styles = css`
         :host {
             display: block;
-            padding: 2vmin;
+            padding: 1.5vmin; /* Изменено с 2vmin на 1.5vmin для выравнивания */
             box-sizing: border-box;
             width: 100%;
         }
