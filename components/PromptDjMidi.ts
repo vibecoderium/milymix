@@ -5,6 +5,7 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import { classMap } from 'lit/directives/class-map.js'; // Импортируем classMap
 
 import { throttle } from '../utils/throttle';
 
@@ -71,7 +72,6 @@ export class PromptDjMidi extends LitElement {
       width: 100vw; /* Полная ширина экрана */
       height: 9vmin; /* Увеличена высота на 20% (было 7.5vmin, стало 9vmin) */
       display: flex;
-      /* justify-content: space-between; */ /* Убрано, чтобы элементы не раздвигались */
       align-items: center;
       gap: 1.5vmin; /* Добавлен отступ между элементами в шапке */
       z-index: 10;
@@ -88,17 +88,31 @@ export class PromptDjMidi extends LitElement {
       height: calc(100% - 6px); /* Корректируем высоту для учета 3px верхнего и нижнего отступа */
       object-fit: contain; /* Сохраняет пропорции и вписывает изображение */
       padding: 3px; /* 3px отступ со всех сторон */
-      /* margin-left: -1.5vmin; */ /* Убран отрицательный отступ, чтобы логотип использовал padding шапки */
     }
     .app-title {
-      /* flex-grow: 1; */ /* Убрано, чтобы название не занимало все доступное пространство */
-      /* text-align: center; */ /* Убрано, так как теперь оно будет выравниваться по flex-контейнеру */
       color: #fff;
       font-size: clamp(18px, 3vmin, 28px); /* Адаптивный размер шрифта */
       font-weight: 600;
       white-space: nowrap; /* Предотвращает перенос текста */
       overflow: hidden; /* Скрывает переполнение, если текст слишком длинный */
       text-overflow: ellipsis; /* Добавляет многоточие, если текст скрыт */
+    }
+    .header-button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: clamp(20px, 3.5vmin, 30px); /* Размер эмодзи */
+      cursor: pointer;
+      padding: 0.5vmin;
+      margin-left: auto; /* Прижимает кнопку к правому краю */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+    .header-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
     }
     #accordions {
       width: 100%;
@@ -122,7 +136,6 @@ export class PromptDjMidi extends LitElement {
       width: 100%; /* Добавлено для растягивания на всю ширину */
     }
     .accordion-item.active {
-      /* flex-grow: 1; */ /* Удалено, чтобы не занимал всю вертикальную высоту */
       flex-shrink: 1;
     }
     .accordion-header {
@@ -164,7 +177,6 @@ export class PromptDjMidi extends LitElement {
       grid-template-columns: repeat(auto-fill, minmax(11vmin, 1fr));
       gap: 1vmin;
       height: 100%;
-      /* padding: 0 1.5vmin 1.5vmin 1.5vmin; */ /* Удалено, теперь управляется родительским .accordion-content */
       box-sizing: border-box;
     }
     #now-playing-container {
@@ -174,7 +186,6 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
-      /* min-height: 15vmin; */ /* Удалена минимальная высота */
       justify-content: flex-end;
     }
     .master-controls-bottom { /* Новый класс для контейнера громкости и сохранения */
@@ -260,6 +271,58 @@ export class PromptDjMidi extends LitElement {
       outline: none;
       cursor: pointer;
     }
+
+    /* Styles for Equalizer Modal */
+    .equalizer-scrim {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .equalizer-scrim.showing {
+      opacity: 1;
+      visibility: visible;
+    }
+    .equalizer-modal {
+      background: #222;
+      color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      width: min(600px, 90vw); /* Шире, чтобы эквалайзер хорошо смотрелся */
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      border: 1px solid #444;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    }
+    .equalizer-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .equalizer-modal-header h2 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+    .equalizer-close-button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
   `;
 
   private prompts: Map<string, Prompt>;
@@ -277,7 +340,7 @@ export class PromptDjMidi extends LitElement {
   @state() private editingPromptId: string | null = null;
   @state() private editorWeight = 0;
   @state() private activeCategory: string | null = null;
-  @state() private showEqualizer = false;
+  @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
 
@@ -660,11 +723,9 @@ export class PromptDjMidi extends LitElement {
       <div id="header">
         <img src="/logow.png" alt="Logo" class="header-logo">
         <span class="app-title">Milymix</span>
-        <!-- <profile-header
-          style="margin-left: auto;"
-          @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
-          @open-settings=${() => console.log('Settings button clicked')}
-        ></profile-header> -->
+        <button class="header-button" @click=${this.handleEqualizerToggle} title="Graphic Equalizer">
+          &#x1F39B;
+        </button>
       </div>
       <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
         ${this.renderAccordions()}
@@ -715,16 +776,6 @@ export class PromptDjMidi extends LitElement {
             <save-icon></save-icon>
           </div> -->
         </div>
-        
-        <div class="accordion-item ${this.showEqualizer ? 'active' : ''}">
-          <button class="accordion-header" @click=${this.handleEqualizerToggle}>
-            <span>Graphic Equalizer</span>
-            <span class="chevron">${this.showEqualizer ? '−' : '+'}</span>
-          </button>
-          <div class="accordion-content">
-            <master-controls @eq-changed=${this.reDispatch}></master-controls>
-          </div>
-        </div>
       </div>
 
       <div id="footer">
@@ -748,6 +799,17 @@ export class PromptDjMidi extends LitElement {
         @close-editor=${this.saveAndCloseEditor}
       >
       </volume-editor>
+
+      <!-- Equalizer Modal -->
+      <div class=${classMap({ 'equalizer-scrim': true, 'showing': this.showEqualizer })} @click=${this.handleEqualizerToggle}>
+        <div class="equalizer-modal" @click=${(e: Event) => e.stopPropagation()}>
+          <div class="equalizer-modal-header">
+            <h2>Graphic Equalizer</h2>
+            <button class="equalizer-close-button" @click=${this.handleEqualizerToggle}>✕</button>
+          </div>
+          <master-controls @eq-changed=${this.reDispatch}></master-controls>
+        </div>
+      </div>
       `;
   }
 
