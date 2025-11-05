@@ -112,15 +112,16 @@ export class LiveMusicHelper extends EventTarget {
             await this.processAudioChunks(e.serverContent.audioChunks);
           }
         },
-        onerror: () => {
+        onerror: (error: Error) => {
           this.connectionError = true;
           this.stop();
-          this.dispatchEvent(new CustomEvent('error', { detail: 'Connection error, please restart audio.' }));
+          const detail = `Connection error: ${error.message}. Please check your API key and network connection.`;
+          this.dispatchEvent(new CustomEvent('error', { detail }));
         },
         onclose: () => {
           this.connectionError = true;
           this.stop();
-          this.dispatchEvent(new CustomEvent('error', { detail: 'Connection error, please restart audio.' }));
+          this.dispatchEvent(new CustomEvent('error', { detail: 'Connection closed unexpectedly. Please restart audio.' }));
         },
       },
     });
