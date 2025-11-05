@@ -54,7 +54,7 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       position: relative;
       /* Обновленные отступы для учета новой высоты шапки и увеличенного подвала */
-      padding: 9vmin 1.5vmin 30vmin 1.5vmin; 
+      padding: 9vmin 1.5vmin 10.5vmin 1.5vmin; 
       gap: 1.5vmin;
     }
     #background {
