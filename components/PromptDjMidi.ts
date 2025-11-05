@@ -209,7 +209,7 @@ export class PromptDjMidi extends LitElement {
       gap: 0.5vmin;
     }
     .master-volume-label {
-      font-size: 4.8vmin; /* Увеличен в 4 раза (1.2vmin * 4) */
+      font-size: clamp(18px, 3vmin, 28px); /* Увеличено до размера заголовка */
       font-weight: 500;
       color: #fff;
       text-align: center; /* Выравнивание текста по центру */
@@ -322,31 +322,6 @@ export class PromptDjMidi extends LitElement {
       color: #fff;
       font-size: 1.5em;
       cursor: pointer;
-    }
-
-    /* New styles for editing prompt display */
-    #editing-prompt-display {
-      position: fixed;
-      bottom: 10.5vmin; /* Adjust based on footer height */
-      left: 0;
-      width: 100%;
-      background-color: rgba(20, 20, 20, 0.9);
-      color: #fff;
-      font-size: clamp(20px, 4vmin, 32px); /* Larger font size */
-      font-weight: 600;
-      text-align: center;
-      padding: 1.5vmin;
-      box-sizing: border-box;
-      z-index: 99; /* Below modal, above footer */
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
-      opacity: 0;
-      visibility: hidden;
-    }
-    #editing-prompt-display.showing {
-      opacity: 1;
-      visibility: visible;
     }
   `;
 
@@ -797,7 +772,9 @@ export class PromptDjMidi extends LitElement {
         
         <div class="master-controls-bottom">
           <div class="master-volume-horizontal-control">
-            <span class="master-volume-label">Volume</span>
+            <span class="master-volume-label">
+              ${this.editingPromptId ? this.currentEditingPromptText : 'Volume'}
+            </span>
             <horizontal-slider
               .value=${this.masterVolume * 2}
               @input=${this.handleMasterVolumeChange}
@@ -807,10 +784,6 @@ export class PromptDjMidi extends LitElement {
             <save-icon></save-icon>
           </div> -->
         </div>
-      </div>
-
-      <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
-        <span>${this.currentEditingPromptText}</span>
       </div>
 
       <div id="footer">
