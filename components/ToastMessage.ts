@@ -7,7 +7,6 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('toast-message')
-// Fix: The class must extend LitElement to be a valid web component.
 export class ToastMessage extends LitElement {
   static override styles = css`
     .toast {
@@ -50,6 +49,9 @@ export class ToastMessage extends LitElement {
 
   @property({ type: String }) message = '';
   @property({ type: Boolean }) showing = false;
+  @property({ type: Number }) duration = 5000; // Длительность показа в миллисекундах
+
+  private timeoutId: number | undefined;
 
   private renderMessageWithLinks() {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -70,10 +72,24 @@ export class ToastMessage extends LitElement {
   show(message: string) {
     this.showing = true;
     this.message = message;
+    
+    // Очищаем предыдущий таймер, если он был
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+    // Устанавливаем новый таймер для автоматического скрытия
+    this.timeoutId = setTimeout(() => {
+      this.hide();
+    }, this.duration);
   }
 
   hide() {
     this.showing = false;
+    // Очищаем таймер, если уведомление скрыто вручную
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = undefined;
+    }
   }
 
 }
