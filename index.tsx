@@ -39,6 +39,12 @@ function main() {
     liveMusicHelper.playPause();
   });
 
+  // Новый обработчик для события 'restart-playback'
+  pdjMidi.addEventListener('restart-playback', async () => {
+    liveMusicHelper.stop(); // Останавливаем текущее воспроизведение
+    await liveMusicHelper.play(); // Запускаем заново
+  });
+
   liveMusicHelper.addEventListener('playback-state-changed', ((e: Event) => {
     const customEvent = e as CustomEvent<PlaybackState>;
     const playbackState = customEvent.detail;
@@ -90,6 +96,13 @@ function main() {
     } else {
       liveMusicHelper.setHighPass(freq);
     }
+  }));
+
+  // Обработчик для обновления настроек генерации
+  pdjMidi.addEventListener('generation-settings-changed', ((e: Event) => {
+    const customEvent = e as CustomEvent<any>;
+    const settings = customEvent.detail;
+    liveMusicHelper.setGenerationConfig(settings);
   }));
 
   audioAnalyser.addEventListener('audio-level-changed', ((e: Event) => {

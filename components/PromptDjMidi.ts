@@ -666,6 +666,9 @@ export class PromptDjMidi extends LitElement {
     this.dispatchEvent(
         new CustomEvent('prompts-changed', { detail: this.prompts }),
     );
+    // Dispatch a new event to signal that playback should restart
+    this.dispatchEvent(new CustomEvent('restart-playback', { bubbles: true, composed: true }));
+
 
     const creator = this.shadowRoot?.querySelector('custom-prompt-creator');
     if (creator) {
