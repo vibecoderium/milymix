@@ -81,9 +81,9 @@ export class PromptDjMidi extends LitElement {
       -webkit-backdrop-filter: blur(10px);
     }
     .header-logo {
-      height: 100%; /* Логотип занимает всю высоту шапки */
+      height: calc(100% - 6px); /* Корректируем высоту для учета 3px верхнего и нижнего отступа */
       object-fit: contain; /* Сохраняет пропорции и вписывает изображение */
-      padding: 0; /* Убираем внутренние отступы логотипа */
+      padding: 3px; /* 3px отступ со всех сторон */
       /* margin-left: -1.5vmin; */ /* Убран отрицательный отступ, чтобы логотип использовал padding шапки */
     }
     .app-title {
