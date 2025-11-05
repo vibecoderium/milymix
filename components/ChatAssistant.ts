@@ -198,7 +198,7 @@ export class ChatAssistant extends LitElement {
       <input
         id="prompt-input"
         type="text"
-        placeholder="Describe the music you want, or use your voice..."
+        placeholder="Какую музыку вам включить?"
         .value=${this.inputValue}
         @input=${this.handleInputChange}
         @keydown=${this.handleKeyDown}
