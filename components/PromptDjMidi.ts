@@ -54,7 +54,7 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       position: relative;
       /* Обновленные отступы для учета новой высоты шапки и увеличенного подвала */
-      padding: 9vmin 1.5vmin 30vmin 1.5vmin; 
+      padding: 9vmin 1.5vmin 28.5vmin 1.5vmin; 
       gap: 1.5vmin;
     }
     #background {
@@ -327,7 +327,7 @@ export class PromptDjMidi extends LitElement {
     /* New styles for editing prompt display */
     #editing-prompt-display {
       position: fixed;
-      bottom: 10.5vmin; /* Adjust based on footer height */
+      bottom: 28.5vmin; /* Adjust based on footer height */
       left: 0;
       width: 100%;
       background-color: rgba(20, 20, 20, 0.9);
@@ -348,7 +348,6 @@ export class PromptDjMidi extends LitElement {
       opacity: 1;
       visibility: visible;
     }
-    /* Удален .active-knob-text-display из PromptDjMidi */
   `;
 
   private prompts: Map<string, Prompt>;
