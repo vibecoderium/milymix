@@ -53,8 +53,8 @@ export class PromptDjMidi extends LitElement {
       align-items: center;
       box-sizing: border-box;
       position: relative;
-      /* Обновленные отступы для учета новой высоты шапки */
-      padding: 9vmin 1.5vmin 10vmin 1.5vmin; 
+      /* Обновленные отступы для учета новой высоты шапки и увеличенного подвала */
+      padding: 9vmin 1.5vmin 30vmin 1.5vmin; 
       gap: 1.5vmin;
     }
     #background {
@@ -241,8 +241,8 @@ export class PromptDjMidi extends LitElement {
       border-top: 1px solid rgba(255, 255, 255, 0.2);
     }
     play-pause-button {
-      width: 9vmin;
-      max-width: 55px;
+      width: 27vmin; /* Увеличена в 3 раза */
+      max-width: 165px; /* Увеличена в 3 раза */
       flex-shrink: 0;
     }
     button {
