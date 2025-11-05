@@ -117,7 +117,7 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       padding: 1.5vmin;
       padding-top: 9vmin; /* Отступ сверху для фиксированной шапки */
-      padding-bottom: 8.5vmin; /* Отступ снизу для фиксированного подвала */
+      padding-bottom: 17vmin; /* Увеличено для новой высоты подвала (8.5vmin * 2 = 17vmin) */
       overflow-y: auto; /* Разрешаем прокрутку только для этой области */
       width: 100%;
       box-sizing: border-box;
@@ -235,6 +235,7 @@ export class PromptDjMidi extends LitElement {
       bottom: 0;
       left: 0;
       width: 100%;
+      height: 17vmin; /* Увеличена высота подвала в 2 раза */
       display: flex;
       align-items: center;
       gap: 1.5vmin;
@@ -247,9 +248,10 @@ export class PromptDjMidi extends LitElement {
       border-top: 1px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
     }
-    #footer play-pause-button { /* Уменьшаем размер кнопки в подвале */
-      width: 7vmin;
-      max-width: 45px;
+    #footer play-pause-button { /* Увеличена кнопка Play/Pause */
+      height: 100%; /* Занимает всю высоту подвала */
+      width: 17vmin; /* Сохраняет квадратные пропорции */
+      max-width: 100px; /* Ограничение для больших экранов */
       flex-shrink: 0;
     }
     button {
@@ -333,7 +335,7 @@ export class PromptDjMidi extends LitElement {
 
     #editing-prompt-display {
       position: fixed;
-      bottom: 8.5vmin; /* Отступ от низа, учитывая высоту подвала */
+      bottom: 17vmin; /* Отступ от низа, учитывая новую высоту подвала */
       left: 0;
       width: 100%;
       background-color: rgba(20, 20, 20, 0.9);
