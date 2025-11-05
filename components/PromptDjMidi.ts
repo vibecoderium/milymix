@@ -61,10 +61,17 @@ export class PromptDjMidi extends LitElement {
     #header {
       width: 100%;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end; /* Выравнивание элементов вправо */
       align-items: center;
       z-index: 10;
       flex-shrink: 0;
+      background-color: rgba(20, 20, 20, 0.7); /* Серый фон */
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 0.75vmin; /* Отступы как у подвала */
+      box-sizing: border-box;
     }
     #midi-controls {
       display: flex;
@@ -485,26 +492,7 @@ export class PromptDjMidi extends LitElement {
     return html`
       <div id="background" style=${bg}></div>
       <div id="header">
-        <div id="midi-controls">
-          <button
-            @click=${this.toggleShowMidi}
-            class=${this.showMidi ? 'active' : ''}
-            >MIDI</button
-          >
-          <select
-            @change=${this.handleMidiInputChange}
-            .value=${this.activeMidiInputId || ''}
-            style=${this.showMidi ? '' : 'visibility: hidden'}>
-            ${this.midiInputIds.length > 0
-              ? this.midiInputIds.map(
-                  (id) =>
-                    html`<option value=${id}>
-                      ${this.midiDispatcher.getDeviceName(id)}
-                    </option>`,
-                )
-              : html`<option value="">No devices found</option>`}
-          </select>
-        </div>
+        <!-- Удален блок #midi-controls -->
         <profile-header
           @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
           @open-settings=${() => console.log('Settings button clicked')}
