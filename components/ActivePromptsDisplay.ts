@@ -26,6 +26,8 @@ export class ActivePromptsDisplay extends LitElement {
             align-items: center; /* Выравнивание по центру */
             justify-content: center; /* Выравнивание по центру */
             width: 100%;
+            position: relative; /* Для позиционирования текста */
+            padding-bottom: 10vmin; /* Дополнительный отступ для текста */
         }
         .placeholder {
             color: #888;
@@ -34,6 +36,21 @@ export class ActivePromptsDisplay extends LitElement {
             align-self: center;
             padding-left: 0.5vmin;
         }
+        .active-prompt-text-display {
+            position: absolute;
+            bottom: 1.5vmin; /* Отступ от низа */
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: clamp(16px, 2.5vh, 20px); /* Размер шрифта как у заголовка аккордеона */
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 1.5vmin; /* Горизонтальные отступы */
+            box-sizing: border-box;
+        }
     `;
 
     @property({ attribute: false })
@@ -41,6 +58,9 @@ export class ActivePromptsDisplay extends LitElement {
 
     @property({ type: Number })
     audioLevel = 0; // Добавляем свойство audioLevel
+
+    @property({ type: String })
+    activePromptText: string | null = null; // Текст активного стиля
 
     private handleKnobInput(e: CustomEvent<number>) {
       const promptId = (e.target as HTMLElement).getAttribute('promptId');
@@ -70,6 +90,7 @@ export class ActivePromptsDisplay extends LitElement {
                 `)
                 : html`<span class="placeholder">No active prompts. Turn up a knob to start the music!</span>`
             }
+            ${this.activePromptText ? html`<div class="active-prompt-text-display">${this.activePromptText}</div>` : ''}
         `;
     }
 }
