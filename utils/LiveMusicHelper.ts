@@ -112,6 +112,7 @@ export class LiveMusicHelper extends EventTarget {
   private async connect(): Promise<LiveMusicSession> {
     this.sessionPromise = this.ai.live.music.connect({
       model: this.model,
+      generationConfig: this.generationConfig, // Передаем generationConfig здесь
       callbacks: {
         onmessage: async (e: LiveMusicServerMessage) => {
           if (e.setupComplete) {
@@ -208,8 +209,8 @@ export class LiveMusicHelper extends EventTarget {
     this.setPlaybackState('loading');
     this.session = await this.getSession();
 
-    // Apply generation config when playing
-    await this.session.setGenerationConfig(this.generationConfig);
+    // Удален вызов this.session.setGenerationConfig(this.generationConfig);
+    // Конфигурация теперь передается при подключении в методе connect().
 
     this.preMasterNode = this.audioContext.createGain();
     // Connect source to the start of the EQ chain
@@ -326,12 +327,6 @@ export class LiveMusicHelper extends EventTarget {
     }
 
     this.generationConfig = { ...this.generationConfig, ...mappedConfig };
-    if (this.session) {
-      try {
-        await this.session.setGenerationConfig(this.generationConfig);
-      } catch (e: any) {
-        this.dispatchEvent(new CustomEvent('error', { detail: `Failed to update generation config: ${e.message}` }));
-      }
-    }
+    // Изменения в generationConfig теперь будут применяться при следующем вызове connect() (т.е. при запуске новой сессии).
   }
 }
