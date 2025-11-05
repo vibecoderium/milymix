@@ -60,7 +60,7 @@ export class PromptDjMidi extends LitElement {
       height: 100%;
       width: 100%;
       z-index: -1;
-      background: linear-gradient(180deg, #0c0c0c 0%, #000022 100%);
+      background: #111;
     }
     #header {
       position: fixed; /* Прикрепляем к верху */
@@ -170,6 +170,7 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
+      min-height: 15vmin;
       justify-content: flex-end;
     }
     .active-prompts-wrapper { /* Новый класс для обертки активных промптов */
@@ -378,13 +379,7 @@ export class PromptDjMidi extends LitElement {
         bg.push(s);
       });
 
-      const promptGradients = bg.join(', ');
-      const baseGradient = 'linear-gradient(180deg, #0c0c0c 0%, #000022 100%)';
-      
-      if (promptGradients) {
-        return `${promptGradients}, ${baseGradient}`;
-      }
-      return baseGradient;
+      return bg.join(', ');
     },
     30, // don't re-render more than once every XXms
   );
