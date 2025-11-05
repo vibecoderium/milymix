@@ -38,6 +38,7 @@ export class CustomPromptCreator extends LitElement {
             align-items: center;
             gap: 1.5vmin;
             width: 100%;
+            justify-content: center; /* Центрируем элементы */
         }
         .knob-and-label { /* Контейнер для ручки и её метки */
             display: flex;
@@ -46,11 +47,11 @@ export class CustomPromptCreator extends LitElement {
             gap: 0.5vmin;
             flex-shrink: 0; /* Предотвращаем сжатие */
         }
-        .knob-and-label volume-knob { /* Уменьшаем размер ручки */
-            width: 8vmin;
-            height: 8vmin;
-            max-width: 60px;
-            max-height: 60px;
+        .knob-and-label volume-knob { /* Увеличиваем размер ручки в 2 раза */
+            width: 16vmin; /* Было 8vmin */
+            height: 16vmin; /* Было 8vmin */
+            max-width: 120px; /* Было 60px */
+            max-height: 120px; /* Было 60px */
         }
         .knob-and-label .label { /* Уменьшаем размер метки ручки */
             font-size: 1.2vmin;
@@ -132,7 +133,7 @@ export class CustomPromptCreator extends LitElement {
             align-items: center;
             gap: 1.5vmin;
             width: 100%;
-            justify-content: flex-end; /* Прижимаем к правому краю */
+            justify-content: center; /* Центрируем элементы */
             margin-top: 1vmin; /* Отступ сверху */
         }
         /* Styles for sliders and selects */
