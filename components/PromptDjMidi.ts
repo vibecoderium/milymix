@@ -16,6 +16,7 @@ import './ChatAssistant';
 import './SynthPanel';
 import './ActivePromptsDisplay';
 import './MasterControls';
+import './ProfileHeader'; // Добавлен импорт нового компонента
 
 import type { ChatAssistant } from './ChatAssistant';
 
@@ -477,7 +478,10 @@ export class PromptDjMidi extends LitElement {
               : html`<option value="">No devices found</option>`}
           </select>
         </div>
-        <button @click=${() => (this.showPresetManager = true)}>Presets</button>
+        <profile-header
+          @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
+          @open-settings=${() => console.log('Settings button clicked')}
+        ></profile-header>
       </div>
       <synth-panel
         @master-volume-changed=${this.reDispatch}
@@ -548,5 +552,11 @@ export class PromptDjMidi extends LitElement {
         color=${prompt.color}>
       </prompt-controller>`;
     });
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'prompt-dj-midi': PromptDjMidi;
   }
 }
