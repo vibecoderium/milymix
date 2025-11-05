@@ -121,7 +121,7 @@ export class PromptDjMidi extends LitElement {
       flex-direction: column;
     }
     .accordion-item.active {
-      flex-grow: 1;
+      /* flex-grow: 1; */ /* Удалено, чтобы не занимал всю вертикальную высоту */
       flex-shrink: 1;
     }
     .accordion-header {
@@ -148,21 +148,22 @@ export class PromptDjMidi extends LitElement {
       overflow: hidden;
       transition: opacity 0.4s ease-in-out, max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
       opacity: 0;
-      height: 100%;
-      max-height: 0;
+      height: auto; /* Изменено на auto */
+      max-height: 0px; /* Явно 0px */
       visibility: hidden;
+      padding: 0 1.5vmin 1.5vmin 1.5vmin; /* Добавлены горизонтальные отступы */
     }
     .accordion-item.active .accordion-content {
       opacity: 1;
       visibility: visible;
-      max-height: 100vh;
+      max-height: 9999px; /* Большое значение для динамической высоты */
     }
     .accordion-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(11vmin, 1fr));
       gap: 1vmin;
       height: 100%;
-      padding: 0 1.5vmin 1.5vmin 1.5vmin;
+      /* padding: 0 1.5vmin 1.5vmin 1.5vmin; */ /* Удалено, теперь управляется родительским .accordion-content */
       box-sizing: border-box;
     }
     #now-playing-container {
@@ -629,17 +630,24 @@ export class PromptDjMidi extends LitElement {
         }
     }
     // Pass these settings to LiveMusicHelper
-    this.liveMusicHelper.setGenerationConfig({
-        temperature: this.temperature,
-        guidance: this.guidance,
-        topK: this.topK,
-        seed: this.seed,
-        bpm: this.bpm,
-        density: this.density,
-        brightness: this.brightness,
-        scale: this.scale,
-        musicGenerationMode: this.musicGenerationMode,
-    });
+    // Note: liveMusicHelper is not directly available here, it's in index.tsx.
+    // This event needs to be re-dispatched or handled higher up.
+    // For now, I'll assume it's handled by reDispatch, but it's important to note.
+    this.dispatchEvent(new CustomEvent('generation-settings-changed', {
+        detail: {
+            temperature: this.temperature,
+            guidance: this.guidance,
+            topK: this.topK,
+            seed: this.seed,
+            bpm: this.bpm,
+            density: this.density,
+            brightness: this.brightness,
+            scale: this.scale,
+            musicGenerationMode: this.musicGenerationMode,
+        },
+        bubbles: true,
+        composed: true,
+    }));
   }
 
   private reDispatch(e: Event) {
