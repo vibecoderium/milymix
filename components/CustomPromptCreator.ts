@@ -4,6 +4,7 @@
  */
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { map } from 'lit/directives/map.js'; // Import map for dropdowns
 import './WeightKnob'; // Используем существующий компонент ручки
 
 @customElement('custom-prompt-creator')
@@ -11,7 +12,7 @@ export class CustomPromptCreator extends LitElement {
     static override styles = css`
         :host {
             display: block;
-            padding: 1.5vmin; /* Изменено с 2vmin на 1.5vmin для выравнивания */
+            padding: 1.5vmin;
             box-sizing: border-box;
             width: 100%;
         }
@@ -20,6 +21,16 @@ export class CustomPromptCreator extends LitElement {
             flex-direction: column;
             gap: 2.5vmin;
             align-items: center;
+        }
+        .section-title {
+            font-size: 1.8vmin;
+            color: #fff;
+            font-weight: 600;
+            margin-top: 2vmin;
+            margin-bottom: 1vmin;
+            width: 100%;
+            text-align: left;
+            padding-left: 0.5vmin;
         }
         .main-input-row {
             display: flex;
@@ -54,18 +65,18 @@ export class CustomPromptCreator extends LitElement {
             border-radius: 50%;
             border: 2px solid #fff;
         }
-        .details-grid {
+        .details-grid, .settings-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 2vmin;
             width: 100%;
         }
-        .input-group {
+        .input-group, .setting-group {
             display: flex;
             flex-direction: column;
             gap: 0.8vmin;
         }
-        .input-group label {
+        .input-group label, .setting-label {
             font-size: 1.4vmin;
             color: #aaa;
             font-weight: 500;
@@ -97,29 +108,116 @@ export class CustomPromptCreator extends LitElement {
             font-size: 1.8vmin;
             margin-top: 1vmin;
         }
+        /* Styles for sliders and selects */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #333;
+            outline: none;
+            border-radius: 4px;
+            border: 1px solid #555;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 2vmin;
+            height: 2vmin;
+            background: #8a2be2; /* Purple color for consistency */
+            cursor: pointer;
+            border-radius: 50%;
+            border: 1px solid #fff;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 2vmin;
+            height: 2vmin;
+            background: #8a2be2;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 1px solid #fff;
+        }
+        select {
+            padding: 1vmin;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #333;
+            color: #fff;
+            font-size: 1.6vmin;
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.6c-5%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.6c0%204.8%201.8%209.3%205.4%2013.2l128%20128c3.9%203.9%208.4%205.4%2013.2%205.4s9.3-1.8%2013.2-5.4l128-128c3.9-3.9%205.4-8.4%205.4-13.2%200-4.8-1.8-9.3-5.4-13.2z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 0.8em center;
+            background-size: 0.8em auto;
+            padding-right: 2.5em;
+        }
+        .slider-with-value {
+            display: flex;
+            align-items: center;
+            gap: 1vmin;
+        }
+        .slider-value {
+            font-size: 1.4vmin;
+            color: #fff;
+            min-width: 3vmin;
+            text-align: right;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5vmin;
+            margin-top: 0.5vmin;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 1.5vmin;
+            height: 1.5vmin;
+            accent-color: #8a2be2;
+        }
+        .checkbox-group label {
+            font-size: 1.2vmin;
+            color: #ccc;
+        }
     `;
 
+    // Prompt creation states
     @state() private text = '';
     @state() private color = '#ffffff';
     @state() private weight = 0;
-    @state() private mood = '';
-    @state() private characteristics = '';
-    @state() private tempo = '';
+
+    // Generation settings states (with default values from screenshots)
+    @state() private temperature = 1.1;
+    @state() private guidance = 4.0;
+    @state() private topK = 40;
+    @state() private seed = 'Auto';
+    @state() private bpm = 'Auto';
+    @state() private density = 0.50;
+    @state() private densityAuto = true;
+    @state() private brightness = 0.50;
+    @state() private brightnessAuto = true;
+    @state() private scale = 'Auto';
+    @state() private musicGenerationMode = 'Quality';
+
+    private scaleOptions = [
+        'Auto', 'C Major / A Minor', 'C# Major / A# Minor', 'D Major / B Minor',
+        'D# Major / C Minor', 'E Major / C# Minor', 'F Major / D Minor',
+        'F# Major / D# Minor', 'G Major / E Minor', 'G# Major / F Minor',
+        'A Major / F# Minor', 'A# Major / G Minor', 'B Major / G# Minor'
+    ];
+
+    private musicGenerationModeOptions = ['Quality', 'Diversity', 'Vocalization'];
 
     private handleAdd() {
         if (!this.text.trim()) {
-            alert('Пожалуйста, введите основной стиль.');
+            alert('Пожалуйста, введите название для вашего стиля.');
             return;
         }
 
-        const promptParts = [
-            this.text.trim(),
-            this.mood.trim(),
-            this.characteristics.trim(),
-            this.tempo.trim()
-        ].filter(part => part !== ''); // Отфильтровываем пустые поля
-
-        const finalText = promptParts.join(', ');
+        const finalText = this.text.trim();
 
         this.dispatchEvent(new CustomEvent('create-custom-prompt', {
             detail: {
@@ -130,24 +228,97 @@ export class CustomPromptCreator extends LitElement {
             bubbles: true,
             composed: true,
         }));
+        this.resetPromptFields(); // Reset only prompt-specific fields
+    }
+
+    private dispatchGenerationSettingChange(propertyName: string, value: any) {
+        this.dispatchEvent(new CustomEvent('update-generation-settings', {
+            detail: { [propertyName]: value },
+            bubbles: true,
+            composed: true,
+        }));
+    }
+
+    private handleSliderInput(e: Event, propertyName: string) {
+        const value = parseFloat((e.target as HTMLInputElement).value);
+        (this as any)[propertyName] = value;
+        this.dispatchGenerationSettingChange(propertyName, value);
+    }
+
+    private handleTextInput(e: Event, propertyName: string) {
+        const value = (e.target as HTMLInputElement).value;
+        (this as any)[propertyName] = value;
+        this.dispatchGenerationSettingChange(propertyName, value);
+    }
+
+    private handleSelectInput(e: Event, propertyName: string) {
+        const value = (e.target as HTMLSelectElement).value;
+        (this as any)[propertyName] = value;
+        this.dispatchGenerationSettingChange(propertyName, value);
+    }
+
+    private handleCheckboxChange(e: Event, propertyName: string, sliderPropertyName: string) {
+        const checked = (e.target as HTMLInputElement).checked;
+        (this as any)[propertyName] = checked;
+        this.dispatchGenerationSettingChange(propertyName, checked);
+        // If auto is checked, reset slider to default or a neutral value
+        if (checked) {
+            if (sliderPropertyName === 'density') {
+                this.density = 0.50;
+                this.dispatchGenerationSettingChange('density', 0.50);
+            }
+            if (sliderPropertyName === 'brightness') {
+                this.brightness = 0.50;
+                this.dispatchGenerationSettingChange('brightness', 0.50);
+            }
+        }
     }
 
     public reset() {
+        this.resetPromptFields();
+        this.resetGenerationSettings();
+    }
+
+    private resetPromptFields() {
         this.text = '';
         this.color = '#ffffff';
         this.weight = 0;
-        this.mood = '';
-        this.characteristics = '';
-        this.tempo = '';
+    }
+
+    private resetGenerationSettings() {
+        this.temperature = 1.1;
+        this.guidance = 4.0;
+        this.topK = 40;
+        this.seed = 'Auto';
+        this.bpm = 'Auto';
+        this.density = 0.50;
+        this.densityAuto = true;
+        this.brightness = 0.50;
+        this.brightnessAuto = true;
+        this.scale = 'Auto';
+        this.musicGenerationMode = 'Quality';
+        // Dispatch changes for all settings to ensure LiveMusicHelper is updated
+        this.dispatchGenerationSettingChange('temperature', this.temperature);
+        this.dispatchGenerationSettingChange('guidance', this.guidance);
+        this.dispatchGenerationSettingChange('topK', this.topK);
+        this.dispatchGenerationSettingChange('seed', this.seed);
+        this.dispatchGenerationSettingChange('bpm', this.bpm);
+        this.dispatchGenerationSettingChange('density', this.density);
+        this.dispatchGenerationSettingChange('densityAuto', this.densityAuto);
+        this.dispatchGenerationSettingChange('brightness', this.brightness);
+        this.dispatchGenerationSettingChange('brightnessAuto', this.brightnessAuto);
+        this.dispatchGenerationSettingChange('scale', this.scale);
+        this.dispatchGenerationSettingChange('musicGenerationMode', this.musicGenerationMode);
     }
 
     override render() {
         return html`
             <div class="creator-form">
+                <div class="section-title">Создать новый стиль</div>
                 <div class="main-input-row">
                     <input 
                         type="text" 
-                        placeholder="Основной стиль (напр., Techno, Piano)"
+                        placeholder="Название стиля (напр., Techno, Piano)"
                         .value=${this.text}
                         @input=${(e: InputEvent) => this.text = (e.target as HTMLInputElement).value}
                     >
@@ -158,40 +329,6 @@ export class CustomPromptCreator extends LitElement {
                         @input=${(e: InputEvent) => this.color = (e.target as HTMLInputElement).value}
                     >
                 </div>
-
-                <div class="details-grid">
-                    <div class="input-group">
-                        <label for="mood-input">Настроение</label>
-                        <input 
-                            id="mood-input"
-                            type="text" 
-                            placeholder="напр., мрачное, энергичное"
-                            .value=${this.mood}
-                            @input=${(e: InputEvent) => this.mood = (e.target as HTMLInputElement).value}
-                        >
-                    </div>
-                    <div class="input-group">
-                        <label for="char-input">Характеристики</label>
-                        <input 
-                            id="char-input"
-                            type="text" 
-                            placeholder="напр., тяжелый бас, арпеджио"
-                            .value=${this.characteristics}
-                            @input=${(e: InputEvent) => this.characteristics = (e.target as HTMLInputElement).value}
-                        >
-                    </div>
-                    <div class="input-group">
-                        <label for="tempo-input">Темп (BPM)</label>
-                        <input 
-                            id="tempo-input"
-                            type="text" 
-                            placeholder="напр., 120 bpm, быстрый"
-                            .value=${this.tempo}
-                            @input=${(e: InputEvent) => this.tempo = (e.target as HTMLInputElement).value}
-                        >
-                    </div>
-                </div>
-
                 <div class="knob-container">
                     <span class="label">Громкость (Вес)</span>
                     <volume-knob
@@ -201,6 +338,148 @@ export class CustomPromptCreator extends LitElement {
                     ></volume-knob>
                 </div>
                 <button class="add-button" @click=${this.handleAdd}>Добавить в микс</button>
+
+                <div class="section-title">Настройки генерации</div>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label class="setting-label">Температура</label>
+                        <div class="slider-with-value">
+                            <input
+                                type="range"
+                                min="0.1"
+                                max="2.0"
+                                step="0.1"
+                                .value=${this.temperature}
+                                @input=${(e: Event) => this.handleSliderInput(e, 'temperature')}
+                            />
+                            <span class="slider-value">${this.temperature.toFixed(1)}</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Направляющая</label>
+                        <div class="slider-with-value">
+                            <input
+                                type="range"
+                                min="0.0"
+                                max="10.0"
+                                step="0.1"
+                                .value=${this.guidance}
+                                @input=${(e: Event) => this.handleSliderInput(e, 'guidance')}
+                            />
+                            <span class="slider-value">${this.guidance.toFixed(1)}</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Top K</label>
+                        <div class="slider-with-value">
+                            <input
+                                type="range"
+                                min="1"
+                                max="100"
+                                step="1"
+                                .value=${this.topK}
+                                @input=${(e: Event) => this.handleSliderInput(e, 'topK')}
+                            />
+                            <span class="slider-value">${this.topK}</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Seed</label>
+                        <input
+                            type="text"
+                            placeholder="Auto"
+                            .value=${this.seed}
+                            @input=${(e: Event) => this.handleTextInput(e, 'seed')}
+                        />
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">BPM</label>
+                        <input
+                            type="text"
+                            placeholder="Auto"
+                            .value=${this.bpm}
+                            @input=${(e: Event) => this.handleTextInput(e, 'bpm')}
+                        />
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Плотность</label>
+                        <div class="slider-with-value">
+                            <input
+                                type="range"
+                                min="0.0"
+                                max="1.0"
+                                step="0.01"
+                                .value=${this.density}
+                                ?disabled=${this.densityAuto}
+                                @input=${(e: Event) => this.handleSliderInput(e, 'density')}
+                            />
+                            <span class="slider-value">${this.density.toFixed(2)}</span>
+                        </div>
+                        <div class="checkbox-group">
+                            <input
+                                type="checkbox"
+                                id="densityAuto"
+                                .checked=${this.densityAuto}
+                                @change=${(e: Event) => this.handleCheckboxChange(e, 'densityAuto', 'density')}
+                            />
+                            <label for="densityAuto">Авто</label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Яркость</label>
+                        <div class="slider-with-value">
+                            <input
+                                type="range"
+                                min="0.0"
+                                max="1.0"
+                                step="0.01"
+                                .value=${this.brightness}
+                                ?disabled=${this.brightnessAuto}
+                                @input=${(e: Event) => this.handleSliderInput(e, 'brightness')}
+                            />
+                            <span class="slider-value">${this.brightness.toFixed(2)}</span>
+                        </div>
+                        <div class="checkbox-group">
+                            <input
+                                type="checkbox"
+                                id="brightnessAuto"
+                                .checked=${this.brightnessAuto}
+                                @change=${(e: Event) => this.handleCheckboxChange(e, 'brightnessAuto', 'brightness')}
+                            />
+                            <label for="brightnessAuto">Авто</label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Гамма</label>
+                        <select
+                            .value=${this.scale}
+                            @change=${(e: Event) => this.handleSelectInput(e, 'scale')}
+                        >
+                            ${map(this.scaleOptions, (option) => html`
+                                <option value=${option}>${option}</option>
+                            `)}
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Режим генерации музыки</label>
+                        <select
+                            .value=${this.musicGenerationMode}
+                            @change=${(e: Event) => this.handleSelectInput(e, 'musicGenerationMode')}
+                        >
+                            ${map(this.musicGenerationModeOptions, (option) => html`
+                                <option value=${option}>${option}</option>
+                            `)}
+                        </select>
+                    </div>
+                </div>
             </div>
         `;
     }

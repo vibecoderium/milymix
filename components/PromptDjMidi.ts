@@ -289,6 +289,20 @@ export class PromptDjMidi extends LitElement {
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
 
+  // New generation settings states
+  @state() private temperature = 1.1;
+  @state() private guidance = 4.0;
+  @state() private topK = 40;
+  @state() private seed = 'Auto';
+  @state() private bpm = 'Auto';
+  @state() private density = 0.50;
+  @state() private densityAuto = true;
+  @state() private brightness = 0.50;
+  @state() private brightnessAuto = true;
+  @state() private scale = 'Auto';
+  @state() private musicGenerationMode = 'Quality';
+
+
   @property({ type: Object })
   private filteredPrompts = new Set<string>();
 
@@ -600,10 +614,32 @@ export class PromptDjMidi extends LitElement {
 
     const creator = this.shadowRoot?.querySelector('custom-prompt-creator');
     if (creator) {
-        (creator as CustomPromptCreator).reset();
+        (creator as CustomPromptCreator).resetPromptFields(); // Reset only prompt-specific fields
     }
 
-    this.showCustomCreator = false;
+    // Do not close the custom creator accordion, as generation settings might still be adjusted
+    // this.showCustomCreator = false;
+  }
+
+  private handleUpdateGenerationSettings(e: CustomEvent<any>) {
+    const settings = e.detail;
+    for (const key in settings) {
+        if (Object.prototype.hasOwnProperty.call(this, key)) {
+            (this as any)[key] = settings[key];
+        }
+    }
+    // Pass these settings to LiveMusicHelper
+    this.liveMusicHelper.setGenerationConfig({
+        temperature: this.temperature,
+        guidance: this.guidance,
+        topK: this.topK,
+        seed: this.seed,
+        bpm: this.bpm,
+        density: this.density,
+        brightness: this.brightness,
+        scale: this.scale,
+        musicGenerationMode: this.musicGenerationMode,
+    });
   }
 
   private reDispatch(e: Event) {
@@ -644,6 +680,18 @@ export class PromptDjMidi extends LitElement {
         <div class="accordion-content">
           <custom-prompt-creator 
             @create-custom-prompt=${this.handleCreateCustomPrompt}
+            @update-generation-settings=${this.handleUpdateGenerationSettings}
+            .temperature=${this.temperature}
+            .guidance=${this.guidance}
+            .topK=${this.topK}
+            .seed=${this.seed}
+            .bpm=${this.bpm}
+            .density=${this.density}
+            .densityAuto=${this.densityAuto}
+            .brightness=${this.brightness}
+            .brightnessAuto=${this.brightnessAuto}
+            .scale=${this.scale}
+            .musicGenerationMode=${this.musicGenerationMode}
           ></custom-prompt-creator>
         </div>
       </div>

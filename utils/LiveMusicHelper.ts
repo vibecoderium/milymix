@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 import type { PlaybackState, Prompt } from '../types';
-import type { AudioChunk, GoogleGenAI, LiveMusicFilteredPrompt, LiveMusicServerMessage, LiveMusicSession } from '@google/genai';
+import type { AudioChunk, GoogleGenAI, LiveMusicFilteredPrompt, LiveMusicServerMessage, LiveMusicSession, LiveMusicGenerationConfig } from '@google/genai'; // Import LiveMusicGenerationConfig
 import { decode, decodeAudioData } from './audio';
 import { throttle } from './throttle';
 
@@ -37,6 +37,19 @@ export class LiveMusicHelper extends EventTarget {
   private playbackState: PlaybackState = 'stopped';
 
   private prompts: Map<string, Prompt>;
+
+  // New generation settings
+  private generationConfig: LiveMusicGenerationConfig = {
+    temperature: 1.1,
+    guidance: 4.0,
+    topK: 40,
+    seed: undefined, // 'Auto' will be undefined
+    bpm: undefined, // 'Auto' will be undefined
+    density: 0.50,
+    brightness: 0.50,
+    scale: undefined, // 'Auto' will be undefined
+    musicGenerationMode: 'QUALITY', // Convert 'Quality' to 'QUALITY' enum
+  };
 
   constructor(ai: GoogleGenAI, model: string) {
     super();
@@ -195,6 +208,9 @@ export class LiveMusicHelper extends EventTarget {
     this.setPlaybackState('loading');
     this.session = await this.getSession();
 
+    // Apply generation config when playing
+    await this.session.setGenerationConfig(this.generationConfig);
+
     this.preMasterNode = this.audioContext.createGain();
     // Connect source to the start of the EQ chain
     this.preMasterNode.connect(this.eqNodes[0]);
@@ -295,5 +311,27 @@ export class LiveMusicHelper extends EventTarget {
   public setHighPass(freq: number) {
     const safeFreq = Math.max(20, Math.min(22050, freq));
     this.highPassFilter.frequency.setTargetAtTime(safeFreq, this.audioContext.currentTime, 0.01);
+  }
+
+  // New method to update generation settings
+  public async setGenerationConfig(config: Partial<LiveMusicGenerationConfig>) {
+    // Map 'Auto' string to undefined for seed, bpm, scale
+    const mappedConfig: Partial<LiveMusicGenerationConfig> = { ...config };
+    if (mappedConfig.seed === 'Auto') mappedConfig.seed = undefined;
+    if (mappedConfig.bpm === 'Auto') mappedConfig.bpm = undefined;
+    if (mappedConfig.scale === 'Auto') mappedConfig.scale = undefined;
+    // Convert 'Quality', 'Diversity', 'Vocalization' to uppercase enum values
+    if (mappedConfig.musicGenerationMode) {
+        mappedConfig.musicGenerationMode = mappedConfig.musicGenerationMode.toUpperCase() as 'QUALITY' | 'DIVERSITY' | 'VOCALIZATION';
+    }
+
+    this.generationConfig = { ...this.generationConfig, ...mappedConfig };
+    if (this.session) {
+      try {
+        await this.session.setGenerationConfig(this.generationConfig);
+      } catch (e: any) {
+        this.dispatchEvent(new CustomEvent('error', { detail: `Failed to update generation config: ${e.message}` }));
+      }
+    }
   }
 }
