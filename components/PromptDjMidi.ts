@@ -48,8 +48,8 @@ export class PromptDjMidi extends LitElement {
       align-items: center;
       box-sizing: border-box;
       position: relative;
-      /* Обновленные отступы для учета новой высоты шапки */
-      padding: 7.5vmin 1.5vmin 10vmin 1.5vmin; 
+      padding: 1.5vmin;
+      padding-bottom: 10vmin; /* Скорректировано для жесткого прикрепления эквалайзера к подвалу */
       gap: 1.5vmin;
     }
     #background {
@@ -61,40 +61,19 @@ export class PromptDjMidi extends LitElement {
       background: #111;
     }
     #header {
-      position: fixed; /* Прикрепляем к верху */
-      top: 0;
-      left: 0;
-      width: 100vw; /* Полная ширина экрана */
-      height: 7.5vmin; /* Увеличена высота на 50% (было ~5vmin, стало 7.5vmin) */
+      width: 100%;
       display: flex;
-      /* justify-content: space-between; */ /* Убрано, чтобы элементы не раздвигались */
+      justify-content: flex-end;
       align-items: center;
-      gap: 1.5vmin; /* Добавлен отступ между элементами в шапке */
       z-index: 10;
       flex-shrink: 0;
       background-color: rgba(20, 20, 20, 0.7);
-      border: none; /* Убираем рамку */
-      border-radius: 0; /* Убираем скругление углов */
-      padding: 0 1.5vmin; /* Убираем вертикальные отступы, оставляем горизонтальные */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 0.75vmin 1.5vmin;
       box-sizing: border-box;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-    }
-    .header-logo {
-      height: 100%; /* Логотип занимает всю высоту шапки */
-      object-fit: contain; /* Сохраняет пропорции и вписывает изображение */
-      padding: 0; /* Убираем внутренние отступы логотипа */
-      /* margin-left: -1.5vmin; */ /* Убран отрицательный отступ, чтобы логотип использовал padding шапки */
-    }
-    .app-title {
-      /* flex-grow: 1; */ /* Убрано, чтобы название не занимало все доступное пространство */
-      /* text-align: center; */ /* Убрано, так как теперь оно будет выравниваться по flex-контейнеру */
-      color: #fff;
-      font-size: clamp(18px, 3vmin, 28px); /* Адаптивный размер шрифта */
-      font-weight: 600;
-      white-space: nowrap; /* Предотвращает перенос текста */
-      overflow: hidden; /* Скрывает переполнение, если текст слишком длинный */
-      text-overflow: ellipsis; /* Добавляет многоточие, если текст скрыт */
     }
     #accordions {
       width: 100%;
@@ -298,11 +277,8 @@ export class PromptDjMidi extends LitElement {
       const { cc, value } = customEvent.detail;
       const promptToControl = [...this.prompts.values()].find(p => p.cc === cc);
       if (promptToControl) {
-        // Создаем новый объект Prompt с обновленным весом
-        const updatedPrompt = { ...promptToControl, weight: (value / 127) * 2 };
-        const newPrompts = new Map(this.prompts);
-        newPrompts.set(promptToControl.promptId, updatedPrompt);
-        this.prompts = newPrompts;
+        promptToControl.weight = (value / 127) * 2;
+        this.requestUpdate();
         this.dispatchEvent(
             new CustomEvent('prompts-changed', { detail: this.prompts }),
         );
@@ -332,14 +308,12 @@ export class PromptDjMidi extends LitElement {
 
     const promptId = this.editingPromptId;
     const weight = this.editorWeight;
-    const oldPrompt = this.prompts.get(promptId);
+    const prompt = this.prompts.get(promptId);
 
-    if (oldPrompt) {
-        // Создаем новый объект Prompt с обновленным весом
-        const updatedPrompt = { ...oldPrompt, weight };
-        
+    if (prompt) {
+        prompt.weight = weight;
         const newPrompts = new Map(this.prompts);
-        newPrompts.set(promptId, updatedPrompt);
+        newPrompts.set(promptId, prompt);
         this.prompts = newPrompts;
 
         this.dispatchEvent(
@@ -420,8 +394,7 @@ export class PromptDjMidi extends LitElement {
     const prompts = e.detail.prompts;
     const newPromptsMap = new Map<string, Prompt>();
     for (const promptId in prompts) {
-      // Создаем новый объект Prompt для каждого элемента пресета
-      newPromptsMap.set(promptId, { ...prompts[promptId] });
+      newPromptsMap.set(promptId, prompts[promptId]);
     }
     this.prompts = newPromptsMap;
     this.showPresetManager = false;
@@ -449,14 +422,12 @@ export class PromptDjMidi extends LitElement {
 
   private handleActivePromptWeightChange(e: CustomEvent<{ promptId: string, weight: number }>) {
     const { promptId, weight } = e.detail;
-    const oldPrompt = this.prompts.get(promptId);
+    const prompt = this.prompts.get(promptId);
 
-    if (oldPrompt) {
-      // Создаем новый объект Prompt с обновленным весом
-      const updatedPrompt = { ...oldPrompt, weight };
-      
+    if (prompt) {
+      prompt.weight = weight;
       const newPrompts = new Map(this.prompts);
-      newPrompts.set(promptId, updatedPrompt); // Устанавливаем НОВЫЙ объект промпта
+      newPrompts.set(promptId, prompt);
       this.prompts = newPrompts;
       this.dispatchEvent(new CustomEvent('prompts-changed', { detail: this.prompts }));
       this.requestUpdate();
@@ -539,17 +510,14 @@ export class PromptDjMidi extends LitElement {
           const mix = functionCall.args.mix as { genre: string, volume: number }[];
           
           if (mix && mix.length > 0) {
-              const newPrompts = new Map<string, Prompt>(); // Начинаем с полностью новой, пустой Map
-              
-              // Копируем существующие промпты, устанавливая вес в 0, обеспечивая новые объекты
-              this.prompts.forEach((prompt, promptId) => {
-                  newPrompts.set(promptId, { ...prompt, weight: 0 });
+              const newPrompts = new Map(this.prompts);
+              newPrompts.forEach(prompt => {
+                  prompt.weight = 0;
               });
   
               mix.forEach(item => {
                   const promptToUpdate = [...newPrompts.values()].find(p => p.text.toLowerCase() === item.genre.toLowerCase());
                   if (promptToUpdate) {
-                      // Мутируем *вновь созданный* объект промпта в newPrompts
                       promptToUpdate.weight = Math.max(0, Math.min(2, item.volume));
                   }
               });
@@ -589,10 +557,7 @@ export class PromptDjMidi extends LitElement {
     return html`
       <div id="background" style=${bg}></div>
       <div id="header">
-        <img src="/logow.png" alt="Logo" class="header-logo">
-        <span class="app-title">Mily Dj</span>
         <profile-header
-          style="margin-left: auto;"
           @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
           @open-settings=${() => console.log('Settings button clicked')}
         ></profile-header>
