@@ -7,14 +7,15 @@ import { customElement, property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('toast-message')
+// Fix: The class must extend LitElement to be a valid web component.
 export class ToastMessage extends LitElement {
   static override styles = css`
     .toast {
       line-height: 1.6;
       position: fixed;
-      top: 50%; /* Центрирование по вертикали */
+      top: 20px;
       left: 50%;
-      transform: translate(-50%, -50%); /* Центрирование по горизонтали и вертикали */
+      transform: translateX(-50%);
       background-color: #000;
       color: white;
       padding: 15px;
@@ -28,7 +29,6 @@ export class ToastMessage extends LitElement {
       border: 2px solid #fff;
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
       text-wrap: pretty;
-      z-index: 1000; /* Увеличил z-index, чтобы быть уверенным, что он поверх всех элементов */
     }
     button {
       border-radius: 100px;
@@ -39,7 +39,7 @@ export class ToastMessage extends LitElement {
     }
     .toast:not(.showing) {
       transition-duration: 1s;
-      transform: translate(-50%, -200%); /* Скрываем вверх, чтобы не мешать */
+      transform: translate(-50%, -200%);
     }
     a {
       color: #acacac;
@@ -49,9 +49,6 @@ export class ToastMessage extends LitElement {
 
   @property({ type: String }) message = '';
   @property({ type: Boolean }) showing = false;
-  @property({ type: Number }) duration = 5000; // Длительность показа в миллисекундах
-
-  private timeoutId: number | undefined;
 
   private renderMessageWithLinks() {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -72,24 +69,10 @@ export class ToastMessage extends LitElement {
   show(message: string) {
     this.showing = true;
     this.message = message;
-    
-    // Очищаем предыдущий таймер, если он был
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
-    // Устанавливаем новый таймер для автоматического скрытия
-    this.timeoutId = setTimeout(() => {
-      this.hide();
-    }, this.duration);
   }
 
   hide() {
     this.showing = false;
-    // Очищаем таймер, если уведомление скрыто вручную
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = undefined;
-    }
   }
 
 }

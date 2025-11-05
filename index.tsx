@@ -11,28 +11,17 @@ import { ToastMessage } from './components/ToastMessage';
 import { LiveMusicHelper } from './utils/LiveMusicHelper';
 import { AudioAnalyser } from './utils/AudioAnalyser';
 
-const apiKey = process.env.API_KEY;
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY, apiVersion: 'v1alpha' });
 const model = 'lyria-realtime-exp';
 
 function main() {
-  // Create and append the toast message component first to show any errors.
-  const toastMessage = new ToastMessage();
-  document.body.appendChild(toastMessage);
-
-  // Check for API key before initializing anything else.
-  if (!apiKey) {
-    const errorMessage = 'GEMINI_API_KEY is not set. Please create a .env file and add your key.';
-    toastMessage.show(errorMessage);
-    console.error(errorMessage);
-    return;
-  }
-
-  const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1alpha' });
-
   const { prompts: initialPrompts, categories } = buildInitialPrompts();
 
   const pdjMidi = new PromptDjMidi(initialPrompts, categories);
   document.body.appendChild(pdjMidi);
+
+  const toastMessage = new ToastMessage();
+  document.body.appendChild(toastMessage);
 
   const liveMusicHelper = new LiveMusicHelper(ai, model);
   liveMusicHelper.setWeightedPrompts(initialPrompts);
