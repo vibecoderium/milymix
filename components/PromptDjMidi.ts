@@ -170,7 +170,7 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
-      min-height: 15vmin;
+      /* min-height: 15vmin; */ /* Удалена минимальная высота */
       justify-content: flex-end;
     }
     .active-prompts-wrapper { /* Новый класс для обертки активных промптов */
