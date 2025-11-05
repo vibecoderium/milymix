@@ -130,7 +130,7 @@ export class PromptDjMidi extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.5vh 2vw;
+      padding: 1vh 2vw;
       font-size: clamp(14px, 2vh, 18px);
       font-weight: 500;
       background: none;
