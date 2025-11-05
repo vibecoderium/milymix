@@ -17,6 +17,7 @@ import './SynthPanel';
 import './ActivePromptsDisplay';
 import './MasterControls';
 import './ProfileHeader'; // Добавлен импорт нового компонента
+import './ActivePromptKnob'; // Добавлен импорт нового компонента
 
 import type { ChatAssistant } from './ChatAssistant';
 
@@ -46,7 +47,7 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       position: relative;
       padding: 1.5vmin;
-      padding-bottom: 11vmin; /* Уменьшено пространство для фиксированного нижнего колонтитула */
+      padding-bottom: 18vmin; /* Увеличено пространство для фиксированного нижнего колонтитула и большего блока 'now-playing' */
       gap: 1.5vmin;
     }
     #background {
@@ -142,6 +143,9 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
+      /* Дополнительные стили для увеличения блока */
+      min-height: 15vmin; /* Увеличиваем минимальную высоту контейнера */
+      justify-content: flex-end; /* Прижимаем содержимое к низу, если есть свободное место */
     }
     #footer {
       position: fixed; /* Фиксируем к нижней части экрана */
@@ -502,7 +506,7 @@ export class PromptDjMidi extends LitElement {
       </div>
 
       <div id="now-playing-container" @edit-prompt=${this.handleEditPromptRequest}>
-        <active-prompts-display .prompts=${this.prompts}></active-prompts-display>
+        <active-prompts-display .prompts=${this.prompts} .audioLevel=${this.audioLevel}></active-prompts-display>
         <master-controls @eq-changed=${this.reDispatch}></master-controls>
       </div>
 
