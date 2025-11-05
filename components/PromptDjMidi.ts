@@ -323,6 +323,31 @@ export class PromptDjMidi extends LitElement {
       font-size: 1.5em;
       cursor: pointer;
     }
+
+    /* New styles for editing prompt display */
+    #editing-prompt-display {
+      position: fixed;
+      bottom: 10.5vmin; /* Adjust based on footer height */
+      left: 0;
+      width: 100%;
+      background-color: rgba(20, 20, 20, 0.9);
+      color: #fff;
+      font-size: clamp(20px, 4vmin, 32px); /* Larger font size */
+      font-weight: 600;
+      text-align: center;
+      padding: 1.5vmin;
+      box-sizing: border-box;
+      z-index: 99; /* Below modal, above footer */
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+      opacity: 0;
+      visibility: hidden;
+    }
+    #editing-prompt-display.showing {
+      opacity: 1;
+      visibility: visible;
+    }
   `;
 
   private prompts: Map<string, Prompt>;
@@ -343,6 +368,7 @@ export class PromptDjMidi extends LitElement {
   @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
+  @state() private currentEditingPromptText = ''; // Новое состояние для текста редактируемого стиля
 
   // New generation settings states
   @state() private temperature = 1.1;
@@ -398,6 +424,7 @@ export class PromptDjMidi extends LitElement {
     if (prompt) {
       this.editingPromptId = promptId;
       this.editorWeight = prompt.weight;
+      this.currentEditingPromptText = prompt.text; // Устанавливаем текст редактируемого стиля
     }
   }
 
@@ -419,6 +446,7 @@ export class PromptDjMidi extends LitElement {
         );
     }
     this.editingPromptId = null;
+    this.currentEditingPromptText = ''; // Очищаем текст при закрытии
   }
 
   private handleEditorWeightChange(e: CustomEvent<number>) {
@@ -779,6 +807,10 @@ export class PromptDjMidi extends LitElement {
             <save-icon></save-icon>
           </div> -->
         </div>
+      </div>
+
+      <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
+        <span>${this.currentEditingPromptText}</span>
       </div>
 
       <div id="footer">
