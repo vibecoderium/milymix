@@ -46,14 +46,14 @@ export class CustomPromptCreator extends LitElement {
             gap: 0.5vmin;
             flex-shrink: 0; /* Предотвращаем сжатие */
         }
-        .knob-and-label volume-knob { /* Уменьшаем размер ручки */
-            width: 8vmin;
-            height: 8vmin;
-            max-width: 60px;
-            max-height: 60px;
+        .knob-and-label volume-knob { /* Увеличиваем размер ручки в 2 раза */
+            width: 16vmin; /* Было 8vmin */
+            height: 16vmin; /* Было 8vmin */
+            max-width: 120px; /* Было 60px */
+            max-height: 120px; /* Было 60px */
         }
-        .knob-and-label .label { /* Уменьшаем размер метки ручки */
-            font-size: 1.2vmin;
+        .knob-and-label .label { /* Увеличиваем размер метки ручки */
+            font-size: 1.6vmin; /* Было 1.2vmin */
             white-space: nowrap;
         }
         input[type="text"] {
