@@ -112,15 +112,17 @@ export class LiveMusicHelper extends EventTarget {
             await this.processAudioChunks(e.serverContent.audioChunks);
           }
         },
-        onerror: () => {
+        onerror: (error: Error) => {
           this.connectionError = true;
           this.stop();
-          this.dispatchEvent(new CustomEvent('error', { detail: 'Connection error, please restart audio.' }));
+          const errorMessage = error?.message || 'An unknown connection error occurred.';
+          this.dispatchEvent(new CustomEvent('error', { detail: errorMessage }));
         },
-        onclose: () => {
+        onclose: (error?: any) => {
           this.connectionError = true;
           this.stop();
-          this.dispatchEvent(new CustomEvent('error', { detail: 'Connection error, please restart audio.' }));
+          const closeMessage = error?.message || 'Connection closed unexpectedly. Please restart audio.';
+          this.dispatchEvent(new CustomEvent('error', { detail: closeMessage }));
         },
       },
     });
@@ -193,7 +195,14 @@ export class LiveMusicHelper extends EventTarget {
 
   public async play() {
     this.setPlaybackState('loading');
-    this.session = await this.getSession();
+    try {
+        this.session = await this.getSession();
+    } catch (error: any) {
+        console.error("Failed to get session:", error);
+        this.stop();
+        this.dispatchEvent(new CustomEvent('error', { detail: error.message || 'Failed to initialize the music session.' }));
+        return;
+    }
 
     this.preMasterNode = this.audioContext.createGain();
     // Connect source to the start of the EQ chain
