@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { css, html, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js'; // Добавлен property
 import { map } from 'lit/directives/map.js'; // Import map for dropdowns
 import { classMap } from 'lit/directives/class-map.js'; // Import classMap for dynamic classes
 import './WeightKnob'; // Используем существующий компонент ручки
@@ -33,11 +33,28 @@ export class CustomPromptCreator extends LitElement {
             text-align: left;
             padding-left: 0.5vmin;
         }
-        .main-input-row {
+        .prompt-creation-controls { /* Новый контейнер для компактной строки */
             display: flex;
+            align-items: center;
             gap: 1.5vmin;
             width: 100%;
+        }
+        .knob-and-label { /* Контейнер для ручки и её метки */
+            display: flex;
+            flex-direction: column;
             align-items: center;
+            gap: 0.5vmin;
+            flex-shrink: 0; /* Предотвращаем сжатие */
+        }
+        .knob-and-label volume-knob { /* Уменьшаем размер ручки */
+            width: 8vmin;
+            height: 8vmin;
+            max-width: 60px;
+            max-height: 60px;
+        }
+        .knob-and-label .label { /* Уменьшаем размер метки ручки */
+            font-size: 1.2vmin;
+            white-space: nowrap;
         }
         input[type="text"] {
             flex-grow: 1;
@@ -57,6 +74,7 @@ export class CustomPromptCreator extends LitElement {
             background-color: transparent;
             border: none;
             cursor: pointer;
+            flex-shrink: 0; /* Предотвращаем сжатие */
         }
         input[type="color"]::-webkit-color-swatch {
             border-radius: 50%;
@@ -83,17 +101,17 @@ export class CustomPromptCreator extends LitElement {
             font-weight: 500;
             margin-left: 0.5vmin;
         }
-        .knob-container {
+        .knob-container { /* Этот стиль теперь относится к ручке громкости в старом контексте, но мы его переопределили выше */
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1vmin;
         }
-        volume-knob {
+        volume-knob { /* Этот стиль теперь относится к ручке громкости в старом контексте, но мы его переопределили выше */
             width: 15vmin;
             max-width: 120px;
         }
-        .label {
+        .label { /* Этот стиль теперь относится к метке ручки громкости в старом контексте, но мы его переопределили выше */
             font-size: 1.6vmin;
             color: #ccc;
             font-weight: 500;
@@ -239,22 +257,22 @@ export class CustomPromptCreator extends LitElement {
     `;
 
     // Prompt creation states
-    @state() private text = '';
-    @state() private color = '#ffffff';
-    @state() private weight = 0;
+    @property({ type: String }) text = '';
+    @property({ type: String }) color = '#ffffff';
+    @property({ type: Number }) weight = 0;
 
     // Generation settings states (with default values from screenshots)
-    @state() private temperature = 1.1;
-    @state() private guidance = 4.0;
-    @state() private topK = 40;
-    @state() private seed = 'Auto';
-    @state() private bpm = 'Auto';
-    @state() private density = 0.50;
-    @state() private densityAuto = true;
-    @state() private brightness = 0.50;
-    @state() private brightnessAuto = true;
-    @state() private scale = 'Auto';
-    @state() private musicGenerationMode = 'Quality';
+    @property({ type: Number }) temperature = 1.1;
+    @property({ type: Number }) guidance = 4.0;
+    @property({ type: Number }) topK = 40;
+    @property({ type: String }) seed = 'Auto';
+    @property({ type: String }) bpm = 'Auto';
+    @property({ type: Number }) density = 0.50;
+    @property({ type: Boolean }) densityAuto = true;
+    @property({ type: Number }) brightness = 0.50;
+    @property({ type: Boolean }) brightnessAuto = true;
+    @property({ type: String }) scale = 'Auto';
+    @property({ type: String }) musicGenerationMode = 'Quality';
 
     // State for the collapsible settings section
     @state() private showGenerationSettings = false; // Свернуто по умолчанию
@@ -336,7 +354,7 @@ export class CustomPromptCreator extends LitElement {
         this.resetGenerationSettings();
     }
 
-    private resetPromptFields() {
+    public resetPromptFields() { // Сделано публичным для вызова из PromptDjMidi
         this.text = '';
         this.color = '#ffffff';
         this.weight = 0;
@@ -372,7 +390,15 @@ export class CustomPromptCreator extends LitElement {
         return html`
             <div class="creator-form">
                 <div class="section-title">Создать новый стиль</div>
-                <div class="main-input-row">
+                <div class="prompt-creation-controls">
+                    <div class="knob-and-label">
+                        <span class="label">Громкость</span>
+                        <volume-knob
+                            .value=${this.weight}
+                            .color=${this.color}
+                            @input=${(e: CustomEvent<number>) => this.weight = e.detail}
+                        ></volume-knob>
+                    </div>
                     <input 
                         type="text" 
                         placeholder="Название стиля (напр., Techno, Piano)"
@@ -385,14 +411,6 @@ export class CustomPromptCreator extends LitElement {
                         .value=${this.color}
                         @input=${(e: InputEvent) => this.color = (e.target as HTMLInputElement).value}
                     >
-                </div>
-                <div class="knob-container">
-                    <span class="label">Громкость (Вес)</span>
-                    <volume-knob
-                        .value=${this.weight}
-                        .color=${this.color}
-                        @input=${(e: CustomEvent<number>) => this.weight = e.detail}
-                    ></volume-knob>
                 </div>
                 <button class="add-button" @click=${this.handleAdd}>Добавить в микс</button>
 
