@@ -63,7 +63,7 @@ export class PromptDjMidi extends LitElement {
     #header {
       width: 100%;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       z-index: 10;
       flex-shrink: 0;
@@ -74,6 +74,10 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+    }
+    .header-logo {
+      height: 3.5vmin;
+      max-height: 30px;
     }
     #accordions {
       width: 100%;
@@ -557,6 +561,7 @@ export class PromptDjMidi extends LitElement {
     return html`
       <div id="background" style=${bg}></div>
       <div id="header">
+        <img src="/logow.png" alt="Logo" class="header-logo">
         <profile-header
           @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
           @open-settings=${() => console.log('Settings button clicked')}
