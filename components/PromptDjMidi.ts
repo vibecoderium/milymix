@@ -119,6 +119,7 @@ export class PromptDjMidi extends LitElement {
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
+      width: 100%; /* Добавлено для растягивания на всю ширину */
     }
     .accordion-item.active {
       /* flex-grow: 1; */ /* Удалено, чтобы не занимал всю вертикальную высоту */
