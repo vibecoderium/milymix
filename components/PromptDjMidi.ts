@@ -45,8 +45,8 @@ export class PromptDjMidi extends LitElement {
       align-items: center;
       box-sizing: border-box;
       position: relative;
-      padding: 1vmin; /* Уменьшен общий отступ */
-      padding-bottom: 8vmin; /* Уменьшен отступ для фиксированного нижнего колонтитула */
+      padding: 1.5vmin;
+      padding-bottom: 20vmin; /* Добавлено пространство для фиксированного нижнего колонтитула */
       gap: 1.5vmin;
     }
     #background {
@@ -152,7 +152,7 @@ export class PromptDjMidi extends LitElement {
       align-items: center;
       gap: 1.5vmin;
       z-index: 100; /* Убедимся, что он находится поверх другого контента */
-      padding: 1vmin; /* Уменьшен отступ для нижнего колонтитула */
+      padding: 1.5vmin; /* Добавляем отступы, чтобы соответствовать отступам хоста и обеспечить вертикальное пространство */
       box-sizing: border-box; /* Включаем отступы в ширину/высоту */
       background-color: rgba(20, 20, 20, 0.7); /* Добавляем фон, чтобы закрыть контент */
       backdrop-filter: blur(10px);
