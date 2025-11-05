@@ -66,8 +66,8 @@ export class PromptDjMidi extends LitElement {
       left: 0;
       width: 100vw; /* Полная ширина экрана */
       height: 7.5vmin; /* Увеличена высота на 50% (было ~5vmin, стало 7.5vmin) */
-      display: grid; /* Используем grid для центрирования */
-      grid-template-columns: auto 1fr auto; /* Логотип, Заголовок, ProfileHeader */
+      display: flex;
+      justify-content: space-between;
       align-items: center;
       z-index: 10;
       flex-shrink: 0;
@@ -84,21 +84,6 @@ export class PromptDjMidi extends LitElement {
       object-fit: contain; /* Сохраняет пропорции и вписывает изображение */
       padding: 0; /* Убираем внутренние отступы логотипа */
       /* margin-left: -1.5vmin; */ /* Убран отрицательный отступ, чтобы логотип использовал padding шапки */
-      grid-column: 1; /* Размещаем в первой колонке */
-    }
-    .app-title {
-      color: #fff;
-      font-size: clamp(20px, 3.5vmin, 30px); /* Размер шрифта, адаптирующийся к высоте шапки */
-      font-weight: 700;
-      text-align: center;
-      white-space: nowrap; /* Предотвращаем перенос текста */
-      overflow: hidden;
-      text-overflow: ellipsis;
-      -webkit-font-smoothing: antialiased;
-      grid-column: 2; /* Размещаем во второй (центральной) колонке */
-    }
-    profile-header {
-      grid-column: 3; /* Размещаем в третьей колонке */
     }
     #accordions {
       width: 100%;
@@ -583,7 +568,6 @@ export class PromptDjMidi extends LitElement {
       <div id="background" style=${bg}></div>
       <div id="header">
         <img src="/logow.png" alt="Logo" class="header-logo">
-        <span class="app-title">Mily Dj</span>
         <profile-header
           @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
           @open-settings=${() => console.log('Settings button clicked')}
