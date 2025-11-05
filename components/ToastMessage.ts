@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { css, html, LitElement } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js'; // Добавлен state
+import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('toast-message')
@@ -13,9 +13,10 @@ export class ToastMessage extends LitElement {
     .toast {
       line-height: 1.6;
       position: fixed;
-      top: 50%; /* Изменено для центрирования по вертикали */
+      top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%); /* Изменено для центрирования по обеим осям */
+      /* Начальное состояние: скрыто и смещено вверх */
+      transform: translate(-50%, -200%); 
       background-color: #000;
       color: white;
       padding: 15px;
@@ -25,11 +26,21 @@ export class ToastMessage extends LitElement {
       justify-content: space-between;
       gap: 15px;
       width: min(450px, 80vw);
-      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+      /* Добавлены переходы для opacity и visibility */
+      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s, visibility 0.3s;
       border: 2px solid #fff;
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
       text-wrap: pretty;
-      z-index: 1000; /* Увеличено для гарантии отображения поверх других элементов */
+      z-index: 1000;
+      /* Изначально невидимо */
+      opacity: 0;
+      visibility: hidden;
+    }
+    .toast.showing {
+      /* Когда показывается: видно и по центру */
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%);
     }
     button {
       border-radius: 100px;
@@ -37,10 +48,6 @@ export class ToastMessage extends LitElement {
       border: none;
       color: #000;
       cursor: pointer;
-    }
-    .toast:not(.showing) {
-      transition-duration: 1s;
-      transform: translate(-50%, -200%);
     }
     a {
       color: #acacac;
@@ -51,7 +58,7 @@ export class ToastMessage extends LitElement {
   @property({ type: String }) message = '';
   @property({ type: Boolean }) showing = false;
 
-  @state() private timeoutId: number | undefined; // Добавлено для хранения ID таймера
+  @state() private timeoutId: number | undefined;
 
   private renderMessageWithLinks() {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -73,20 +80,17 @@ export class ToastMessage extends LitElement {
     this.showing = true;
     this.message = message;
 
-    // Очищаем предыдущий таймер, если он был
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
 
-    // Устанавливаем новый таймер для автоматического скрытия через 5 секунд
     this.timeoutId = setTimeout(() => {
       this.hide();
-    }, 5000); // 5000 миллисекунд = 5 секунд
+    }, 5000);
   }
 
   hide() {
     this.showing = false;
-    // Очищаем таймер, если тост был закрыт вручную
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
       this.timeoutId = undefined;
