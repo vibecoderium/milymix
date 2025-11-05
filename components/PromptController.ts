@@ -33,7 +33,7 @@ export class PromptController extends LitElement {
       color: #fff;
       font-weight: 500;
       font-size: clamp(14px, 2vh, 18px);
-      padding: 0.4vmin;
+      padding: 1.2vmin;
       text-align: center;
       cursor: pointer;
       transition: background-color 0.2s ease-in-out, transform 0.1s ease;
