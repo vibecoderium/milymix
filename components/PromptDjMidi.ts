@@ -20,6 +20,7 @@ import './ProfileHeader';
 import './ActivePromptKnob';
 // import './WeightKnob'; // Удален импорт WeightKnob
 import './VerticalSlider'; // Импортируем новый компонент VerticalSlider
+import './SaveIcon'; // Импортируем новый компонент SaveIcon
 
 import type { ChatAssistant } from './ChatAssistant';
 
@@ -602,6 +603,7 @@ export class PromptDjMidi extends LitElement {
             @weight-changed=${this.handleActivePromptWeightChange}
           ></active-prompts-display>
           <div class="master-volume-control">
+            <save-icon></save-icon> <!-- Добавлен значок дискеты -->
             <vertical-slider
               .value=${this.masterVolume * 2}
               @input=${this.handleMasterVolumeChange}
