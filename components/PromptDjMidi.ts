@@ -218,6 +218,7 @@ export class PromptDjMidi extends LitElement {
   @state() private editingPromptId: string | null = null;
   @state() private editorWeight = 0;
   @state() private activeCategory: string | null = null;
+  @state() private showEqualizer = false; // Новое состояние для эквалайзера
 
   @property({ type: Object })
   private filteredPrompts = new Set<string>();
@@ -375,6 +376,10 @@ export class PromptDjMidi extends LitElement {
     this.activeCategory = this.activeCategory === categoryName ? null : categoryName;
   }
 
+  private handleEqualizerToggle() {
+    this.showEqualizer = !this.showEqualizer;
+  }
+
   private handleActivePromptWeightChange(e: CustomEvent<{ promptId: string, weight: number }>) {
     const { promptId, weight } = e.detail;
     const prompt = this.prompts.get(promptId);
@@ -509,7 +514,16 @@ export class PromptDjMidi extends LitElement {
           @edit-prompt=${this.handleEditPromptRequest}
           @weight-changed=${this.handleActivePromptWeightChange}
         ></active-prompts-display>
-        <master-controls @eq-changed=${this.reDispatch}></master-controls>
+        
+        <div class="accordion-item ${this.showEqualizer ? 'active' : ''}">
+          <button class="accordion-header" @click=${this.handleEqualizerToggle}>
+            <span>Graphic Equalizer</span>
+            <span class="chevron">${this.showEqualizer ? '−' : '+'}</span>
+          </button>
+          <div class="accordion-content">
+            <master-controls @eq-changed=${this.reDispatch}></master-controls>
+          </div>
+        </div>
       </div>
 
       <div id="footer">
