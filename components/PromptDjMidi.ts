@@ -13,11 +13,12 @@ import './PlayPauseButton';
 import './PresetManager';
 import './VolumeEditor';
 import './ChatAssistant';
-import './SynthPanel';
+// import './SynthPanel'; // Удален импорт SynthPanel
 import './ActivePromptsDisplay';
 import './MasterControls';
-import './ProfileHeader'; // Добавлен импорт нового компонента
-import './ActivePromptKnob'; // Добавлен импорт нового компонента
+import './ProfileHeader';
+import './ActivePromptKnob';
+import './WeightKnob'; // Импортируем VolumeKnob для использования в качестве Master Volume
 
 import type { ChatAssistant } from './ChatAssistant';
 
@@ -61,22 +62,17 @@ export class PromptDjMidi extends LitElement {
     #header {
       width: 100%;
       display: flex;
-      justify-content: flex-end; /* Изменено на flex-end, так как MIDI-кнопки удалены */
+      justify-content: flex-end;
       align-items: center;
       z-index: 10;
       flex-shrink: 0;
-      background-color: rgba(20, 20, 20, 0.7); /* Серый фон */
-      border: 1px solid rgba(255, 255, 255, 0.2); /* Граница */
-      border-radius: 8px; /* Скругленные углы */
-      padding: 0.75vmin 1.5vmin; /* Отступы */
+      background-color: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 0.75vmin 1.5vmin;
       box-sizing: border-box;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-    }
-    #midi-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
     #accordions {
       width: 100%;
@@ -146,33 +142,74 @@ export class PromptDjMidi extends LitElement {
     #now-playing-container {
       width: 100%;
       display: flex;
-      flex-direction: column;
+      flex-direction: column; /* Основное направление - колонка */
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
-      /* Дополнительные стили для увеличения блока */
-      min-height: 15vmin; /* Увеличиваем минимальную высоту контейнера */
-      justify-content: flex-end; /* Прижимаем содержимое к низу, если есть свободное место */
+      min-height: 15vmin;
+      justify-content: flex-end;
+    }
+    .active-prompts-and-master-volume-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1.5vmin;
+      width: 100%;
+      background-color: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 1.5vmin;
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .active-prompts-and-master-volume-wrapper active-prompts-display {
+      flex-grow: 1;
+    }
+    .master-volume-control {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5vmin;
+      flex-shrink: 0;
+      width: 10vmin; /* Размер ручки */
+    }
+    .master-volume-control volume-knob {
+      width: 10vmin;
+      height: 10vmin;
+    }
+    .master-volume-label {
+      font-size: 1.2vmin;
+      font-weight: 500;
+      color: #fff;
+      text-align: center;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.2;
+      padding: 0 0.2vmin;
+      box-sizing: border-box;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     #footer {
-      position: fixed; /* Фиксируем к нижней части экрана */
+      position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
       display: flex;
       align-items: center;
       gap: 1.5vmin;
-      z-index: 100; /* Убедимся, что он находится поверх другого контента */
-      padding: 0.75vmin; /* Уменьшены отступы */
-      box-sizing: border-box; /* Включаем отступы в ширину/высоту */
-      background-color: rgba(20, 20, 20, 0.7); /* Добавляем фон, чтобы закрыть контент */
+      z-index: 100;
+      padding: 0.75vmin;
+      box-sizing: border-box;
+      background-color: rgba(20, 20, 20, 0.7);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(255, 255, 255, 0.2); /* Добавляем верхнюю границу */
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
     }
     play-pause-button {
-      width: 9vmin; /* Уменьшена ширина кнопки */
-      max-width: 55px; /* Уменьшена максимальная ширина */
+      width: 9vmin;
+      max-width: 55px;
       flex-shrink: 0;
     }
     button {
@@ -218,7 +255,8 @@ export class PromptDjMidi extends LitElement {
   @state() private editingPromptId: string | null = null;
   @state() private editorWeight = 0;
   @state() private activeCategory: string | null = null;
-  @state() private showEqualizer = false; // Новое состояние для эквалайзера
+  @state() private showEqualizer = false;
+  @state() private masterVolume = 0.8; // Новое состояние для общей громкости
 
   @property({ type: Object })
   private filteredPrompts = new Set<string>();
@@ -394,6 +432,16 @@ export class PromptDjMidi extends LitElement {
     }
   }
 
+  private handleMasterVolumeChange(e: CustomEvent<number>) {
+    // Значение ручки от 0 до 2, преобразуем в 0-1 для LiveMusicHelper
+    this.masterVolume = e.detail / 2;
+    this.dispatchEvent(new CustomEvent('master-volume-changed', {
+      detail: this.masterVolume,
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
   private async handleAssistantPrompt(e: CustomEvent<string>) {
     const userPrompt = e.detail;
     const assistant = this.shadowRoot?.querySelector('chat-assistant');
@@ -502,18 +550,27 @@ export class PromptDjMidi extends LitElement {
           @open-settings=${() => console.log('Settings button clicked')}
         ></profile-header>
       </div>
-      <!-- Удален synth-panel -->
       <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
         ${this.renderAccordions()}
       </div>
 
       <div id="now-playing-container">
-        <active-prompts-display
-          .prompts=${this.prompts}
-          .audioLevel=${this.audioLevel}
-          @edit-prompt=${this.handleEditPromptRequest}
-          @weight-changed=${this.handleActivePromptWeightChange}
-        ></active-prompts-display>
+        <div class="active-prompts-and-master-volume-wrapper">
+          <active-prompts-display
+            .prompts=${this.prompts}
+            .audioLevel=${this.audioLevel}
+            @edit-prompt=${this.handleEditPromptRequest}
+            @weight-changed=${this.handleActivePromptWeightChange}
+          ></active-prompts-display>
+          <div class="master-volume-control">
+            <volume-knob
+              .value=${this.masterVolume * 2}
+              @input=${this.handleMasterVolumeChange}
+              color="#fff"
+            ></volume-knob>
+            <span class="master-volume-label">Master Volume</span>
+          </div>
+        </div>
         
         <div class="accordion-item ${this.showEqualizer ? 'active' : ''}">
           <button class="accordion-header" @click=${this.handleEqualizerToggle}>
