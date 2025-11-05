@@ -19,9 +19,9 @@ export class ActivePromptsDisplay extends LitElement {
         .container {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5vmin; /* Увеличен зазор между кружками */
-            padding: 1.5vmin;
-            min-height: 12vmin; /* Увеличена минимальная высота для размещения кружков */
+            gap: 4vmin; /* Увеличен зазор между кружками */
+            padding: 6vmin; /* Значительно увеличены отступы для размещения максимального свечения */
+            min-height: 32vmin; /* Увеличена минимальная высота для размещения кружков и их свечения */
             box-sizing: border-box;
             background-color: rgba(20, 20, 20, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.2);
