@@ -1,0 +1,18 @@
+html, body {
+  height: 100vh; /* Use viewport height */
+  width: 100vw; /* Use viewport width */
+  margin: 0;
+  overflow: hidden; /* Prevent scrolling */
+}
+body {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 14px;
+  overscroll-behavior-y: contain;
+}
+body.dragging {
+  cursor: ns-resize;
+}
+body.dragging * {
+  user-select: none;
+  pointer-events: none;
+}
