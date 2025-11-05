@@ -125,7 +125,15 @@ export class CustomPromptCreator extends LitElement {
             color: #fff;
             font-weight: 600;
             font-size: 1.8vmin;
-            margin-top: 1vmin;
+            /* margin-top: 1vmin; */ /* Удален, теперь управляется action-row */
+        }
+        .action-row { /* Новый стиль для строки с ручкой и кнопкой */
+            display: flex;
+            align-items: center;
+            gap: 1.5vmin;
+            width: 100%;
+            justify-content: flex-end; /* Прижимаем к правому краю */
+            margin-top: 1vmin; /* Отступ сверху */
         }
         /* Styles for sliders and selects */
         input[type="range"] {
@@ -389,16 +397,7 @@ export class CustomPromptCreator extends LitElement {
     override render() {
         return html`
             <div class="creator-form">
-                <!-- Удалена дублирующая надпись "Создать новый стиль" -->
                 <div class="prompt-creation-controls">
-                    <div class="knob-and-label">
-                        <span class="label">Громкость</span>
-                        <volume-knob
-                            .value=${this.weight}
-                            .color=${this.color}
-                            @input=${(e: CustomEvent<number>) => this.weight = e.detail}
-                        ></volume-knob>
-                    </div>
                     <input 
                         type="text" 
                         placeholder="Название стиля (напр., Techno, Piano)"
@@ -412,7 +411,17 @@ export class CustomPromptCreator extends LitElement {
                         @input=${(e: InputEvent) => this.color = (e.target as HTMLInputElement).value}
                     >
                 </div>
-                <button class="add-button" @click=${this.handleAdd}>Добавить в микс</button>
+                <div class="action-row">
+                    <div class="knob-and-label">
+                        <span class="label">Громкость</span>
+                        <volume-knob
+                            .value=${this.weight}
+                            .color=${this.color}
+                            @input=${(e: CustomEvent<number>) => this.weight = e.detail}
+                        ></volume-knob>
+                    </div>
+                    <button class="add-button" @click=${this.handleAdd}>Добавить в микс</button>
+                </div>
 
                 <div class=${classMap({ 'settings-accordion-item': true, 'active': this.showGenerationSettings })}>
                     <button class="settings-accordion-header" @click=${() => this.showGenerationSettings = !this.showGenerationSettings}>
