@@ -19,9 +19,8 @@ export class ActivePromptsDisplay extends LitElement {
         .container {
             display: flex;
             flex-wrap: wrap;
-            gap: 4vmin; /* Увеличен зазор между кружками */
-            padding: 6vmin; /* Значительно увеличены отступы для размещения максимального свечения */
-            min-height: 32vmin; /* Увеличена минимальная высота для размещения кружков и их свечения */
+            gap: 4vmin; /* Зазор между элементами */
+            padding: 3vmin; /* Уменьшены отступы для лучшей адаптивности */
             box-sizing: border-box;
             background-color: rgba(20, 20, 20, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -30,6 +29,7 @@ export class ActivePromptsDisplay extends LitElement {
             -webkit-backdrop-filter: blur(10px);
             align-items: center; /* Выравнивание по центру */
             justify-content: center; /* Выравнивание по центру */
+            transition: all 0.3s ease-in-out; /* Плавный переход для высоты и отступов */
         }
         .placeholder {
             color: #888;
