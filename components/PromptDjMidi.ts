@@ -47,9 +47,10 @@ export class PromptDjMidi extends LitElement {
     :host {
       height: 100vh;
       width: 100vw;
-      display: block; /* Изменено на block */
+      display: flex;
+      flex-direction: column;
       box-sizing: border-box;
-      position: relative; /* Контекст для позиционирования */
+      position: relative; /* For modals */
       background: #111;
       overflow: hidden;
     }
@@ -62,15 +63,14 @@ export class PromptDjMidi extends LitElement {
       background: #111;
     }
     #header {
-      position: absolute; /* Изменено на absolute */
-      top: 0;
-      left: 0;
+      /* No longer fixed */
       width: 100%;
       height: 9vmin;
       display: flex;
       align-items: center;
       gap: 1.5vmin;
       z-index: 10;
+      flex-shrink: 0;
       background-color: rgba(20, 20, 20, 0.7);
       padding: 0 1.5vmin;
       box-sizing: border-box;
@@ -108,17 +108,15 @@ export class PromptDjMidi extends LitElement {
       background-color: rgba(255, 255, 255, 0.1);
     }
     
+    /* New wrapper for main content */
     #main-area {
-      position: absolute; /* Изменено на absolute */
-      top: 9vmin; /* Отступ от шапки */
-      bottom: 10.5vmin; /* Отступ от подвала */
-      left: 0;
-      width: 100%;
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
       gap: 1.5vmin;
       padding: 1.5vmin;
       overflow-y: auto;
+      width: 100%;
       box-sizing: border-box;
     }
 
@@ -231,11 +229,8 @@ export class PromptDjMidi extends LitElement {
       flex-shrink: 0;
     }
     #footer {
-      position: absolute; /* Изменено на absolute */
-      bottom: 0;
-      left: 0;
+      /* No longer fixed */
       width: 100%;
-      height: 10.5vmin; /* Задана фиксированная высота */
       display: flex;
       align-items: center;
       gap: 1.5vmin;
@@ -246,11 +241,12 @@ export class PromptDjMidi extends LitElement {
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border-top: 1px solid rgba(255, 255, 255, 0.2);
+      flex-shrink: 0;
     }
-    #footer play-pause-button {
-      height: 100%; /* Кнопка подстраивается под высоту подвала */
-      width: auto;
-      aspect-ratio: 1 / 1; /* Сохраняем пропорции кнопки */
+    play-pause-button {
+      width: 27vmin;
+      max-width: 165px;
+      flex-shrink: 0;
     }
     button {
       font: inherit;
