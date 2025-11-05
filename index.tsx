@@ -92,6 +92,12 @@ function main() {
     }
   }));
 
+  pdjMidi.addEventListener('advanced-settings-changed', ((e: Event) => {
+    const customEvent = e as CustomEvent<any>; // Use 'any' for now, or define a specific type
+    const settings = customEvent.detail;
+    liveMusicHelper.setAdvancedGenerationSettings(settings); // New method in LiveMusicHelper
+  }));
+
   audioAnalyser.addEventListener('audio-level-changed', ((e: Event) => {
     const customEvent = e as CustomEvent<number>;
     const level = customEvent.detail;
