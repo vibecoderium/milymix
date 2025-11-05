@@ -5,6 +5,7 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js'; // Import map for dropdowns
+import { classMap } from 'lit/directives/class-map.js'; // Import classMap for dynamic classes
 import './WeightKnob'; // Используем существующий компонент ручки
 
 @customElement('custom-prompt-creator')
@@ -182,6 +183,59 @@ export class CustomPromptCreator extends LitElement {
             font-size: 1.2vmin;
             color: #ccc;
         }
+
+        /* Styles for the new collapsible settings section */
+        .settings-accordion-item {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background-color: rgba(20, 20, 20, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            flex-shrink: 0;
+            margin-top: 2.5vmin; /* Отступ от кнопки "Добавить в микс" */
+        }
+        .settings-accordion-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5vh 2vw;
+            font-size: clamp(14px, 2vh, 18px);
+            font-weight: 500;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            text-align: left;
+            flex-shrink: 0;
+        }
+        .settings-chevron {
+            font-size: clamp(16px, 2.5vh, 20px);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.7);
+            transition: transform 0.3s ease-in-out;
+        }
+        .settings-accordion-item.active .settings-chevron {
+            transform: rotate(180deg);
+        }
+        .settings-accordion-content {
+            overflow: hidden;
+            transition: opacity 0.4s ease-in-out, max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0;
+            height: auto;
+            max-height: 0px;
+            visibility: hidden;
+            padding: 0 1.5vmin 1.5vmin 1.5vmin; /* Отступы для содержимого */
+        }
+        .settings-accordion-item.active .settings-accordion-content {
+            opacity: 1;
+            visibility: visible;
+            max-height: 9999px; /* Большое значение для динамической высоты */
+        }
     `;
 
     // Prompt creation states
@@ -201,6 +255,9 @@ export class CustomPromptCreator extends LitElement {
     @state() private brightnessAuto = true;
     @state() private scale = 'Auto';
     @state() private musicGenerationMode = 'Quality';
+
+    // State for the collapsible settings section
+    @state() private showGenerationSettings = false; // Свернуто по умолчанию
 
     private scaleOptions = [
         'Auto', 'C Major / A Minor', 'C# Major / A# Minor', 'D Major / B Minor',
@@ -339,145 +396,152 @@ export class CustomPromptCreator extends LitElement {
                 </div>
                 <button class="add-button" @click=${this.handleAdd}>Добавить в микс</button>
 
-                <div class="section-title">Настройки генерации</div>
-                <div class="settings-grid">
-                    <div class="setting-group">
-                        <label class="setting-label">Температура</label>
-                        <div class="slider-with-value">
-                            <input
-                                type="range"
-                                min="0.1"
-                                max="2.0"
-                                step="0.1"
-                                .value=${this.temperature}
-                                @input=${(e: Event) => this.handleSliderInput(e, 'temperature')}
-                            />
-                            <span class="slider-value">${this.temperature.toFixed(1)}</span>
+                <div class=${classMap({ 'settings-accordion-item': true, 'active': this.showGenerationSettings })}>
+                    <button class="settings-accordion-header" @click=${() => this.showGenerationSettings = !this.showGenerationSettings}>
+                        <span>Настройки генерации</span>
+                        <span class="settings-chevron">${this.showGenerationSettings ? '−' : '+'}</span>
+                    </button>
+                    <div class="settings-accordion-content">
+                        <div class="settings-grid">
+                            <div class="setting-group">
+                                <label class="setting-label">Температура</label>
+                                <div class="slider-with-value">
+                                    <input
+                                        type="range"
+                                        min="0.1"
+                                        max="2.0"
+                                        step="0.1"
+                                        .value=${this.temperature}
+                                        @input=${(e: Event) => this.handleSliderInput(e, 'temperature')}
+                                    />
+                                    <span class="slider-value">${this.temperature.toFixed(1)}</span>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Направляющая</label>
+                                <div class="slider-with-value">
+                                    <input
+                                        type="range"
+                                        min="0.0"
+                                        max="10.0"
+                                        step="0.1"
+                                        .value=${this.guidance}
+                                        @input=${(e: Event) => this.handleSliderInput(e, 'guidance')}
+                                    />
+                                    <span class="slider-value">${this.guidance.toFixed(1)}</span>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Top K</label>
+                                <div class="slider-with-value">
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max="100"
+                                        step="1"
+                                        .value=${this.topK}
+                                        @input=${(e: Event) => this.handleSliderInput(e, 'topK')}
+                                    />
+                                    <span class="slider-value">${this.topK}</span>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Seed</label>
+                                <input
+                                    type="text"
+                                    placeholder="Auto"
+                                    .value=${this.seed}
+                                    @input=${(e: Event) => this.handleTextInput(e, 'seed')}
+                                />
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">BPM</label>
+                                <input
+                                    type="text"
+                                    placeholder="Auto"
+                                    .value=${this.bpm}
+                                    @input=${(e: Event) => this.handleTextInput(e, 'bpm')}
+                                />
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Плотность</label>
+                                <div class="slider-with-value">
+                                    <input
+                                        type="range"
+                                        min="0.0"
+                                        max="1.0"
+                                        step="0.01"
+                                        .value=${this.density}
+                                        ?disabled=${this.densityAuto}
+                                        @input=${(e: Event) => this.handleSliderInput(e, 'density')}
+                                    />
+                                    <span class="slider-value">${this.density.toFixed(2)}</span>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input
+                                        type="checkbox"
+                                        id="densityAuto"
+                                        .checked=${this.densityAuto}
+                                        @change=${(e: Event) => this.handleCheckboxChange(e, 'densityAuto', 'density')}
+                                    />
+                                    <label for="densityAuto">Авто</label>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Яркость</label>
+                                <div class="slider-with-value">
+                                    <input
+                                        type="range"
+                                        min="0.0"
+                                        max="1.0"
+                                        step="0.01"
+                                        .value=${this.brightness}
+                                        ?disabled=${this.brightnessAuto}
+                                        @input=${(e: Event) => this.handleSliderInput(e, 'brightness')}
+                                    />
+                                    <span class="slider-value">${this.brightness.toFixed(2)}</span>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input
+                                        type="checkbox"
+                                        id="brightnessAuto"
+                                        .checked=${this.brightnessAuto}
+                                        @change=${(e: Event) => this.handleCheckboxChange(e, 'brightnessAuto', 'brightness')}
+                                    />
+                                    <label for="brightnessAuto">Авто</label>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Гамма</label>
+                                <select
+                                    .value=${this.scale}
+                                    @change=${(e: Event) => this.handleSelectInput(e, 'scale')}
+                                >
+                                    ${map(this.scaleOptions, (option) => html`
+                                        <option value=${option}>${option}</option>
+                                    `)}
+                                </select>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Режим генерации музыки</label>
+                                <select
+                                    .value=${this.musicGenerationMode}
+                                    @change=${(e: Event) => this.handleSelectInput(e, 'musicGenerationMode')}
+                                >
+                                    ${map(this.musicGenerationModeOptions, (option) => html`
+                                        <option value=${option}>${option}</option>
+                                    `)}
+                                </select>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Направляющая</label>
-                        <div class="slider-with-value">
-                            <input
-                                type="range"
-                                min="0.0"
-                                max="10.0"
-                                step="0.1"
-                                .value=${this.guidance}
-                                @input=${(e: Event) => this.handleSliderInput(e, 'guidance')}
-                            />
-                            <span class="slider-value">${this.guidance.toFixed(1)}</span>
-                        </div>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Top K</label>
-                        <div class="slider-with-value">
-                            <input
-                                type="range"
-                                min="1"
-                                max="100"
-                                step="1"
-                                .value=${this.topK}
-                                @input=${(e: Event) => this.handleSliderInput(e, 'topK')}
-                            />
-                            <span class="slider-value">${this.topK}</span>
-                        </div>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Seed</label>
-                        <input
-                            type="text"
-                            placeholder="Auto"
-                            .value=${this.seed}
-                            @input=${(e: Event) => this.handleTextInput(e, 'seed')}
-                        />
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">BPM</label>
-                        <input
-                            type="text"
-                            placeholder="Auto"
-                            .value=${this.bpm}
-                            @input=${(e: Event) => this.handleTextInput(e, 'bpm')}
-                        />
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Плотность</label>
-                        <div class="slider-with-value">
-                            <input
-                                type="range"
-                                min="0.0"
-                                max="1.0"
-                                step="0.01"
-                                .value=${this.density}
-                                ?disabled=${this.densityAuto}
-                                @input=${(e: Event) => this.handleSliderInput(e, 'density')}
-                            />
-                            <span class="slider-value">${this.density.toFixed(2)}</span>
-                        </div>
-                        <div class="checkbox-group">
-                            <input
-                                type="checkbox"
-                                id="densityAuto"
-                                .checked=${this.densityAuto}
-                                @change=${(e: Event) => this.handleCheckboxChange(e, 'densityAuto', 'density')}
-                            />
-                            <label for="densityAuto">Авто</label>
-                        </div>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Яркость</label>
-                        <div class="slider-with-value">
-                            <input
-                                type="range"
-                                min="0.0"
-                                max="1.0"
-                                step="0.01"
-                                .value=${this.brightness}
-                                ?disabled=${this.brightnessAuto}
-                                @input=${(e: Event) => this.handleSliderInput(e, 'brightness')}
-                            />
-                            <span class="slider-value">${this.brightness.toFixed(2)}</span>
-                        </div>
-                        <div class="checkbox-group">
-                            <input
-                                type="checkbox"
-                                id="brightnessAuto"
-                                .checked=${this.brightnessAuto}
-                                @change=${(e: Event) => this.handleCheckboxChange(e, 'brightnessAuto', 'brightness')}
-                            />
-                            <label for="brightnessAuto">Авто</label>
-                        </div>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Гамма</label>
-                        <select
-                            .value=${this.scale}
-                            @change=${(e: Event) => this.handleSelectInput(e, 'scale')}
-                        >
-                            ${map(this.scaleOptions, (option) => html`
-                                <option value=${option}>${option}</option>
-                            `)}
-                        </select>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Режим генерации музыки</label>
-                        <select
-                            .value=${this.musicGenerationMode}
-                            @change=${(e: Event) => this.handleSelectInput(e, 'musicGenerationMode')}
-                        >
-                            ${map(this.musicGenerationModeOptions, (option) => html`
-                                <option value=${option}>${option}</option>
-                            `)}
-                        </select>
                     </div>
                 </div>
             </div>
