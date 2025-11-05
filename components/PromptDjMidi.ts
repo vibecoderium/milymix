@@ -45,8 +45,9 @@ export class PromptDjMidi extends LitElement {
       align-items: center;
       box-sizing: border-box;
       position: relative;
-      padding: 0.5vmin; /* Уменьшен общий отступ */
-      gap: 0.5vmin; /* Уменьшен общий зазор */
+      padding: 1.5vmin;
+      padding-bottom: 20vmin; /* Добавлено пространство для фиксированного нижнего колонтитула */
+      gap: 1.5vmin;
     }
     #background {
       will-change: background-image;
@@ -63,12 +64,11 @@ export class PromptDjMidi extends LitElement {
       align-items: center;
       z-index: 10;
       flex-shrink: 0;
-      gap: 0.5vmin; /* Уменьшен зазор */
     }
     #midi-controls {
       display: flex;
       align-items: center;
-      gap: 0.5vmin; /* Уменьшен зазор */
+      gap: 10px;
     }
     #accordions {
       width: 100%;
@@ -76,7 +76,7 @@ export class PromptDjMidi extends LitElement {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.5vmin; /* Уменьшен зазор */
+      gap: 1vmin;
       overflow: hidden;
     }
     .accordion-item {
@@ -99,7 +99,7 @@ export class PromptDjMidi extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.5vh 0.5vw; /* Уменьшен отступ */
+      padding: 1.5vh 2vw;
       font-size: clamp(14px, 2vh, 18px);
       font-weight: 500;
       background: none;
@@ -130,16 +130,16 @@ export class PromptDjMidi extends LitElement {
     .accordion-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(11vmin, 1fr));
-      gap: 0.5vmin; /* Уменьшен зазор */
+      gap: 1vmin;
       height: 100%;
-      padding: 0 0.5vmin 0.5vmin 0.5vmin; /* Уменьшен отступ */
+      padding: 0 1.5vmin 1.5vmin 1.5vmin;
       box-sizing: border-box;
     }
     #now-playing-container {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 0.5vmin; /* Уменьшен зазор */
+      gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
     }
@@ -150,9 +150,9 @@ export class PromptDjMidi extends LitElement {
       width: 100%;
       display: flex;
       align-items: center;
-      gap: 0.5vmin; /* Уменьшен зазор */
+      gap: 1.5vmin;
       z-index: 100; /* Убедимся, что он находится поверх другого контента */
-      padding: 0.5vmin; /* Уменьшен отступ */
+      padding: 1.5vmin; /* Добавляем отступы, чтобы соответствовать отступам хоста и обеспечить вертикальное пространство */
       box-sizing: border-box; /* Включаем отступы в ширину/высоту */
       background-color: rgba(20, 20, 20, 0.7); /* Добавляем фон, чтобы закрыть контент */
       backdrop-filter: blur(10px);
