@@ -389,7 +389,7 @@ export class CustomPromptCreator extends LitElement {
     override render() {
         return html`
             <div class="creator-form">
-                <div class="section-title">Создать новый стиль</div>
+                <!-- Удалена дублирующая надпись "Создать новый стиль" -->
                 <div class="prompt-creation-controls">
                     <div class="knob-and-label">
                         <span class="label">Громкость</span>
