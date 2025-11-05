@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js'; // Добавлен state
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('toast-message')
@@ -51,6 +51,8 @@ export class ToastMessage extends LitElement {
   @property({ type: String }) message = '';
   @property({ type: Boolean }) showing = false;
 
+  @state() private timeoutId: number | undefined; // Добавлено для хранения ID таймера
+
   private renderMessageWithLinks() {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const parts = this.message.split( urlRegex );
@@ -70,12 +72,26 @@ export class ToastMessage extends LitElement {
   show(message: string) {
     this.showing = true;
     this.message = message;
+
+    // Очищаем предыдущий таймер, если он был
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+
+    // Устанавливаем новый таймер для автоматического скрытия через 5 секунд
+    this.timeoutId = setTimeout(() => {
+      this.hide();
+    }, 5000); // 5000 миллисекунд = 5 секунд
   }
 
   hide() {
     this.showing = false;
+    // Очищаем таймер, если тост был закрыт вручную
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = undefined;
+    }
   }
-
 }
 
 declare global {
