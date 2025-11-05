@@ -18,7 +18,8 @@ import './ActivePromptsDisplay';
 import './MasterControls';
 import './ProfileHeader';
 import './ActivePromptKnob';
-import './WeightKnob'; // Импортируем VolumeKnob для использования в качестве Master Volume
+// import './WeightKnob'; // Удален импорт WeightKnob
+import './VerticalSlider'; // Импортируем новый компонент VerticalSlider
 
 import type { ChatAssistant } from './ChatAssistant';
 
@@ -171,11 +172,12 @@ export class PromptDjMidi extends LitElement {
       align-items: center;
       gap: 0.5vmin;
       flex-shrink: 0;
-      width: 10vmin; /* Размер ручки */
+      width: 4vmin; /* Уменьшена ширина для вертикального слайдера */
+      height: 15vmin; /* Увеличена высота для вертикального слайдера */
     }
-    .master-volume-control volume-knob {
-      width: 10vmin;
-      height: 10vmin;
+    .master-volume-control vertical-slider { /* Изменено с volume-knob на vertical-slider */
+      width: 100%; /* Слайдер занимает всю доступную ширину контейнера */
+      height: 100%; /* Слайдер занимает всю доступную высоту контейнера */
     }
     .master-volume-label {
       font-size: 1.2vmin;
@@ -433,7 +435,7 @@ export class PromptDjMidi extends LitElement {
   }
 
   private handleMasterVolumeChange(e: CustomEvent<number>) {
-    // Значение ручки от 0 до 2, преобразуем в 0-1 для LiveMusicHelper
+    // Значение слайдера от 0 до 2, преобразуем в 0-1 для LiveMusicHelper
     this.masterVolume = e.detail / 2;
     this.dispatchEvent(new CustomEvent('master-volume-changed', {
       detail: this.masterVolume,
@@ -563,11 +565,10 @@ export class PromptDjMidi extends LitElement {
             @weight-changed=${this.handleActivePromptWeightChange}
           ></active-prompts-display>
           <div class="master-volume-control">
-            <volume-knob
+            <vertical-slider
               .value=${this.masterVolume * 2}
               @input=${this.handleMasterVolumeChange}
-              color="#fff"
-            ></volume-knob>
+            ></vertical-slider>
             <span class="master-volume-label">Master Volume</span>
           </div>
         </div>
