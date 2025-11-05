@@ -22,7 +22,9 @@ import './ActivePromptKnob';
 // import './VerticalSlider'; // Удален импорт VerticalSlider
 import './HorizontalSlider'; // Импортируем новый компонент HorizontalSlider
 // import './SaveIcon'; // Удален импорт SaveIcon
+import './CustomPromptCreator'; // Импортируем новый компонент
 
+import type { CustomPromptCreator } from './CustomPromptCreator';
 import type { ChatAssistant } from './ChatAssistant';
 
 import type { Preset } from './PresetManager';
@@ -170,7 +172,7 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
-      min-height: 15vmin;
+      /* min-height: 15vmin; */ /* Удалена минимальная высота */
       justify-content: flex-end;
     }
     .active-prompts-wrapper { /* Новый класс для обертки активных промптов */
@@ -284,6 +286,7 @@ export class PromptDjMidi extends LitElement {
   @state() private editorWeight = 0;
   @state() private activeCategory: string | null = null;
   @state() private showEqualizer = false;
+  @state() private showCustomCreator = false; // Состояние для нового аккордеона
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
 
   @property({ type: Object })
@@ -569,6 +572,40 @@ export class PromptDjMidi extends LitElement {
     }
   }
 
+  private handleCreateCustomPrompt(e: CustomEvent<{ text: string, weight: number, color: string }>) {
+    const { text, weight, color } = e.detail;
+
+    if (!text) return;
+
+    const maxCc = Math.max(0, ...Array.from(this.prompts.values()).map(p => p.cc));
+    const newCc = maxCc + 1;
+
+    const promptId = `custom-${Date.now()}`;
+
+    const newPrompt: Prompt = {
+        promptId,
+        text,
+        color,
+        weight,
+        cc: newCc,
+    };
+
+    const newPrompts = new Map(this.prompts);
+    newPrompts.set(promptId, newPrompt);
+    this.prompts = newPrompts;
+
+    this.dispatchEvent(
+        new CustomEvent('prompts-changed', { detail: this.prompts }),
+    );
+
+    const creator = this.shadowRoot?.querySelector('custom-prompt-creator');
+    if (creator) {
+        (creator as CustomPromptCreator).reset();
+    }
+
+    this.showCustomCreator = false;
+  }
+
   private reDispatch(e: Event) {
     this.dispatchEvent(new CustomEvent(e.type, { detail: (e as CustomEvent).detail }));
   }
@@ -596,6 +633,19 @@ export class PromptDjMidi extends LitElement {
       </div>
       <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
         ${this.renderAccordions()}
+      </div>
+
+      <!-- Панель создания пользовательских стилей -->
+      <div class="accordion-item ${this.showCustomCreator ? 'active' : ''}">
+        <button class="accordion-header" @click=${() => this.showCustomCreator = !this.showCustomCreator}>
+          <span>Создать свой стиль</span>
+          <span class="chevron">${this.showCustomCreator ? '−' : '+'}</span>
+        </button>
+        <div class="accordion-content">
+          <custom-prompt-creator 
+            @create-custom-prompt=${this.handleCreateCustomPrompt}
+          ></custom-prompt-creator>
+        </div>
       </div>
 
       <div id="now-playing-container">
