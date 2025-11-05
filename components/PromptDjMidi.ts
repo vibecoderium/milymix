@@ -200,14 +200,14 @@ export class PromptDjMidi extends LitElement {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
-      align-items: flex-start; /* Выравнивание текста по левому краю */
+      align-items: center; /* Выравнивание текста по центру */
       gap: 0.5vmin;
     }
     .master-volume-label {
-      font-size: 1.2vmin;
+      font-size: 4.8vmin; /* Увеличен в 4 раза (1.2vmin * 4) */
       font-weight: 500;
       color: #fff;
-      text-align: left; /* Выравнивание текста по левому краю */
+      text-align: center; /* Выравнивание текста по центру */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -610,7 +610,7 @@ export class PromptDjMidi extends LitElement {
         
         <div class="master-controls-bottom">
           <div class="master-volume-horizontal-control">
-            <span class="master-volume-label">Master Volume</span>
+            <span class="master-volume-label">Volume</span>
             <horizontal-slider
               .value=${this.masterVolume * 2}
               @input=${this.handleMasterVolumeChange}

@@ -12,8 +12,8 @@ export class SaveIcon extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 3vmin; /* Размер иконки */
-      height: 3vmin;
+      width: 9vmin; /* Размер иконки увеличен в 3 раза (было 3vmin, стало 9vmin) */
+      height: 9vmin; /* Размер иконки увеличен в 3 раза (было 3vmin, стало 9vmin) */
       color: #fff; /* Цвет иконки */
       cursor: pointer; /* Указываем, что это интерактивный элемент */
       transition: transform 0.2s ease-in-out;
