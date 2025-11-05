@@ -83,7 +83,7 @@ export class PromptDjMidi extends LitElement {
       height: 100%; /* Логотип занимает всю высоту шапки */
       object-fit: contain; /* Сохраняет пропорции и вписывает изображение */
       padding: 0; /* Убираем внутренние отступы логотипа */
-      margin-left: -1.5vmin; /* Компенсируем padding шапки, чтобы логотип был вплотную к краю */
+      /* margin-left: -1.5vmin; */ /* Убран отрицательный отступ, чтобы логотип использовал padding шапки */
     }
     #accordions {
       width: 100%;
