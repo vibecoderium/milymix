@@ -4,7 +4,7 @@
  */
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { map } from 'lit/directives/map.js';
+import { repeat } from 'lit/directives/repeat.js';
 import type { Prompt } from '../types';
 import './ActivePromptKnob'; // Импортируем новый компонент
 
@@ -63,7 +63,7 @@ export class ActivePromptsDisplay extends LitElement {
         return html`
             <div class="container">
                 ${activePrompts.length > 0
-                    ? map(activePrompts, prompt => html`
+                    ? repeat(activePrompts, (prompt) => prompt.promptId, (prompt) => html`
                         <active-prompt-knob
                             promptId=${prompt.promptId}
                             text=${prompt.text}
