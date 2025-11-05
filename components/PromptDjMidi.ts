@@ -582,7 +582,7 @@ export class PromptDjMidi extends LitElement {
       <div id="background" style=${bg}></div>
       <div id="header">
         <img src="/logow.png" alt="Logo" class="header-logo">
-        <span class="app-title">Mily Dj</span>
+        <span class="app-title">Milymix</span>
         <profile-header
           style="margin-left: auto;"
           @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
