@@ -71,8 +71,9 @@ export class PromptDjMidi extends LitElement {
       width: 100vw; /* Полная ширина экрана */
       height: 9vmin; /* Увеличена высота на 20% (было 7.5vmin, стало 9vmin) */
       display: flex;
-      justify-content: space-between; /* Выравниваем элементы по краям */
+      /* justify-content: space-between; */ /* Убрано, чтобы элементы не раздвигались */
       align-items: center;
+      gap: 1.5vmin; /* Добавлен отступ между элементами в шапке */
       z-index: 10;
       flex-shrink: 0;
       background-color: rgba(20, 20, 20, 0.7);
@@ -83,56 +84,21 @@ export class PromptDjMidi extends LitElement {
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 1.5vmin;
-    }
     .header-logo {
       height: calc(100% - 6px); /* Корректируем высоту для учета 3px верхнего и нижнего отступа */
       object-fit: contain; /* Сохраняет пропорции и вписывает изображение */
       padding: 3px; /* 3px отступ со всех сторон */
+      /* margin-left: -1.5vmin; */ /* Убран отрицательный отступ, чтобы логотип использовал padding шапки */
     }
     .app-title {
+      /* flex-grow: 1; */ /* Убрано, чтобы название не занимало все доступное пространство */
+      /* text-align: center; */ /* Убрано, так как теперь оно будет выравниваться по flex-контейнеру */
       color: #fff;
       font-size: clamp(18px, 3vmin, 28px); /* Адаптивный размер шрифта */
       font-weight: 600;
       white-space: nowrap; /* Предотвращает перенос текста */
       overflow: hidden; /* Скрывает переполнение, если текст слишком длинный */
       text-overflow: ellipsis; /* Добавляет многоточие, если текст скрыт */
-    }
-    .eq-button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 4vmin;
-      padding: 0;
-      color: white;
-      opacity: 0.8;
-      transition: opacity 0.2s;
-    }
-    .eq-button:hover {
-      opacity: 1;
-    }
-    #equalizer-panel {
-      position: fixed;
-      top: 9vmin; /* Высота шапки */
-      left: 0;
-      width: 100%;
-      z-index: 9;
-      background-color: rgba(20, 20, 20, 0.9);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 1.5vmin;
-      box-sizing: border-box;
-      transform: translateY(-150%); /* Скрываем панель выше */
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.4s;
-      visibility: hidden;
-    }
-    #equalizer-panel.showing {
-      transform: translateY(0);
-      visibility: visible;
     }
     #accordions {
       width: 100%;
@@ -692,19 +658,14 @@ export class PromptDjMidi extends LitElement {
     return html`
       <div id="background" style=${bg}></div>
       <div id="header">
-        <div class="header-left">
-          <img src="/logow.png" alt="Logo" class="header-logo">
-          <span class="app-title">Milymix</span>
-        </div>
-        <button class="eq-button" @click=${this.handleEqualizerToggle} title="Toggle Equalizer">
-          🎚️
-        </button>
+        <img src="/logow.png" alt="Logo" class="header-logo">
+        <span class="app-title">Milymix</span>
+        <!-- <profile-header
+          style="margin-left: auto;"
+          @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
+          @open-settings=${() => console.log('Settings button clicked')}
+        ></profile-header> -->
       </div>
-
-      <div id="equalizer-panel" class="${this.showEqualizer ? 'showing' : ''}">
-        <master-controls @eq-changed=${this.reDispatch}></master-controls>
-      </div>
-
       <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
         ${this.renderAccordions()}
       </div>
@@ -753,6 +714,16 @@ export class PromptDjMidi extends LitElement {
           <!-- <div class="save-icon-wrapper">
             <save-icon></save-icon>
           </div> -->
+        </div>
+        
+        <div class="accordion-item ${this.showEqualizer ? 'active' : ''}">
+          <button class="accordion-header" @click=${this.handleEqualizerToggle}>
+            <span>Graphic Equalizer</span>
+            <span class="chevron">${this.showEqualizer ? '−' : '+'}</span>
+          </button>
+          <div class="accordion-content">
+            <master-controls @eq-changed=${this.reDispatch}></master-controls>
+          </div>
         </div>
       </div>
 
