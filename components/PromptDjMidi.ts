@@ -52,7 +52,7 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       position: relative; /* For modals */
       background: #111;
-      overflow: hidden;
+      overflow: hidden; /* Prevent host scrolling */
     }
     #background {
       will-change: background-image;
@@ -63,9 +63,11 @@ export class PromptDjMidi extends LitElement {
       background: #111;
     }
     #header {
-      /* No longer fixed */
+      position: fixed; /* Прикрепляем к верху */
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 9vmin;
+      height: 9vmin; /* Высота шапки */
       display: flex;
       align-items: center;
       gap: 1.5vmin;
@@ -108,14 +110,15 @@ export class PromptDjMidi extends LitElement {
       background-color: rgba(255, 255, 255, 0.1);
     }
     
-    /* New wrapper for main content */
     #main-area {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       gap: 1.5vmin;
       padding: 1.5vmin;
-      overflow-y: auto;
+      padding-top: 9vmin; /* Отступ сверху для фиксированной шапки */
+      padding-bottom: 8.5vmin; /* Отступ снизу для фиксированного подвала */
+      overflow-y: auto; /* Разрешаем прокрутку только для этой области */
       width: 100%;
       box-sizing: border-box;
     }
@@ -189,8 +192,7 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
-      justify-content: flex-end;
-      margin-top: auto;
+      /* margin-top: auto; */ /* Удалено, так как main-area теперь прокручивается */
     }
     .master-controls-bottom {
       display: flex;
@@ -229,13 +231,15 @@ export class PromptDjMidi extends LitElement {
       flex-shrink: 0;
     }
     #footer {
-      /* No longer fixed */
+      position: fixed; /* Прикрепляем к низу */
+      bottom: 0;
+      left: 0;
       width: 100%;
       display: flex;
       align-items: center;
       gap: 1.5vmin;
       z-index: 100;
-      padding: 0.75vmin;
+      padding: 0.75vmin; /* Отступы подвала */
       box-sizing: border-box;
       background-color: rgba(20, 20, 20, 0.7);
       backdrop-filter: blur(10px);
@@ -243,9 +247,9 @@ export class PromptDjMidi extends LitElement {
       border-top: 1px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
     }
-    play-pause-button {
-      width: 27vmin;
-      max-width: 165px;
+    #footer play-pause-button { /* Уменьшаем размер кнопки в подвале */
+      width: 7vmin;
+      max-width: 45px;
       flex-shrink: 0;
     }
     button {
@@ -329,7 +333,7 @@ export class PromptDjMidi extends LitElement {
 
     #editing-prompt-display {
       position: fixed;
-      bottom: 10.5vmin;
+      bottom: 8.5vmin; /* Отступ от низа, учитывая высоту подвала */
       left: 0;
       width: 100%;
       background-color: rgba(20, 20, 20, 0.9);
