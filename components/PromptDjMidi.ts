@@ -71,9 +71,8 @@ export class PromptDjMidi extends LitElement {
       width: 100vw; /* Полная ширина экрана */
       height: 9vmin; /* Увеличена высота на 20% (было 7.5vmin, стало 9vmin) */
       display: flex;
-      /* justify-content: space-between; */ /* Убрано, чтобы элементы не раздвигались */
+      justify-content: space-between; /* Выравниваем элементы по краям */
       align-items: center;
-      gap: 1.5vmin; /* Добавлен отступ между элементами в шапке */
       z-index: 10;
       flex-shrink: 0;
       background-color: rgba(20, 20, 20, 0.7);
@@ -84,21 +83,40 @@ export class PromptDjMidi extends LitElement {
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5vmin;
+    }
     .header-logo {
       height: calc(100% - 6px); /* Корректируем высоту для учета 3px верхнего и нижнего отступа */
       object-fit: contain; /* Сохраняет пропорции и вписывает изображение */
       padding: 3px; /* 3px отступ со всех сторон */
-      /* margin-left: -1.5vmin; */ /* Убран отрицательный отступ, чтобы логотип использовал padding шапки */
     }
     .app-title {
-      /* flex-grow: 1; */ /* Убрано, чтобы название не занимало все доступное пространство */
-      /* text-align: center; */ /* Убрано, так как теперь оно будет выравниваться по flex-контейнеру */
       color: #fff;
       font-size: clamp(18px, 3vmin, 28px); /* Адаптивный размер шрифта */
       font-weight: 600;
       white-space: nowrap; /* Предотвращает перенос текста */
       overflow: hidden; /* Скрывает переполнение, если текст слишком длинный */
       text-overflow: ellipsis; /* Добавляет многоточие, если текст скрыт */
+    }
+    .eq-button {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 3.5vmin;
+      padding: 0;
+      line-height: 1;
+      opacity: 0.8;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .eq-button:hover {
+      opacity: 1;
+    }
+    .eq-button:active {
+      transform: scale(0.9);
     }
     #accordions {
       width: 100%;
@@ -164,7 +182,6 @@ export class PromptDjMidi extends LitElement {
       grid-template-columns: repeat(auto-fill, minmax(11vmin, 1fr));
       gap: 1vmin;
       height: 100%;
-      /* padding: 0 1.5vmin 1.5vmin 1.5vmin; */ /* Удалено, теперь управляется родительским .accordion-content */
       box-sizing: border-box;
     }
     #now-playing-container {
@@ -174,7 +191,6 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       flex-shrink: 0;
       z-index: 5;
-      /* min-height: 15vmin; */ /* Удалена минимальная высота */
       justify-content: flex-end;
     }
     .master-controls-bottom { /* Новый класс для контейнера громкости и сохранения */
@@ -233,6 +249,27 @@ export class PromptDjMidi extends LitElement {
       width: 9vmin;
       max-width: 55px;
       flex-shrink: 0;
+    }
+    #equalizer-popup {
+      position: fixed;
+      top: 10vmin; /* header height + a little gap */
+      right: 1.5vmin;
+      z-index: 50;
+      background-color: rgba(20, 20, 20, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 1.5vmin;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px) scale(0.95);
+      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    }
+    #equalizer-popup.showing {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
     }
     button {
       font: inherit;
@@ -658,13 +695,11 @@ export class PromptDjMidi extends LitElement {
     return html`
       <div id="background" style=${bg}></div>
       <div id="header">
-        <img src="/logow.png" alt="Logo" class="header-logo">
-        <span class="app-title">Milymix</span>
-        <!-- <profile-header
-          style="margin-left: auto;"
-          @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
-          @open-settings=${() => console.log('Settings button clicked')}
-        ></profile-header> -->
+        <div class="header-left">
+          <img src="/logow.png" alt="Logo" class="header-logo">
+          <span class="app-title">Milymix</span>
+        </div>
+        <button class="eq-button" @click=${this.handleEqualizerToggle} title="Toggle Equalizer">🎛️</button>
       </div>
       <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
         ${this.renderAccordions()}
@@ -715,22 +750,17 @@ export class PromptDjMidi extends LitElement {
             <save-icon></save-icon>
           </div> -->
         </div>
-        
-        <div class="accordion-item ${this.showEqualizer ? 'active' : ''}">
-          <button class="accordion-header" @click=${this.handleEqualizerToggle}>
-            <span>Graphic Equalizer</span>
-            <span class="chevron">${this.showEqualizer ? '−' : '+'}</span>
-          </button>
-          <div class="accordion-content">
-            <master-controls @eq-changed=${this.reDispatch}></master-controls>
-          </div>
-        </div>
       </div>
 
       <div id="footer">
         <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
         <play-pause-button .playbackState=${this.playbackState} @click=${this.playPause}></play-pause-button>
       </div>
+
+      <div id="equalizer-popup" class="${this.showEqualizer ? 'showing' : ''}">
+        <master-controls @eq-changed=${this.reDispatch}></master-controls>
+      </div>
+
       <preset-manager
         .showing=${this.showPresetManager}
         .currentPrompts=${this.getCurrentPromptsAsObject()}
