@@ -19,7 +19,8 @@ import './MasterControls';
 import './ProfileHeader';
 import './ActivePromptKnob';
 // import './WeightKnob'; // Удален импорт WeightKnob
-import './VerticalSlider'; // Импортируем новый компонент VerticalSlider
+// import './VerticalSlider'; // Удален импорт VerticalSlider
+import './HorizontalSlider'; // Импортируем новый компонент HorizontalSlider
 import './SaveIcon'; // Импортируем новый компонент SaveIcon
 
 import type { ChatAssistant } from './ChatAssistant';
@@ -172,7 +173,17 @@ export class PromptDjMidi extends LitElement {
       min-height: 15vmin;
       justify-content: flex-end;
     }
-    .active-prompts-and-master-volume-wrapper {
+    .active-prompts-wrapper { /* Новый класс для обертки активных промптов */
+      width: 100%;
+      background-color: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 1.5vmin;
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .master-controls-bottom { /* Новый класс для контейнера громкости и сохранения */
       display: flex;
       align-items: center;
       gap: 1.5vmin;
@@ -185,35 +196,28 @@ export class PromptDjMidi extends LitElement {
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
-    .active-prompts-and-master-volume-wrapper active-prompts-display {
+    .master-volume-horizontal-control { /* Новый класс для горизонтального слайдера */
       flex-grow: 1;
-    }
-    .master-volume-control {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start; /* Выравнивание текста по левому краю */
       gap: 0.5vmin;
-      flex-shrink: 0;
-      width: 4vmin; /* Уменьшена ширина для вертикального слайдера */
-      height: 15vmin; /* Увеличена высота для вертикального слайдера */
-    }
-    .master-volume-control vertical-slider { /* Изменено с volume-knob на vertical-slider */
-      width: 100%; /* Слайдер занимает всю доступную ширину контейнера */
-      height: 100%; /* Слайдер занимает всю доступную высоту контейнера */
     }
     .master-volume-label {
       font-size: 1.2vmin;
       font-weight: 500;
       color: #fff;
-      text-align: center;
-      white-space: normal;
-      word-break: break-word;
-      line-height: 1.2;
-      padding: 0 0.2vmin;
-      box-sizing: border-box;
-      max-width: 100%;
+      text-align: left; /* Выравнивание текста по левому краю */
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .save-icon-wrapper { /* Обертка для значка сохранения */
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; /* Прижимаем к правому краю */
+      flex-shrink: 0;
     }
     #footer {
       position: fixed;
@@ -595,20 +599,25 @@ export class PromptDjMidi extends LitElement {
       </div>
 
       <div id="now-playing-container">
-        <div class="active-prompts-and-master-volume-wrapper">
+        <div class="active-prompts-wrapper">
           <active-prompts-display
             .prompts=${this.prompts}
             .audioLevel=${this.audioLevel}
             @edit-prompt=${this.handleEditPromptRequest}
             @weight-changed=${this.handleActivePromptWeightChange}
           ></active-prompts-display>
-          <div class="master-volume-control">
-            <save-icon></save-icon> <!-- Добавлен значок дискеты -->
-            <vertical-slider
+        </div>
+        
+        <div class="master-controls-bottom">
+          <div class="master-volume-horizontal-control">
+            <span class="master-volume-label">Master Volume</span>
+            <horizontal-slider
               .value=${this.masterVolume * 2}
               @input=${this.handleMasterVolumeChange}
-            ></vertical-slider>
-            <span class="master-volume-label">Master Volume</span>
+            ></horizontal-slider>
+          </div>
+          <div class="save-icon-wrapper">
+            <save-icon></save-icon>
           </div>
         </div>
         
