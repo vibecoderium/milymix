@@ -110,6 +110,23 @@ export class ChatAssistant extends LitElement {
       this.recognition.onerror = (event: any) => {
         console.error('Speech recognition error', event.error);
         this.stopListening();
+        let errorMessage = 'An error occurred with voice recognition.';
+        if (event.error === 'not-allowed') {
+          errorMessage = 'Microphone access denied. Please allow microphone usage in your browser settings.';
+        } else if (event.error === 'no-speech') {
+          errorMessage = 'No speech detected. Please try again.';
+        } else if (event.error === 'audio-capture') {
+          errorMessage = 'No microphone found or audio input device is not working.';
+        } else if (event.error === 'network') {
+          errorMessage = 'Network error during speech recognition.';
+        } else if (event.error === 'aborted') {
+          errorMessage = 'Voice recognition was aborted.';
+        } else if (event.error === 'language-not-supported') {
+          errorMessage = 'The selected language is not supported.';
+        } else if (event.error === 'service-not-allowed') {
+          errorMessage = 'Speech recognition service not allowed by the browser.';
+        }
+        alert(errorMessage);
       };
 
       this.recognition.onend = () => {
