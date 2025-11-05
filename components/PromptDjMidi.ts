@@ -47,7 +47,7 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       position: relative;
       padding: 1.5vmin;
-      padding-bottom: 18vmin; /* Увеличено пространство для фиксированного нижнего колонтитула и большего блока 'now-playing' */
+      padding-bottom: 10vmin; /* Скорректировано для жесткого прикрепления эквалайзера к подвалу */
       gap: 1.5vmin;
     }
     #background {
