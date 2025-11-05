@@ -368,17 +368,12 @@ export class PromptDjMidi extends LitElement {
     this.activeCategory = this.activeCategory === categoryName ? null : categoryName;
   }
 
-  private handleActivePromptWeightChange(e: CustomEvent<number>) {
-    if (!this.editingPromptId) return; // Should not happen if we're editing
-
-    const promptId = (e.target as HTMLElement).getAttribute('promptId');
-    if (!promptId) return;
-
-    const newWeight = e.detail;
+  private handleActivePromptWeightChange(e: CustomEvent<{ promptId: string, weight: number }>) {
+    const { promptId, weight } = e.detail;
     const prompt = this.prompts.get(promptId);
 
     if (prompt) {
-      prompt.weight = newWeight;
+      prompt.weight = weight;
       const newPrompts = new Map(this.prompts);
       newPrompts.set(promptId, prompt);
       this.prompts = newPrompts;

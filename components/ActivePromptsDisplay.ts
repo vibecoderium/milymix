@@ -46,7 +46,16 @@ export class ActivePromptsDisplay extends LitElement {
     @property({ type: Number })
     audioLevel = 0; // Добавляем свойство audioLevel
 
-    // Метод handleCardClick больше не нужен, так как ActivePromptKnob сам диспатчит событие
+    private handleKnobInput(e: CustomEvent<number>) {
+      const promptId = (e.target as HTMLElement).getAttribute('promptId');
+      if (promptId) {
+        this.dispatchEvent(new CustomEvent('weight-changed', {
+          detail: { promptId, weight: e.detail },
+          bubbles: true,
+          composed: true,
+        }));
+      }
+    }
 
     override render() {
         const activePrompts = [...this.prompts.values()].filter(p => p.weight > 0);
@@ -61,6 +70,7 @@ export class ActivePromptsDisplay extends LitElement {
                             weight=${prompt.weight}
                             color=${prompt.color}
                             .audioLevel=${this.audioLevel}
+                            @input=${this.handleKnobInput}
                         ></active-prompt-knob>
                     `)
                     : html`<span class="placeholder">No active prompts. Turn up a knob to start the music!</span>`
