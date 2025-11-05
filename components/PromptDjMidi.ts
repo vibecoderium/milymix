@@ -16,12 +16,12 @@ import './ChatAssistant';
 // import './SynthPanel'; // Удален импорт SynthPanel
 import './ActivePromptsDisplay';
 import './MasterControls';
-import './ProfileHeader';
+// import './ProfileHeader'; // Удален импорт ProfileHeader
 import './ActivePromptKnob';
 // import './WeightKnob'; // Удален импорт WeightKnob
 // import './VerticalSlider'; // Удален импорт VerticalSlider
 import './HorizontalSlider'; // Импортируем новый компонент HorizontalSlider
-import './SaveIcon'; // Импортируем новый компонент SaveIcon
+// import './SaveIcon'; // Удален импорт SaveIcon
 
 import type { ChatAssistant } from './ChatAssistant';
 
@@ -588,11 +588,11 @@ export class PromptDjMidi extends LitElement {
       <div id="header">
         <img src="/logow.png" alt="Logo" class="header-logo">
         <span class="app-title">Milymix</span>
-        <profile-header
+        <!-- <profile-header
           style="margin-left: auto;"
           @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
           @open-settings=${() => console.log('Settings button clicked')}
-        ></profile-header>
+        ></profile-header> -->
       </div>
       <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
         ${this.renderAccordions()}
@@ -616,9 +616,9 @@ export class PromptDjMidi extends LitElement {
               @input=${this.handleMasterVolumeChange}
             ></horizontal-slider>
           </div>
-          <div class="save-icon-wrapper">
+          <!-- <div class="save-icon-wrapper">
             <save-icon></save-icon>
-          </div>
+          </div> -->
         </div>
         
         <div class="accordion-item ${this.showEqualizer ? 'active' : ''}">
