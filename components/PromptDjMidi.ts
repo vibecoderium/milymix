@@ -85,6 +85,16 @@ export class PromptDjMidi extends LitElement {
       padding: 0; /* Убираем внутренние отступы логотипа */
       /* margin-left: -1.5vmin; */ /* Убран отрицательный отступ, чтобы логотип использовал padding шапки */
     }
+    .app-title {
+      flex-grow: 1; /* Занимает все доступное пространство между логотипом и кнопками */
+      text-align: center; /* Центрирует текст внутри своего пространства */
+      color: #fff;
+      font-size: clamp(18px, 3vmin, 28px); /* Адаптивный размер шрифта */
+      font-weight: 600;
+      white-space: nowrap; /* Предотвращает перенос текста */
+      overflow: hidden; /* Скрывает переполнение, если текст слишком длинный */
+      text-overflow: ellipsis; /* Добавляет многоточие, если текст скрыт */
+    }
     #accordions {
       width: 100%;
       height: 100%;
@@ -568,6 +578,7 @@ export class PromptDjMidi extends LitElement {
       <div id="background" style=${bg}></div>
       <div id="header">
         <img src="/logow.png" alt="Logo" class="header-logo">
+        <span class="app-title">Mily Dj</span>
         <profile-header
           @toggle-presets=${() => (this.showPresetManager = !this.showPresetManager)}
           @open-settings=${() => console.log('Settings button clicked')}
