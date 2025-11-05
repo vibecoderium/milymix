@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { css, html, LitElement } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js'; // Добавлен property
 import { map } from 'lit/directives/map.js'; // Import map for dropdowns
 import { classMap } from 'lit/directives/class-map.js'; // Import classMap for dynamic classes
 import './WeightKnob'; // Используем существующий компонент ручки
@@ -40,22 +40,25 @@ export class CustomPromptCreator extends LitElement {
             width: 100%;
             justify-content: center; /* Центрируем элементы */
         }
-        .name-input-wrapper { /* Обертка для метки и поля ввода названия */
+        .knob-and-label { /* Контейнер для ручки и её метки */
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.8vmin; /* Отступ между меткой и полем ввода */
-            flex-grow: 1; /* Позволяет занимать доступное пространство */
+            gap: 0.5vmin;
+            flex-shrink: 0; /* Предотвращаем сжатие */
         }
-        .name-input-wrapper .input-label {
-            font-size: 1.4vmin; /* Размер метки */
-            color: #aaa;
-            font-weight: 500;
-            white-space: nowrap; /* Предотвращает перенос текста метки */
+        .knob-and-label volume-knob { /* Увеличиваем размер ручки в 2 раза */
+            width: 16vmin; /* Было 8vmin */
+            height: 16vmin; /* Было 8vmin */
+            max-width: 120px; /* Было 60px */
+            max-height: 120px; /* Было 60px */
         }
-        .name-input-wrapper input[type="text"] { /* Поле ввода названия */
-            flex-grow: 0; /* Не растягивается */
-            flex-shrink: 0; /* Не сжимается */
-            width: 50%; /* Сокращено в два раза относительно родительской обертки */
+        .knob-and-label .label { /* Уменьшаем размер метки ручки */
+            font-size: 1.2vmin;
+            white-space: nowrap;
+        }
+        input[type="text"] {
+            flex-grow: 1;
             padding: 1.2vmin;
             border-radius: 4px;
             border: 1px solid #555;
@@ -82,32 +85,48 @@ export class CustomPromptCreator extends LitElement {
             border-radius: 50%;
             border: 2px solid #fff;
         }
-        .knob-and-label { /* Контейнер для ручки и её метки */
+        .details-grid, .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2vmin;
+            width: 100%;
+        }
+        .input-group, .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8vmin;
+        }
+        .input-group label, .setting-label {
+            font-size: 1.4vmin;
+            color: #aaa;
+            font-weight: 500;
+            margin-left: 0.5vmin;
+        }
+        .knob-container { /* Этот стиль теперь относится к ручке громкости в старом контексте, но мы его переопределили выше */
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5vmin;
-            flex-shrink: 0; /* Предотвращаем сжатие */
+            gap: 1vmin;
         }
-        .knob-and-label volume-knob { /* Увеличиваем размер ручки в 2 раза */
-            width: 16vmin; /* Было 8vmin */
-            height: 16vmin; /* Было 8vmin */
-            max-width: 120px; /* Было 60px */
-            max-height: 120px; /* Было 60px */
+        volume-knob { /* Этот стиль теперь относится к ручке громкости в старом контексте, но мы его переопределили выше */
+            width: 15vmin;
+            max-width: 120px;
         }
-        .knob-and-label .label { /* Уменьшаем размер метки ручки */
-            font-size: 1.2vmin;
-            white-space: nowrap;
+        .label { /* Этот стиль теперь относится к метке ручки громкости в старом контексте, но мы его переопределили выше */
+            font-size: 1.6vmin;
+            color: #ccc;
+            font-weight: 500;
         }
         .add-button {
             padding: 1.2vmin 2.5vmin;
-            border-radius: 44px;
+            border-radius: 4px;
             border: none;
             cursor: pointer;
             background: #3c8ce4;
             color: #fff;
             font-weight: 600;
             font-size: 1.8vmin;
+            /* margin-top: 1vmin; */ /* Удален, теперь управляется action-row */
         }
         .action-row { /* Новый стиль для строки с ручкой и кнопкой */
             display: flex;
@@ -380,16 +399,12 @@ export class CustomPromptCreator extends LitElement {
         return html`
             <div class="creator-form">
                 <div class="prompt-creation-controls">
-                    <div class="name-input-wrapper">
-                        <label for="style-name-input" class="input-label">Название</label>
-                        <input 
-                            id="style-name-input"
-                            type="text" 
-                            placeholder="Название стиля (напр., Techno, Piano)"
-                            .value=${this.text}
-                            @input=${(e: InputEvent) => this.text = (e.target as HTMLInputElement).value}
-                        >
-                    </div>
+                    <input 
+                        type="text" 
+                        placeholder="Название стиля (напр., Techno, Piano)"
+                        .value=${this.text}
+                        @input=${(e: InputEvent) => this.text = (e.target as HTMLInputElement).value}
+                    >
                     <input 
                         type="color" 
                         title="Выбрать цвет"
