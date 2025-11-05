@@ -110,7 +110,6 @@ export class PromptDjMidi extends LitElement {
       overflow: hidden;
     }
     .accordion-item {
-      width: 100%; /* Добавлено для растягивания на всю ширину */
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
       background-color: rgba(20, 20, 20, 0.5);
@@ -534,7 +533,7 @@ export class PromptDjMidi extends LitElement {
           },
       });
       
-      const functionCall = response.functionCalls?[0];
+      const functionCall = response.functionCalls?.[0];
   
       if (functionCall?.name === 'setMusicMix') {
           const mix = functionCall.args.mix as { genre: string, volume: number }[];
