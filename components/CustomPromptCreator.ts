@@ -40,6 +40,13 @@ export class CustomPromptCreator extends LitElement {
             width: 100%;
             justify-content: center; /* Центрируем элементы */
         }
+        .input-label {
+            font-size: 1.6vmin;
+            color: #ccc;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
         .knob-and-label { /* Контейнер для ручки и её метки */
             display: flex;
             flex-direction: column;
@@ -58,7 +65,8 @@ export class CustomPromptCreator extends LitElement {
             white-space: nowrap;
         }
         input[type="text"] {
-            flex-grow: 1;
+            /* flex-grow: 1; */ /* Удалено для контроля ширины */
+            width: 40%; /* Уменьшаем ширину */
             padding: 1.2vmin;
             border-radius: 4px;
             border: 1px solid #555;
@@ -178,7 +186,7 @@ export class CustomPromptCreator extends LitElement {
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.6c-5%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.6c0%204.8%201.8%209.3%205.4%2013.2l128%20128c3.9%203.9%208.4%205.4%2013.2%205.4s9.3-1.8%2013.2-5.4l128-128c3.9-3.9%205.4-8.4%205.4-13.2%200-4.8-1.8-9.3-5.4-13.2z%22%2F%3E%3C%2Fsvg%3E');
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.6c-5%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.6c0%204.8%201.8%209.3%205.4%2013.2l128%20128c3.9%203.9%208.4%205.4%2013.2%205.4s9.3-1.8%2013.2-5.4l128-128c3.9%203.9%205.4-8.4%205.4-13.2%200-4.8-1.8-9.3-5.4-13.2z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
             background-position: right 0.8em center;
             background-size: 0.8em auto;
@@ -399,9 +407,10 @@ export class CustomPromptCreator extends LitElement {
         return html`
             <div class="creator-form">
                 <div class="prompt-creation-controls">
+                    <label class="input-label">Название</label>
                     <input 
                         type="text" 
-                        placeholder="Название стиля (напр., Techno, Piano)"
+                        placeholder="напр., Techno, Piano"
                         .value=${this.text}
                         @input=${(e: InputEvent) => this.text = (e.target as HTMLInputElement).value}
                     >
