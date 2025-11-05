@@ -14,5 +14,5 @@ body.dragging {
 }
 body.dragging * {
   user-select: none;
-  /* Удалено: pointer-events: none; чтобы ползунок громкости оставался интерактивным */
+  pointer-events: none;
 }
