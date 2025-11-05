@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, svg } from 'lit'; // Добавлен svg
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js'; // Импортируем classMap
@@ -93,21 +93,27 @@ export class PromptDjMidi extends LitElement {
       text-overflow: ellipsis;
     }
     .header-button {
-      background: none;
-      border: none;
+      background-color: rgba(20, 20, 20, 0.7); /* Фон как у других элементов */
+      border: 1px solid rgba(255, 255, 255, 0.2); /* Граница как у других элементов */
       color: #fff;
-      font-size: clamp(20px, 3.5vmin, 30px);
+      width: 7vmin; /* Квадратная форма */
+      height: 7vmin; /* Квадратная форма */
+      border-radius: 8px; /* Закругленные углы */
       cursor: pointer;
-      padding: 0.5vmin;
       margin-left: auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 50%;
       transition: background-color 0.2s;
+      flex-shrink: 0; /* Предотвращаем сжатие */
     }
     .header-button:hover {
       background-color: rgba(255, 255, 255, 0.1);
+    }
+    .header-button svg {
+      width: 60%; /* Размер иконки внутри кнопки */
+      height: 60%;
+      fill: currentColor; /* Цвет иконки будет соответствовать цвету текста кнопки */
     }
     
     #main-area {
@@ -752,6 +758,14 @@ export class PromptDjMidi extends LitElement {
     this.dispatchEvent(new CustomEvent(e.type, { detail: (e as CustomEvent).detail }));
   }
 
+  private renderEqualizerIcon() {
+    return svg`
+      <svg viewBox="0 0 24 24">
+        <path d="M10 20H14V4H10V20ZM4 20H8V12H4V20ZM16 20H20V8H16V20Z"/>
+      </svg>
+    `;
+  }
+
   override render() {
     const bg = styleMap({
       backgroundImage: this.makeBackground(),
@@ -765,7 +779,7 @@ export class PromptDjMidi extends LitElement {
         <img src="/logow.png" alt="Logo" class="header-logo">
         <span class="app-title">Milymix</span>
         <button class="header-button" @click=${this.handleEqualizerToggle} title="Graphic Equalizer">
-          &#x1F39B;
+          ${this.renderEqualizerIcon()}
         </button>
       </div>
 
