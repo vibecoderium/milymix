@@ -575,6 +575,9 @@ export class PromptDjMidi extends LitElement {
 
     const promptToEdit = this.editingPromptId ? this.prompts.get(this.editingPromptId) : null;
 
+    // Отладочный вывод для проверки пути к логотипу
+    console.log('Rendering PromptDjMidi. Logo src:', '/logow.png');
+
     return html`
       <div id="background" style=${bg}></div>
       <div id="header">
