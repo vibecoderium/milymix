@@ -298,8 +298,11 @@ export class PromptDjMidi extends LitElement {
       const { cc, value } = customEvent.detail;
       const promptToControl = [...this.prompts.values()].find(p => p.cc === cc);
       if (promptToControl) {
-        promptToControl.weight = (value / 127) * 2;
-        this.requestUpdate();
+        // Создаем новый объект Prompt с обновленным весом
+        const updatedPrompt = { ...promptToControl, weight: (value / 127) * 2 };
+        const newPrompts = new Map(this.prompts);
+        newPrompts.set(promptToControl.promptId, updatedPrompt);
+        this.prompts = newPrompts;
         this.dispatchEvent(
             new CustomEvent('prompts-changed', { detail: this.prompts }),
         );
@@ -329,12 +332,14 @@ export class PromptDjMidi extends LitElement {
 
     const promptId = this.editingPromptId;
     const weight = this.editorWeight;
-    const prompt = this.prompts.get(promptId);
+    const oldPrompt = this.prompts.get(promptId);
 
-    if (prompt) {
-        prompt.weight = weight;
+    if (oldPrompt) {
+        // Создаем новый объект Prompt с обновленным весом
+        const updatedPrompt = { ...oldPrompt, weight };
+        
         const newPrompts = new Map(this.prompts);
-        newPrompts.set(promptId, prompt);
+        newPrompts.set(promptId, updatedPrompt);
         this.prompts = newPrompts;
 
         this.dispatchEvent(
@@ -415,7 +420,8 @@ export class PromptDjMidi extends LitElement {
     const prompts = e.detail.prompts;
     const newPromptsMap = new Map<string, Prompt>();
     for (const promptId in prompts) {
-      newPromptsMap.set(promptId, prompts[promptId]);
+      // Создаем новый объект Prompt для каждого элемента пресета
+      newPromptsMap.set(promptId, { ...prompts[promptId] });
     }
     this.prompts = newPromptsMap;
     this.showPresetManager = false;
@@ -443,12 +449,14 @@ export class PromptDjMidi extends LitElement {
 
   private handleActivePromptWeightChange(e: CustomEvent<{ promptId: string, weight: number }>) {
     const { promptId, weight } = e.detail;
-    const prompt = this.prompts.get(promptId);
+    const oldPrompt = this.prompts.get(promptId);
 
-    if (prompt) {
-      prompt.weight = weight;
+    if (oldPrompt) {
+      // Создаем новый объект Prompt с обновленным весом
+      const updatedPrompt = { ...oldPrompt, weight };
+      
       const newPrompts = new Map(this.prompts);
-      newPrompts.set(promptId, prompt);
+      newPrompts.set(promptId, updatedPrompt); // Устанавливаем НОВЫЙ объект промпта
       this.prompts = newPrompts;
       this.dispatchEvent(new CustomEvent('prompts-changed', { detail: this.prompts }));
       this.requestUpdate();
@@ -531,14 +539,17 @@ export class PromptDjMidi extends LitElement {
           const mix = functionCall.args.mix as { genre: string, volume: number }[];
           
           if (mix && mix.length > 0) {
-              const newPrompts = new Map(this.prompts);
-              newPrompts.forEach(prompt => {
-                  prompt.weight = 0;
+              const newPrompts = new Map<string, Prompt>(); // Начинаем с полностью новой, пустой Map
+              
+              // Копируем существующие промпты, устанавливая вес в 0, обеспечивая новые объекты
+              this.prompts.forEach((prompt, promptId) => {
+                  newPrompts.set(promptId, { ...prompt, weight: 0 });
               });
   
               mix.forEach(item => {
                   const promptToUpdate = [...newPrompts.values()].find(p => p.text.toLowerCase() === item.genre.toLowerCase());
                   if (promptToUpdate) {
+                      // Мутируем *вновь созданный* объект промпта в newPrompts
                       promptToUpdate.weight = Math.max(0, Math.min(2, item.volume));
                   }
               });
