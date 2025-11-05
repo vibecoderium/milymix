@@ -16,3 +16,7 @@ body.dragging * {
   user-select: none;
   pointer-events: none;
 }
+/* Fix: Ensure vertical-slider is always interactive even when dragging other elements */
+body.dragging vertical-slider {
+  pointer-events: all;
+}
