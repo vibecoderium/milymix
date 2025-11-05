@@ -343,7 +343,6 @@ export class PromptDjMidi extends LitElement {
   @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
-  @state() private activePromptText: string | null = null; // Новое состояние для текста активного стиля
 
   // New generation settings states
   @state() private temperature = 1.1;
@@ -399,7 +398,6 @@ export class PromptDjMidi extends LitElement {
     if (prompt) {
       this.editingPromptId = promptId;
       this.editorWeight = prompt.weight;
-      this.activePromptText = prompt.text; // Устанавливаем текст активного стиля
     }
   }
 
@@ -421,7 +419,6 @@ export class PromptDjMidi extends LitElement {
         );
     }
     this.editingPromptId = null;
-    this.activePromptText = null; // Очищаем текст активного стиля
   }
 
   private handleEditorWeightChange(e: CustomEvent<number>) {
@@ -766,7 +763,6 @@ export class PromptDjMidi extends LitElement {
         <active-prompts-display
           .prompts=${this.prompts}
           .audioLevel=${this.audioLevel}
-          .activePromptText=${this.activePromptText}
           @edit-prompt=${this.handleEditPromptRequest}
           @weight-changed=${this.handleActivePromptWeightChange}
         ></active-prompts-display>
