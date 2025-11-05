@@ -370,7 +370,7 @@ export class PromptDjMidi extends LitElement {
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
   @state() private currentEditingPromptText = ''; // Новое состояние для текста редактируемого стиля
-  // Удалены activeKnobText и activeKnobTextTimeout из PromptDjMidi
+  @state() private showSelectStyleAccordion = false; // Новое состояние для главного аккордеона "Выбрать стиль"
 
   // New generation settings states
   @state() private temperature = 1.1;
@@ -772,8 +772,18 @@ export class PromptDjMidi extends LitElement {
           &#x1F39B;
         </button>
       </div>
-      <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
-        ${this.renderAccordions()}
+
+      <!-- Главный аккордеон "Выбрать стиль" -->
+      <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
+        <button class="accordion-header" @click=${() => this.showSelectStyleAccordion = !this.showSelectStyleAccordion}>
+          <span>Выбрать стиль</span>
+          <span class="chevron">${this.showSelectStyleAccordion ? '−' : '+'}</span>
+        </button>
+        <div class="accordion-content">
+          <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
+            ${this.renderAccordions()}
+          </div>
+        </div>
       </div>
 
       <!-- Панель создания пользовательских стилей -->
