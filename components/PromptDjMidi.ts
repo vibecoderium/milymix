@@ -214,13 +214,6 @@ export class PromptDjMidi extends LitElement {
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .presets-button-above-volume {
-      margin-bottom: 1vmin; /* Отступ от слайдера */
-      width: 100%; /* Кнопка занимает всю ширину контейнера */
-      font-size: 1.2vmin; /* Адаптивный размер шрифта */
-      padding: 0.5vmin 0.8vmin; /* Адаптивные отступы */
-      box-sizing: border-box;
-    }
     #footer {
       position: fixed;
       bottom: 0;
@@ -609,12 +602,6 @@ export class PromptDjMidi extends LitElement {
             @weight-changed=${this.handleActivePromptWeightChange}
           ></active-prompts-display>
           <div class="master-volume-control">
-            <button 
-              class="presets-button-above-volume" 
-              @click=${() => (this.showPresetManager = !this.showPresetManager)}
-            >
-              Presets
-            </button>
             <vertical-slider
               .value=${this.masterVolume * 2}
               @input=${this.handleMasterVolumeChange}
