@@ -13,15 +13,10 @@ import './ActivePromptKnob'; // Импортируем новый компоне
 export class ActivePromptsDisplay extends LitElement {
     static override styles = css`
         :host {
-            display: block;
-            width: 100%;
-        }
-        .container {
             display: flex;
             flex-wrap: wrap;
             gap: 4vmin; /* Увеличен зазор между кружками */
             padding: 6vmin; /* Значительно увеличены отступы для размещения максимального свечения */
-            min-height: 32vmin; /* Увеличена минимальная высота для размещения кружков и их свечения */
             box-sizing: border-box;
             background-color: rgba(20, 20, 20, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -30,6 +25,7 @@ export class ActivePromptsDisplay extends LitElement {
             -webkit-backdrop-filter: blur(10px);
             align-items: center; /* Выравнивание по центру */
             justify-content: center; /* Выравнивание по центру */
+            width: 100%;
         }
         .placeholder {
             color: #888;
@@ -61,21 +57,19 @@ export class ActivePromptsDisplay extends LitElement {
         const activePrompts = [...this.prompts.values()].filter(p => p.weight > 0);
 
         return html`
-            <div class="container">
-                ${activePrompts.length > 0
-                    ? repeat(activePrompts, (prompt) => prompt.promptId, (prompt) => html`
-                        <active-prompt-knob
-                            promptId=${prompt.promptId}
-                            text=${prompt.text}
-                            weight=${prompt.weight}
-                            color=${prompt.color}
-                            .audioLevel=${this.audioLevel}
-                            @input=${this.handleKnobInput}
-                        ></active-prompt-knob>
-                    `)
-                    : html`<span class="placeholder">No active prompts. Turn up a knob to start the music!</span>`
-                }
-            </div>
+            ${activePrompts.length > 0
+                ? repeat(activePrompts, (prompt) => prompt.promptId, (prompt) => html`
+                    <active-prompt-knob
+                        promptId=${prompt.promptId}
+                        text=${prompt.text}
+                        weight=${prompt.weight}
+                        color=${prompt.color}
+                        .audioLevel=${this.audioLevel}
+                        @input=${this.handleKnobInput}
+                    ></active-prompt-knob>
+                `)
+                : html`<span class="placeholder">No active prompts. Turn up a knob to start the music!</span>`
+            }
         `;
     }
 }

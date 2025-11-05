@@ -177,16 +177,6 @@ export class PromptDjMidi extends LitElement {
       /* min-height: 15vmin; */ /* Удалена минимальная высота */
       justify-content: flex-end;
     }
-    .active-prompts-wrapper { /* Новый класс для обертки активных промптов */
-      width: 100%;
-      background-color: rgba(20, 20, 20, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      padding: 1.5vmin;
-      box-sizing: border-box;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
     .master-controls-bottom { /* Новый класс для контейнера громкости и сохранения */
       display: flex;
       align-items: center;
@@ -706,14 +696,12 @@ export class PromptDjMidi extends LitElement {
       </div>
 
       <div id="now-playing-container">
-        <div class="active-prompts-wrapper">
-          <active-prompts-display
-            .prompts=${this.prompts}
-            .audioLevel=${this.audioLevel}
-            @edit-prompt=${this.handleEditPromptRequest}
-            @weight-changed=${this.handleActivePromptWeightChange}
-          ></active-prompts-display>
-        </div>
+        <active-prompts-display
+          .prompts=${this.prompts}
+          .audioLevel=${this.audioLevel}
+          @edit-prompt=${this.handleEditPromptRequest}
+          @weight-changed=${this.handleActivePromptWeightChange}
+        ></active-prompts-display>
         
         <div class="master-controls-bottom">
           <div class="master-volume-horizontal-control">
