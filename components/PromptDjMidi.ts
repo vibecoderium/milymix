@@ -48,8 +48,8 @@ export class PromptDjMidi extends LitElement {
       align-items: center;
       box-sizing: border-box;
       position: relative;
-      padding: 1.5vmin;
-      padding-bottom: 10vmin; /* Скорректировано для жесткого прикрепления эквалайзера к подвалу */
+      /* Обновленные отступы для учета новой высоты шапки */
+      padding: 7.5vmin 1.5vmin 10vmin 1.5vmin; 
       gap: 1.5vmin;
     }
     #background {
@@ -61,23 +61,29 @@ export class PromptDjMidi extends LitElement {
       background: #111;
     }
     #header {
-      width: 100%;
+      position: fixed; /* Прикрепляем к верху */
+      top: 0;
+      left: 0;
+      width: 100vw; /* Полная ширина экрана */
+      height: 7.5vmin; /* Увеличена высота на 50% (было ~5vmin, стало 7.5vmin) */
       display: flex;
       justify-content: space-between;
       align-items: center;
       z-index: 10;
       flex-shrink: 0;
       background-color: rgba(20, 20, 20, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      padding: 0.75vmin 1.5vmin;
+      border: none; /* Убираем рамку */
+      border-radius: 0; /* Убираем скругление углов */
+      padding: 0 1.5vmin; /* Убираем вертикальные отступы, оставляем горизонтальные */
       box-sizing: border-box;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
     .header-logo {
-      height: 3.5vmin;
-      max-height: 30px;
+      height: 100%; /* Логотип занимает всю высоту шапки */
+      object-fit: contain; /* Сохраняет пропорции и вписывает изображение */
+      padding: 0; /* Убираем внутренние отступы логотипа */
+      margin-left: -1.5vmin; /* Компенсируем padding шапки, чтобы логотип был вплотную к краю */
     }
     #accordions {
       width: 100%;
