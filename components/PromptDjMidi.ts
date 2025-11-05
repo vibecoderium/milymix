@@ -117,7 +117,7 @@ export class PromptDjMidi extends LitElement {
       gap: 1.5vmin;
       padding: 1.5vmin;
       padding-top: 9vmin; /* Отступ сверху для фиксированной шапки */
-      padding-bottom: 17vmin; /* Увеличено для новой высоты подвала (8.5vmin * 2 = 17vmin) */
+      padding-bottom: 49vmin; /* Увеличено для новой высоты нижних фиксированных блоков */
       overflow-y: auto; /* Разрешаем прокрутку только для этой области */
       width: 100%;
       box-sizing: border-box;
@@ -186,13 +186,20 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
     }
     #now-playing-container {
+      position: fixed; /* Сделано фиксированным */
+      bottom: 17vmin; /* Над футером */
+      left: 0;
       width: 100%;
       display: flex;
       flex-direction: column;
       gap: 1.5vmin;
-      flex-shrink: 0;
-      z-index: 5;
-      /* margin-top: auto; */ /* Удалено, так как main-area теперь прокручивается */
+      z-index: 90; /* Ниже модальных окон, выше основного контента */
+      padding: 1.5vmin; /* Отступы внутри контейнера */
+      box-sizing: border-box;
+      background-color: rgba(20, 20, 20, 0.7); /* Фон для всего блока */
+      border-top: 1px solid rgba(255, 255, 255, 0.2); /* Верхняя граница */
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
     .master-controls-bottom {
       display: flex;
@@ -239,7 +246,7 @@ export class PromptDjMidi extends LitElement {
       display: flex;
       align-items: center;
       gap: 1.5vmin;
-      z-index: 100;
+      z-index: 95; /* Ниже модальных окон, выше других фиксированных элементов */
       padding: 0.75vmin; /* Отступы подвала */
       box-sizing: border-box;
       background-color: rgba(20, 20, 20, 0.7);
@@ -335,7 +342,7 @@ export class PromptDjMidi extends LitElement {
 
     #editing-prompt-display {
       position: fixed;
-      bottom: 17vmin; /* Отступ от низа, учитывая новую высоту подвала */
+      bottom: 47.5vmin; /* Отступ от низа, учитывая новую высоту подвала и now-playing-container */
       left: 0;
       width: 100%;
       background-color: rgba(20, 20, 20, 0.9);
@@ -800,29 +807,30 @@ export class PromptDjMidi extends LitElement {
             ></custom-prompt-creator>
           </div>
         </div>
-
-        <div id="now-playing-container">
-          <active-prompts-display
-            .prompts=${this.prompts}
-            .audioLevel=${this.audioLevel}
-            @edit-prompt=${this.handleEditPromptRequest}
-            @weight-changed=${this.handleActivePromptWeightChange}
-          ></active-prompts-display>
-          
-          <div class="master-controls-bottom">
-            <div class="master-volume-horizontal-control">
-              <span class="master-volume-label">Volume</span>
-              <horizontal-slider
-                .value=${this.masterVolume * 2}
-                @input=${this.handleMasterVolumeChange}
-              ></horizontal-slider>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
         <span>${this.currentEditingPromptText}</span>
+      </div>
+
+      <!-- Перемещенный блок now-playing-container -->
+      <div id="now-playing-container">
+        <active-prompts-display
+          .prompts=${this.prompts}
+          .audioLevel=${this.audioLevel}
+          @edit-prompt=${this.handleEditPromptRequest}
+          @weight-changed=${this.handleActivePromptWeightChange}
+        ></active-prompts-display>
+        
+        <div class="master-controls-bottom">
+          <div class="master-volume-horizontal-control">
+            <span class="master-volume-label">Volume</span>
+            <horizontal-slider
+              .value=${this.masterVolume * 2}
+              @input=${this.handleMasterVolumeChange}
+            ></horizontal-slider>
+          </div>
+        </div>
       </div>
 
       <div id="footer">
