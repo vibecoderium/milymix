@@ -348,17 +348,7 @@ export class PromptDjMidi extends LitElement {
       opacity: 1;
       visibility: visible;
     }
-    .active-knob-text-display {
-      color: #fff;
-      font-size: clamp(18px, 3vmin, 28px); /* Адаптивный размер шрифта */
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-      text-align: center;
-      flex-grow: 1; /* Позволяет занимать доступное пространство */
-    }
+    /* Удален .active-knob-text-display из PromptDjMidi */
   `;
 
   private prompts: Map<string, Prompt>;
@@ -380,8 +370,7 @@ export class PromptDjMidi extends LitElement {
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
   @state() private currentEditingPromptText = ''; // Новое состояние для текста редактируемого стиля
-  @state() private activeKnobText: string | null = null; // Новое состояние для текста активной ручки
-  private activeKnobTextTimeout: number | null = null; // Таймер для скрытия текста активной ручки
+  // Удалены activeKnobText и activeKnobTextTimeout из PromptDjMidi
 
   // New generation settings states
   @state() private temperature = 1.1;
@@ -425,26 +414,15 @@ export class PromptDjMidi extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('knob-interaction', this.handleKnobInteraction as EventListener);
+    // Удален обработчик knob-interaction из PromptDjMidi
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('knob-interaction', this.handleKnobInteraction as EventListener);
-    if (this.activeKnobTextTimeout) {
-      clearTimeout(this.activeKnobTextTimeout);
-    }
+    // Удален обработчик knob-interaction из PromptDjMidi
   }
 
-  private handleKnobInteraction(e: CustomEvent<{ text: string }>) {
-    this.activeKnobText = e.detail.text;
-    if (this.activeKnobTextTimeout) {
-      clearTimeout(this.activeKnobTextTimeout);
-    }
-    this.activeKnobTextTimeout = setTimeout(() => {
-      this.activeKnobText = null;
-    }, 3000); // Скрываем текст через 3 секунды
-  }
+  // Удален handleKnobInteraction из PromptDjMidi
 
   private handleEditPromptRequest(e: CustomEvent<{ promptId: string }>) {
     const requestedPromptId = e.detail.promptId;
@@ -789,10 +767,7 @@ export class PromptDjMidi extends LitElement {
       <div id="background" style=${bg}></div>
       <div id="header">
         <img src="/logow.png" alt="Logo" class="header-logo">
-        ${this.activeKnobText
-          ? html`<span class="active-knob-text-display">${this.activeKnobText}</span>`
-          : html`<span class="app-title">Milymix</span>`
-        }
+        <span class="app-title">Milymix</span>
         <button class="header-button" @click=${this.handleEqualizerToggle} title="Graphic Equalizer">
           &#x1F39B;
         </button>
