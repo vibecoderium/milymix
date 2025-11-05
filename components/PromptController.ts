@@ -32,7 +32,7 @@ export class PromptController extends LitElement {
       background-color: transparent;
       color: #fff;
       font-weight: 500;
-      font-size: 1.4vmin;
+      font-size: clamp(14px, 2vh, 18px);
       padding: 0.4vmin;
       text-align: center;
       cursor: pointer;
@@ -55,12 +55,6 @@ export class PromptController extends LitElement {
     }
     .text {
        mix-blend-mode: difference;
-    }
-
-    @media (max-height: 500px) {
-      .prompt-button {
-        font-size: 1.2vmin;
-      }
     }
   `;
 
