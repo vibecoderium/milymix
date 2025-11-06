@@ -135,7 +135,7 @@ export class PromptDjMidi extends LitElement {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 3px; /* Уменьшено до 3px */
+      gap: 1vmin;
     }
     .accordion-item {
       border: 1px solid rgba(255, 255, 255, 0.2);
