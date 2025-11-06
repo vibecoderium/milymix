@@ -38,9 +38,12 @@ function main() {
     return;
   }
 
+  const tg = window.Telegram.WebApp;
+  const username = tg.initDataUnsafe?.user?.username;
+
   const { prompts: initialPrompts, categories } = buildInitialPrompts();
 
-  const pdjMidi = new PromptDjMidi(initialPrompts, categories);
+  const pdjMidi = new PromptDjMidi(initialPrompts, categories, username);
   document.body.appendChild(pdjMidi);
 
   const toastMessage = new ToastMessage();

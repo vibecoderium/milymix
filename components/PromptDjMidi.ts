@@ -91,13 +91,23 @@ export class PromptDjMidi extends LitElement {
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .username-display {
+      flex-grow: 1;
+      text-align: center;
+      color: #ccc;
+      font-size: clamp(16px, 2.5vmin, 22px);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .header-button {
       background: none;
       border: none;
       color: #fff;
       cursor: pointer;
       padding: 0.5vmin;
-      margin-left: auto;
+      /* margin-left: auto; */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -376,6 +386,7 @@ export class PromptDjMidi extends LitElement {
   private promptCategories: PromptCategory[];
   private allPromptTexts: string[];
   private midiDispatcher: MidiDispatcher;
+  private username: string | undefined;
 
   @property({ type: Boolean }) private showMidi = false;
   @property({ type: String }) public playbackState: PlaybackState = 'stopped';
@@ -413,10 +424,12 @@ export class PromptDjMidi extends LitElement {
   constructor(
     initialPrompts: Map<string, Prompt>,
     promptCategories: PromptCategory[],
+    username?: string,
   ) {
     super();
     this.prompts = initialPrompts;
     this.promptCategories = promptCategories;
+    this.username = username;
     this.allPromptTexts = promptCategories.flatMap(cat => cat.prompts.map(p => p.text));
     this.midiDispatcher = new MidiDispatcher();
     this.midiDispatcher.addEventListener('cc-message', (e: Event) => {
@@ -779,6 +792,7 @@ export class PromptDjMidi extends LitElement {
       <div id="header">
         <img src="/logow.png" alt="Logo" class="header-logo">
         <span class="app-title">Milymix</span>
+        ${this.username ? html`<span class="username-display">@${this.username}</span>` : html`<span class="username-display"></span>`}
         <button class="header-button" @click=${this.handleEqualizerToggle} title="Graphic Equalizer">
           ${this.renderEqualizerIcon()}
         </button>
