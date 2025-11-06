@@ -196,6 +196,19 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       padding: 1.5vmin;
     }
+    .category-section { /* New style for inner category sections */
+      display: flex;
+      flex-direction: column;
+      gap: 1vmin;
+      margin-bottom: 2vmin;
+    }
+    .category-title { /* New style for inner category titles */
+      font-size: clamp(16px, 2.5vmin, 22px);
+      font-weight: 500;
+      color: #fff;
+      padding: 0.5vmin 1.5vmin;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
     #now-playing-container {
       position: fixed; /* Сделано фиксированным */
       bottom: 17vmin; /* Над футером */
@@ -390,10 +403,10 @@ export class PromptDjMidi extends LitElement {
 
   @state() private editingPromptId: string | null = null;
   @state() private editorWeight = 0;
-  @state() private activeCategories = new Set<string>();
+  // Removed @state() private activeCategories = new Set<string>(); // No longer needed for inner categories
   @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
-  // Removed @state() private showSelectStyleAccordion = false;
+  @state() private showSelectStyleAccordion = false; // Состояние для главного аккордеона "Выбрать стиль"
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
   @state() private currentEditingPromptText = ''; // Новое состояние для текста редактируемого стиля
 
@@ -573,17 +586,11 @@ export class PromptDjMidi extends LitElement {
     return obj;
   }
 
-  private handleAccordionToggle(categoryName: string) {
-    const newActiveCategories = new Set(this.activeCategories);
-    if (newActiveCategories.has(categoryName)) {
-      newActiveCategories.delete(categoryName);
-    } else {
-      newActiveCategories.add(categoryName);
-    }
-    this.activeCategories = newActiveCategories;
-  }
+  // Removed handleAccordionToggle as inner categories are no longer independent accordions
 
-  // Removed handleMainAccordionToggle()
+  private handleMainAccordionToggle() {
+    this.showSelectStyleAccordion = !this.showSelectStyleAccordion;
+  }
 
   private handleEqualizerToggle() {
     this.showEqualizer = !this.showEqualizer;
@@ -797,8 +804,17 @@ export class PromptDjMidi extends LitElement {
       </div>
 
       <div id="main-area">
-        <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
-          ${this.renderAccordions()}
+        <!-- Main "Select Style" Accordion -->
+        <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
+          <button class="accordion-header" @click=${this.handleMainAccordionToggle}>
+            <span>Выбрать стиль</span>
+            <span class="chevron">${this.showSelectStyleAccordion ? '−' : '+'}</span>
+          </button>
+          <div class="accordion-content">
+            <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
+              ${this.renderCategoriesAsSections()}
+            </div>
+          </div>
         </div>
 
         <!-- Панель создания пользовательских стилей -->
@@ -886,19 +902,14 @@ export class PromptDjMidi extends LitElement {
       `;
   }
 
-  private renderAccordions() {
+  // Modified to render categories as simple sections, not accordions
+  private renderCategoriesAsSections() {
     return this.promptCategories.map(category => {
-      const isActive = this.activeCategories.has(category.name);
       return html`
-        <div class="accordion-item ${isActive ? 'active' : ''}">
-          <button class="accordion-header" @click=${() => this.handleAccordionToggle(category.name)}>
-            <span>${category.name}</span>
-            <span class="chevron">${isActive ? '−' : '+'}</span>
-          </button>
-          <div class="accordion-content">
-            <div class="accordion-grid">
-              ${this.renderPromptsForCategory(category)}
-            </div>
+        <div class="category-section">
+          <h3 class="category-title">${category.name}</h3>
+          <div class="accordion-grid">
+            ${this.renderPromptsForCategory(category)}
           </div>
         </div>
       `;
