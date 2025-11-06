@@ -118,9 +118,7 @@ export class PromptDjMidi extends LitElement {
       flex-grow: 1; /* Занимает все доступное вертикальное пространство */
       display: flex;
       flex-direction: column;
-      padding: 1.5vmin; /* Отступы вокруг всего контента, кроме шапки */
-      box-sizing: border-box;
-      gap: 3px; /* Отступ между прокручиваемым контентом и фиксированными нижними панелями */
+      /* Отступы будут управляться дочерними элементами */
     }
 
     #scrollable-content { /* Прокручиваемая центральная область */
@@ -128,7 +126,9 @@ export class PromptDjMidi extends LitElement {
       overflow-y: auto; /* Включает прокрутку */
       display: flex;
       flex-direction: column;
-      gap: 3px; /* Отступ между кнопкой воспроизведения и аккордеонами */
+      gap: 3px; /* Строгий отступ 3px между кнопкой воспроизведения и аккордеонами */
+      padding: 1.5vmin; /* Отступы вокруг прокручиваемого контента */
+      box-sizing: border-box;
     }
 
     #central-play-button-container {
@@ -147,7 +147,7 @@ export class PromptDjMidi extends LitElement {
       flex-direction: column;
       gap: 3px;
       width: 100%;
-      flex-grow: 1; /* Позволяет аккордеонам занимать оставшееся пространство в scrollable-content */
+      /* flex-grow: 1; */ /* Удалено, чтобы аккордеоны не растягивались, а занимали только необходимое место */
     }
     .accordion-item {
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -808,30 +808,6 @@ export class PromptDjMidi extends LitElement {
               @click=${this.playPause}
             ></play-pause-button>
           </div>
-        </div>
-
-        <div id="fixed-bottom-panels">
-          <!-- HTML order is reversed for visual order: footer (bottom), master-controls-bottom, active-prompts-display, accordions-container (top) -->
-          <div id="footer">
-            <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
-          </div>
-
-          <div class="master-controls-bottom">
-            <div class="master-volume-horizontal-control">
-              <span class="master-volume-label">Volume</span>
-              <horizontal-slider
-                .value=${this.masterVolume * 2}
-                @input=${this.handleMasterVolumeChange}
-              ></horizontal-slider>
-            </div>
-          </div>
-
-          <active-prompts-display
-            .prompts=${this.prompts}
-            .audioLevel=${this.audioLevel}
-            @edit-prompt=${this.handleEditPromptRequest}
-            @weight-changed=${this.handleActivePromptWeightChange}
-          ></active-prompts-display>
 
           <div id="accordions-container">
             <!-- Main "Select Style" Accordion -->
@@ -863,7 +839,6 @@ export class PromptDjMidi extends LitElement {
                   .seed=${this.seed}
                   .bpm=${this.bpm}
                   .density=${this.density}
-                  .densityAuto=${this.densityAuto}
                   .brightness=${this.brightness}
                   .brightnessAuto=${this.brightnessAuto}
                   .scale=${this.scale}
@@ -872,6 +847,30 @@ export class PromptDjMidi extends LitElement {
               </div>
             </div>
           </div>
+        </div>
+
+        <div id="fixed-bottom-panels">
+          <!-- HTML order is reversed for visual order: footer (bottom), master-controls-bottom, active-prompts-display -->
+          <div id="footer">
+            <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
+          </div>
+
+          <div class="master-controls-bottom">
+            <div class="master-volume-horizontal-control">
+              <span class="master-volume-label">Volume</span>
+              <horizontal-slider
+                .value=${this.masterVolume * 2}
+                @input=${this.handleMasterVolumeChange}
+              ></horizontal-slider>
+            </div>
+          </div>
+
+          <active-prompts-display
+            .prompts=${this.prompts}
+            .audioLevel=${this.audioLevel}
+            @edit-prompt=${this.handleEditPromptRequest}
+            @weight-changed=${this.handleActivePromptWeightChange}
+          ></active-prompts-display>
         </div>
       </div>
 
