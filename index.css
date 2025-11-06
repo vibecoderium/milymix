@@ -1,13 +1,14 @@
 html, body {
-  height: 100vh; /* Use viewport height */
-  width: 100vw; /* Use viewport width */
+  height: 100%; /* Use 100% for scrollable content */
+  width: 100%; /* Use viewport width */
   margin: 0;
-  overflow: hidden; /* Prevent scrolling */
+  overflow-y: auto; /* Allow vertical scrolling */
 }
 body {
   font-family: 'Google Sans', sans-serif;
   font-size: 14px;
   overscroll-behavior-y: contain;
+  background-color: #111; /* Base background color for the body */
 }
 body.dragging {
   cursor: ns-resize;
