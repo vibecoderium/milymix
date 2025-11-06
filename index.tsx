@@ -11,10 +11,33 @@ import { ToastMessage } from './components/ToastMessage';
 import { LiveMusicHelper } from './utils/LiveMusicHelper';
 import { AudioAnalyser } from './utils/AudioAnalyser';
 
+declare global {
+  interface Window {
+    Telegram: any;
+  }
+}
+
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY, apiVersion: 'v1alpha' });
 const model = 'lyria-realtime-exp';
 
+function isTelegramWebApp(): boolean {
+  // Свойство `window.Telegram.WebApp.initData` — это надежный способ
+  // проверить, запущено ли приложение в среде Telegram.
+  return window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+}
+
 function main() {
+  if (!isTelegramWebApp()) {
+    document.body.innerHTML = `
+      <div style="color: white; text-align: center; padding: 50px; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <h1>Доступ запрещен</h1>
+        <p>Это приложение можно открыть только через Telegram.</p>
+      </div>
+    `;
+    document.body.style.backgroundColor = '#111';
+    return;
+  }
+
   const { prompts: initialPrompts, categories } = buildInitialPrompts();
 
   const pdjMidi = new PromptDjMidi(initialPrompts, categories);
