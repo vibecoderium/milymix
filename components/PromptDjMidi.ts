@@ -177,15 +177,16 @@ export class PromptDjMidi extends LitElement {
       transform: rotate(180deg);
     }
     .accordion-content {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    .accordion-content > * {
       overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease-in-out;
+      max-height: 0; /* Start collapsed */
+      opacity: 0;
+      visibility: hidden; /* Hide content completely when collapsed */
     }
     .accordion-item.active .accordion-content {
-      grid-template-rows: 1fr;
+      max-height: 1000px; /* A large enough value to show content */
+      opacity: 1;
+      visibility: visible;
     }
     .accordion-grid {
       display: grid;
