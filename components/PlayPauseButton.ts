@@ -11,7 +11,6 @@ import type { PlaybackState } from '../types';
 export class PlayPauseButton extends LitElement {
 
   @property({ type: String }) playbackState: PlaybackState = 'stopped';
-  @property({ type: String }) buttonText = ''; // Новое свойство для текста
 
   static override styles = css`
     :host {
@@ -24,29 +23,22 @@ export class PlayPauseButton extends LitElement {
       border-radius: 50%; /* Делаем сам компонент круглым */
       overflow: hidden; /* Обрезаем все, что выходит за круг */
     }
-    .button-content { /* Новый контейнер для текста */
+    .logo-image {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(20px, 5vmin, 36px); /* Адаптивный размер текста */
-      font-weight: 700;
-      color: #fff;
-      text-transform: uppercase;
+      width: 100%; /* Изменено на 100% */
+      height: 100%; /* Изменено на 100% */
+      object-fit: cover; /* Изменено на cover */
       transition: transform 0.5s cubic-bezier(0.25, 1.56, 0.32, 0.99);
-      border-radius: 50%; /* Делаем контент круглым */
-      background-color: rgba(0,0,0,0.2); /* Небольшой фон для текста */
+      border-radius: 50%; /* Сделано круглым */
     }
-    :host(:hover) .button-content:not(.loading) { /* Только масштабирование, если не загружается */
-      transform: translate(-50%, -50%) scale(1.1); /* Уменьшил масштаб для текста */
+    :host(:hover) .logo-image { /* Масштабирование при наведении, без вращения */
+      transform: translate(-50%, -50%) scale(1.1);
     }
-    /* Удаляем анимацию вращения для .button-content.loading */
-    /* @keyframes spin больше не нужен */
+    /* Удалена анимация вращения для .logo-image.loading */
+    /* Удален @keyframes spin */
     .hitbox {
       pointer-events: all;
       position: absolute;
@@ -148,16 +140,14 @@ export class PlayPauseButton extends LitElement {
   }
 
   override render() {
-    const contentClasses = {
-      'button-content': true,
+    const logoClasses = {
+      'logo-image': true,
       // 'loading': this.playbackState === 'loading' // Удалена привязка к состоянию загрузки для вращения
     };
 
     return html`
       ${this.renderSvgBackground()}
-      <div class=${classMap(contentClasses)}>
-        ${this.buttonText || (this.playbackState === 'playing' ? 'PAUSE' : 'PLAY')}
-      </div>
+      <img src="/logow.png" alt="Logo" class=${classMap(logoClasses)} />
       <div class="hitbox"></div>
     `;
   }

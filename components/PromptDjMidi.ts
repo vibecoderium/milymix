@@ -796,7 +796,6 @@ export class PromptDjMidi extends LitElement {
           <play-pause-button 
             .playbackState=${this.playbackState} 
             @click=${this.playPause}
-            buttonText="START" <!-- Передаем текст "START" -->
           ></play-pause-button>
         </div>
 
