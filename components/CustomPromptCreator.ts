@@ -13,30 +13,30 @@ export class CustomPromptCreator extends LitElement {
     static override styles = css`
         :host {
             display: block;
-            /* padding: 1.5vmin; */ /* Удалено, теперь управляется родительским аккордеоном */
+            padding: 3px; /* Уменьшено до 3px */
             box-sizing: border-box;
             width: 100%;
         }
         .creator-form {
             display: flex;
             flex-direction: column;
-            gap: 2.5vmin;
+            gap: 3px; /* Уменьшено до 3px */
             align-items: center;
         }
         .section-title {
             font-size: 1.8vmin;
             color: #fff;
             font-weight: 600;
-            margin-top: 2vmin;
-            margin-bottom: 1vmin;
+            margin-top: 3px; /* Уменьшено до 3px */
+            margin-bottom: 3px; /* Уменьшено до 3px */
             width: 100%;
             text-align: left;
-            padding-left: 0.5vmin;
+            padding-left: 3px; /* Уменьшено до 3px */
         }
         .prompt-creation-controls { /* Новый контейнер для компактной строки */
             display: flex;
             align-items: center;
-            gap: 1.5vmin;
+            gap: 3px; /* Уменьшено до 3px */
             width: 100%;
             justify-content: center; /* Центрируем элементы */
         }
@@ -51,7 +51,7 @@ export class CustomPromptCreator extends LitElement {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5vmin;
+            gap: 3px; /* Уменьшено до 3px */
             flex-shrink: 0; /* Предотвращаем сжатие */
         }
         .knob-and-label volume-knob { /* Увеличиваем размер ручки в 2 раза */
@@ -67,7 +67,7 @@ export class CustomPromptCreator extends LitElement {
         input[type="text"] {
             /* flex-grow: 1; */ /* Удалено для контроля ширины */
             width: 40%; /* Уменьшаем ширину */
-            padding: 1.2vmin;
+            padding: 3px; /* Уменьшено до 3px */
             border-radius: 4px;
             border: 1px solid #555;
             background: #333;
@@ -96,25 +96,25 @@ export class CustomPromptCreator extends LitElement {
         .details-grid, .settings-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2vmin;
+            gap: 3px; /* Уменьшено до 3px */
             width: 100%;
         }
         .input-group, .setting-group {
             display: flex;
             flex-direction: column;
-            gap: 0.8vmin;
+            gap: 3px; /* Уменьшено до 3px */
         }
         .input-group label, .setting-label {
             font-size: 1.4vmin;
             color: #aaa;
             font-weight: 500;
-            margin-left: 0.5vmin;
+            margin-left: 3px; /* Уменьшено до 3px */
         }
         .knob-container { /* Этот стиль теперь относится к ручке громкости в старом контексте, но мы его переопределили выше */
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1vmin;
+            gap: 3px; /* Уменьшено до 3px */
         }
         volume-knob { /* Этот стиль теперь относится к ручке громкости в старом контексте, но мы его переопределили выше */
             width: 15vmin;
@@ -126,7 +126,7 @@ export class CustomPromptCreator extends LitElement {
             font-weight: 500;
         }
         .add-button {
-            padding: 1.2vmin 2.5vmin;
+            padding: 3px 5px; /* Уменьшено до 3px 5px */
             border-radius: 4px;
             border: none;
             cursor: pointer;
@@ -134,15 +134,14 @@ export class CustomPromptCreator extends LitElement {
             color: #fff;
             font-weight: 600;
             font-size: 1.8vmin;
-            /* margin-top: 1vmin; */ /* Удален, теперь управляется action-row */
         }
         .action-row { /* Новый стиль для строки с ручкой и кнопкой */
             display: flex;
             align-items: center;
-            gap: 1.5vmin;
+            gap: 3px; /* Уменьшено до 3px */
             width: 100%;
             justify-content: center; /* Центрируем элементы */
-            margin-top: 1vmin; /* Отступ сверху */
+            margin-top: 3px; /* Уменьшено до 3px */
         }
         /* Styles for sliders and selects */
         input[type="range"] {
@@ -175,7 +174,7 @@ export class CustomPromptCreator extends LitElement {
             border: 1px solid #fff;
         }
         select {
-            padding: 1vmin;
+            padding: 3px; /* Уменьшено до 3px */
             border-radius: 4px;
             border: 1px solid #555;
             background: #333;
@@ -195,7 +194,7 @@ export class CustomPromptCreator extends LitElement {
         .slider-with-value {
             display: flex;
             align-items: center;
-            gap: 1vmin;
+            gap: 3px; /* Уменьшено до 3px */
         }
         .slider-value {
             font-size: 1.4vmin;
@@ -206,8 +205,8 @@ export class CustomPromptCreator extends LitElement {
         .checkbox-group {
             display: flex;
             align-items: center;
-            gap: 0.5vmin;
-            margin-top: 0.5vmin;
+            gap: 3px; /* Уменьшено до 3px */
+            margin-top: 3px; /* Уменьшено до 3px */
         }
         .checkbox-group input[type="checkbox"] {
             width: 1.5vmin;
@@ -231,14 +230,14 @@ export class CustomPromptCreator extends LitElement {
             -webkit-backdrop-filter: blur(10px);
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             flex-shrink: 0;
-            margin-top: 2.5vmin; /* Отступ от кнопки "Добавить в микс" */
+            margin-top: 3px; /* Уменьшено до 3px */
         }
         .settings-accordion-header {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5vh 2vw;
+            padding: 3px 5px; /* Уменьшено до 3px 5px */
             font-size: clamp(14px, 2vh, 18px);
             font-weight: 500;
             background: none;
@@ -264,7 +263,7 @@ export class CustomPromptCreator extends LitElement {
             height: 0; /* Изменено с 'auto' на '0' */
             max-height: 0px;
             visibility: hidden;
-            padding: 0 1.5vmin 1.5vmin 1.5vmin; /* Отступы для содержимого */
+            padding: 0 3px 3px 3px; /* Уменьшено до 3px */
         }
         .settings-accordion-item.active .settings-accordion-content {
             opacity: 1;
