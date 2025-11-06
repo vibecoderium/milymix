@@ -14,15 +14,20 @@ import './PlayPauseButton';
 import './PresetManager';
 import './VolumeEditor';
 import './ChatAssistant';
+// import './SynthPanel'; // Удален импорт SynthPanel
 import './ActivePromptsDisplay';
 import './MasterControls';
+// import './ProfileHeader'; // Удален импорт ProfileHeader
 import './ActivePromptKnob';
+// import './WeightKnob'; // Удален импорт WeightKnob
+// import './VerticalSlider'; // Удален импорт VerticalSlider
 import './HorizontalSlider'; // Импортируем новый компонент HorizontalSlider
+// import './SaveIcon'; // Удален импорт SaveIcon
 import './CustomPromptCreator'; // Импортируем новый компонент
-import './PromptCategoriesSection'; // Импортируем новый компонент
 
 import type { CustomPromptCreator } from './CustomPromptCreator';
 import type { ChatAssistant } from './ChatAssistant';
+
 import type { Preset } from './PresetManager';
 import type { PlaybackState, Prompt } from '../types';
 import { MidiDispatcher } from '../utils/MidiDispatcher';
@@ -385,7 +390,7 @@ export class PromptDjMidi extends LitElement {
 
   @state() private editingPromptId: string | null = null;
   @state() private editorWeight = 0;
-  // @state() private activeCategories = new Set<string>(); // REMOVED: Moved to PromptCategoriesSection
+  @state() private activeCategories = new Set<string>();
   @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
@@ -568,16 +573,15 @@ export class PromptDjMidi extends LitElement {
     return obj;
   }
 
-  // REMOVED: handleAccordionToggle is now in PromptCategoriesSection
-  // private handleAccordionToggle(categoryName: string) {
-  //   const newActiveCategories = new Set(this.activeCategories);
-  //   if (newActiveCategories.has(categoryName)) {
-  //     newActiveCategories.delete(categoryName);
-  //   } else {
-  //     newActiveCategories.add(categoryName);
-  //   }
-  //   this.activeCategories = newActiveCategories;
-  // }
+  private handleAccordionToggle(categoryName: string) {
+    const newActiveCategories = new Set(this.activeCategories);
+    if (newActiveCategories.has(categoryName)) {
+      newActiveCategories.delete(categoryName);
+    } else {
+      newActiveCategories.add(categoryName);
+    }
+    this.activeCategories = newActiveCategories;
+  }
 
   private handleEqualizerToggle() {
     this.showEqualizer = !this.showEqualizer;
@@ -791,14 +795,10 @@ export class PromptDjMidi extends LitElement {
       </div>
 
       <div id="main-area">
-        <!-- Новый контейнер для всех аккордеонов категорий -->
-        <prompt-categories-section
-          .promptCategories=${this.promptCategories}
-          .prompts=${this.prompts}
-          .filteredPrompts=${this.filteredPrompts}
-          .editingPromptId=${this.editingPromptId}
-          @edit-prompt=${this.handleEditPromptRequest}
-        ></prompt-categories-section>
+        <!-- Аккордеоны с категориями стилей музыки -->
+        <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
+          ${this.renderAccordions()}
+        </div>
 
         <!-- Панель создания пользовательских стилей -->
         <div class="accordion-item ${this.showCustomCreator ? 'active' : ''}">
@@ -885,40 +885,38 @@ export class PromptDjMidi extends LitElement {
       `;
   }
 
-  // REMOVED: renderAccordions is now in PromptCategoriesSection
-  // private renderAccordions() {
-  //   return this.promptCategories.map(category => {
-  //     const isActive = this.activeCategories.has(category.name);
-  //     return html`
-  //       <div class="accordion-item ${isActive ? 'active' : ''}">
-  //         <button class="accordion-header" @click=${() => this.handleAccordionToggle(category.name)}>
-  //           <span>${category.name}</span>
-  //           <span class="chevron">${isActive ? '−' : '+'}</span>
-  //         </button>
-  //         <div class="accordion-content">
-  //           <div class="accordion-grid">
-  //             ${this.renderPromptsForCategory(category)}
-  //           </div>
-  //         </div>
-  //       </div>
-  //     `;
-  //   });
-  // }
+  private renderAccordions() {
+    return this.promptCategories.map(category => {
+      const isActive = this.activeCategories.has(category.name);
+      return html`
+        <div class="accordion-item ${isActive ? 'active' : ''}">
+          <button class="accordion-header" @click=${() => this.handleAccordionToggle(category.name)}>
+            <span>${category.name}</span>
+            <span class="chevron">${isActive ? '−' : '+'}</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-grid">
+              ${this.renderPromptsForCategory(category)}
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  }
 
-  // REMOVED: renderPromptsForCategory is now in PromptCategoriesSection
-  // private renderPromptsForCategory(category: PromptCategory) {
-  //   return category.prompts.map(prompt => {
-  //     if (!prompt) return html``;
-  //     return html`<prompt-controller
-  //       promptId=${prompt.promptId}
-  //       ?filtered=${this.filteredPrompts.has(prompt.text)}
-  //       ?active=${this.editingPromptId === prompt.promptId}
-  //       text=${prompt.text}
-  //       weight=${prompt.weight}
-  //       color=${prompt.color}>
-  //     </prompt-controller>`;
-  //   });
-  // }
+  private renderPromptsForCategory(category: PromptCategory) {
+    return category.prompts.map(prompt => {
+      if (!prompt) return html``;
+      return html`<prompt-controller
+        promptId=${prompt.promptId}
+        ?filtered=${this.filteredPrompts.has(prompt.text)}
+        ?active=${this.editingPromptId === prompt.promptId}
+        text=${prompt.text}
+        weight=${prompt.weight}
+        color=${prompt.color}>
+      </prompt-controller>`;
+    });
+  }
 }
 
 declare global {
