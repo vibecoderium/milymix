@@ -23,6 +23,7 @@ export class PromptController extends LitElement {
   static override styles = css`
     .prompt-button {
       width: 100%;
+      height: 100%;
       min-height: 8vmin;
       display: flex;
       align-items: center;
