@@ -7,7 +7,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js'; // Импортируем classMap
 
-import { throttle } from '../utils/throttle';
+// import { throttle } from '../utils/throttle'; // Удален импорт throttle
 
 import './PromptController';
 import './PlayPauseButton';
@@ -279,11 +279,16 @@ export class PromptDjMidi extends LitElement {
       border-top: 1px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
     }
-    #footer play-pause-button { /* Увеличена кнопка Play/Pause */
-      height: 100%; /* Занимает всю высоту подвала */
-      width: 17vmin; /* Сохраняет квадратные пропорции */
-      max-width: 100px; /* Ограничение для больших экранов */
-      flex-shrink: 0;
+    #central-play-button-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 98; /* Выше футера, но ниже модальных окон */
+      width: 17vmin; /* Сохраняет размер кнопки */
+      height: 17vmin;
+      max-width: 100px;
+      max-height: 100px;
     }
     button {
       font: inherit;
@@ -867,8 +872,12 @@ export class PromptDjMidi extends LitElement {
 
       <div id="footer">
         <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
+      </div>
+
+      <div id="central-play-button-container">
         <play-pause-button .playbackState=${this.playbackState} @click=${this.playPause}></play-pause-button>
       </div>
+
       <preset-manager
         .showing=${this.showPresetManager}
         .currentPrompts=${this.getCurrentPromptsAsObject()}
