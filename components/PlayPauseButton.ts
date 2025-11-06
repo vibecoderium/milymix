@@ -8,10 +8,10 @@ import { classMap } from 'lit/directives/class-map.js';
 import type { PlaybackState } from '../types';
 
 @customElement('play-pause-button')
-// Fix: The class must extend LitElement to be a valid web component.
 export class PlayPauseButton extends LitElement {
 
   @property({ type: String }) playbackState: PlaybackState = 'stopped';
+  @property({ type: String }) buttonText = ''; // Новое свойство для текста
 
   static override styles = css`
     :host {
@@ -21,40 +21,41 @@ export class PlayPauseButton extends LitElement {
       justify-content: center;
       pointer-events: none;
       aspect-ratio: 1; /* Гарантируем, что хост всегда квадратный */
+      border-radius: 50%; /* Делаем сам компонент круглым */
+      overflow: hidden; /* Обрезаем все, что выходит за круг */
     }
-    /* Удалены старые стили для svg на ховере */
-    .logo-image {
+    .button-content { /* Новый контейнер для текста */
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 100%; /* Изменено на 100% */
-      height: 100%; /* Изменено на 100% */
-      object-fit: cover; /* Изменено на cover */
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(20px, 5vmin, 36px); /* Адаптивный размер текста */
+      font-weight: 700;
+      color: #fff;
+      text-transform: uppercase;
       transition: transform 0.5s cubic-bezier(0.25, 1.56, 0.32, 0.99);
-      border-radius: 50%; /* Сделано круглым */
+      border-radius: 50%; /* Делаем контент круглым */
+      background-color: rgba(0,0,0,0.2); /* Небольшой фон для текста */
     }
-    :host(:hover) .logo-image:not(.loading) { /* Только масштабирование, если не загружается */
-      transform: translate(-50%, -50%) scale(1.2);
+    :host(:hover) .button-content:not(.loading) { /* Только масштабирование, если не загружается */
+      transform: translate(-50%, -50%) scale(1.1); /* Уменьшил масштаб для текста */
     }
-    .logo-image.loading {
-      animation: spin linear 1s infinite;
-    }
+    /* Удаляем анимацию вращения для .button-content.loading */
+    /* @keyframes spin больше не нужен */
     .hitbox {
       pointer-events: all;
       position: absolute;
-      width: 65%;
-      aspect-ratio: 1;
-      top: 50%; /* Centered vertically */
-      left: 50%; /* Centered horizontally */
-      transform: translate(-50%, -50%); /* Adjust for its own size */
+      width: 100%; /* Расширяем hitbox на весь круг */
+      height: 100%;
+      top: 0;
+      left: 0;
       border-radius: 50%;
       cursor: pointer;
-    }
-    /* Удалены старые стили для .loader */
-    @keyframes spin {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(359deg); }
     }
   `;
 
@@ -146,17 +147,17 @@ export class PlayPauseButton extends LitElement {
     </svg>`;
   }
 
-  // Удалены методы renderPause, renderPlay, renderLoading
-
   override render() {
-    const logoClasses = {
-      'logo-image': true,
-      'loading': this.playbackState === 'loading'
+    const contentClasses = {
+      'button-content': true,
+      // 'loading': this.playbackState === 'loading' // Удалена привязка к состоянию загрузки для вращения
     };
 
     return html`
       ${this.renderSvgBackground()}
-      <img src="/logow.png" alt="Logo" class=${classMap(logoClasses)} />
+      <div class=${classMap(contentClasses)}>
+        ${this.buttonText || (this.playbackState === 'playing' ? 'PAUSE' : 'PLAY')}
+      </div>
       <div class="hitbox"></div>
     `;
   }

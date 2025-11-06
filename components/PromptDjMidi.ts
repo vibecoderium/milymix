@@ -48,11 +48,11 @@ export class PromptDjMidi extends LitElement {
       height: 100vh;
       width: 100vw;
       display: flex;
-      flex-direction: column;
+      flex-direction: column; /* Основной flex-контейнер */
       box-sizing: border-box;
-      position: relative; /* For modals */
+      position: relative;
       background: #111;
-      overflow: hidden; /* Prevent host from scrolling */
+      overflow: hidden; /* Сам хост не прокручивается, прокручивается внутренний контент */
     }
     #background {
       position: fixed;
@@ -62,7 +62,7 @@ export class PromptDjMidi extends LitElement {
       background: #111;
     }
     #header {
-      flex-shrink: 0; /* Prevent shrinking */
+      flex-shrink: 0; /* Фиксированная высота */
       width: 100%;
       height: 9vmin;
       display: flex;
@@ -114,9 +114,14 @@ export class PromptDjMidi extends LitElement {
       fill: currentColor;
     }
 
-    #main-scroll-area {
-      flex-grow: 1; /* Takes up all available vertical space */
-      overflow-y: auto; /* Enables scrolling for this area only */
+    #main-content-wrapper { /* Новый контейнер для прокручиваемого контента */
+      flex-grow: 1; /* Занимает все доступное вертикальное пространство */
+      overflow-y: auto; /* Включает прокрутку */
+      display: flex;
+      flex-direction: column; /* Располагает дочерние элементы вертикально */
+      gap: 3px; /* Отступ между кнопкой воспроизведения и аккордеонами */
+      padding: 1.5vmin; /* Отступы вокруг прокручиваемого контента */
+      box-sizing: border-box;
     }
 
     #central-play-button-container {
@@ -124,33 +129,17 @@ export class PromptDjMidi extends LitElement {
       height: 25.5vmin;
       max-width: 150px;
       max-height: 150px;
-      margin: 2vmin auto;
-      flex-shrink: 0;
+      margin: 2vmin auto; /* Центрирование с вертикальным отступом */
+      flex-shrink: 0; /* Предотвращаем сжатие */
+      border-radius: 50%; /* Обеспечиваем круглую форму контейнера */
+      overflow: hidden; /* Обрезаем содержимое по круглой форме */
     }
 
-    #bottom-panels-container {
-      flex-shrink: 0; /* Prevent this container from shrinking */
-      display: flex;
-      flex-direction: column;
-      gap: 3px; /* Strict 3px gap between all child panels */
-      padding: 1.5vmin;
-      background-color: rgba(20, 20, 20, 0.7);
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    
-    #accordions-container {
+    #accordions-container { /* Теперь внутри main-content-wrapper, поэтому прокручивается */
       display: flex;
       flex-direction: column;
       gap: 3px;
-    }
-
-    #accordions {
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
     }
     .accordion-item {
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -225,10 +214,22 @@ export class PromptDjMidi extends LitElement {
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
+    #bottom-panels-container { /* Фиксирован внизу */
+      flex-shrink: 0; /* Фиксированная высота */
+      display: flex;
+      flex-direction: column;
+      gap: 3px; /* Строгий отступ 3px между дочерними панелями */
+      padding: 1.5vmin; /* Отступы вокруг всего нижнего блока */
+      background-color: rgba(20, 20, 20, 0.7);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
     #now-playing-container {
       display: flex;
       flex-direction: column;
-      gap: 3px; /* Strict 3px gap */
+      gap: 3px; /* Строгий отступ 3px между active-prompts-display и master-controls-bottom */
     }
     .master-controls-bottom {
       display: flex;
@@ -354,7 +355,7 @@ export class PromptDjMidi extends LitElement {
 
     #editing-prompt-display {
       position: fixed;
-      bottom: 54vmin;
+      bottom: 50vmin; /* Примерное значение, чтобы быть над нижними панелями */
       left: 0;
       width: 100%;
       background-color: rgba(20, 20, 20, 0.9);
@@ -790,13 +791,15 @@ export class PromptDjMidi extends LitElement {
         </button>
       </div>
 
-      <div id="main-scroll-area">
+      <div id="main-content-wrapper"> <!-- Scrollable content starts here -->
         <div id="central-play-button-container">
-          <play-pause-button .playbackState=${this.playbackState} @click=${this.playPause}></play-pause-button>
+          <play-pause-button 
+            .playbackState=${this.playbackState} 
+            @click=${this.playPause}
+            buttonText="START" <!-- Передаем текст "START" -->
+          ></play-pause-button>
         </div>
-      </div>
 
-      <div id="bottom-panels-container">
         <div id="accordions-container">
           <!-- Main "Select Style" Accordion -->
           <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
@@ -836,7 +839,9 @@ export class PromptDjMidi extends LitElement {
             </div>
           </div>
         </div>
+      </div> <!-- End of main-content-wrapper -->
 
+      <div id="bottom-panels-container"> <!-- Fixed bottom panels start here -->
         <div id="now-playing-container">
           <active-prompts-display
             .prompts=${this.prompts}
@@ -859,7 +864,7 @@ export class PromptDjMidi extends LitElement {
         <div id="footer">
           <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
         </div>
-      </div>
+      </div> <!-- End of bottom-panels-container -->
 
       <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
         <span>${this.currentEditingPromptText}</span>
@@ -893,7 +898,7 @@ export class PromptDjMidi extends LitElement {
           <master-controls @eq-changed=${this.reDispatch}></master-controls>
         </div>
       </div>
-      `;
+    `;
   }
 
   // Modified to render categories as simple sections, not accordions
