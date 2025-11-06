@@ -47,11 +47,10 @@ export class PromptDjMidi extends LitElement {
     :host {
       display: flex;
       flex-direction: column; /* Основной flex-контейнер */
-      height: 100%; /* Занимает всю высоту родителя (body) */
-      width: 100%; /* Занимает всю ширину, избегая горизонтальной прокрутки */
+      min-height: 100vh; /* Allow host to grow if content is larger than viewport */
+      width: 100vw; /* Use viewport width */
       box-sizing: border-box;
       position: relative;
-      overflow: hidden; /* Предотвращаем случайное появление полос прокрутки на хосте */
     }
     #background {
       position: fixed;
