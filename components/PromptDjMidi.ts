@@ -14,16 +14,19 @@ import './PlayPauseButton';
 import './PresetManager';
 import './VolumeEditor';
 import './ChatAssistant';
+// import './SynthPanel'; // Удален импорт SynthPanel
 import './ActivePromptsDisplay';
 import './MasterControls';
+// import './ProfileHeader'; // Удален импорт ProfileHeader
 import './ActivePromptKnob';
+// import './WeightKnob'; // Удален импорт WeightKnob
+// import './VerticalSlider'; // Удален импорт VerticalSlider
 import './HorizontalSlider'; // Импортируем новый компонент HorizontalSlider
+// import './SaveIcon'; // Удален импорт SaveIcon
 import './CustomPromptCreator'; // Импортируем новый компонент
-import './GenerationSettingsPanel'; // Импортируем новый компонент
 
 import type { CustomPromptCreator } from './CustomPromptCreator';
 import type { ChatAssistant } from './ChatAssistant';
-import type { GenerationSettingsPanel } from './GenerationSettingsPanel'; // Импортируем тип
 
 import type { Preset } from './PresetManager';
 import type { PlaybackState, Prompt } from '../types';
@@ -388,12 +391,13 @@ export class PromptDjMidi extends LitElement {
   @state() private editingPromptId: string | null = null;
   @state() private editorWeight = 0;
   @state() private activeCategories = new Set<string>();
-  @state() private showEqualizer = false;
-  @state() private showCustomCreator = false;
-  @state() private masterVolume = 0.8;
-  @state() private currentEditingPromptText = '';
+  @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
+  @state() private showCustomCreator = false; // Состояние для нового аккордеона
+  @state() private masterVolume = 0.8; // Новое состояние для общей громкости
+  @state() private currentEditingPromptText = ''; // Новое состояние для текста редактируемого стиля
+  // @state() private showSelectStyleAccordion = false; // УДАЛЕНО: Больше не нужен главный аккордеон "Выбрать стиль"
 
-  // Generation settings states
+  // New generation settings states
   @state() private temperature = 1.1;
   @state() private guidance = 4.0;
   @state() private topK = 40;
@@ -737,7 +741,7 @@ export class PromptDjMidi extends LitElement {
     }
   }
 
-  private handleGenerationSettingChanged(e: CustomEvent<any>) {
+  private handleUpdateGenerationSettings(e: CustomEvent<any>) {
     const settings = e.detail;
     for (const key in settings) {
         if (Object.prototype.hasOwnProperty.call(this, key)) {
@@ -805,25 +809,21 @@ export class PromptDjMidi extends LitElement {
           <div class="accordion-content">
             <custom-prompt-creator 
               @create-custom-prompt=${this.handleCreateCustomPrompt}
+              @update-generation-settings=${this.handleUpdateGenerationSettings}
+              .temperature=${this.temperature}
+              .guidance=${this.guidance}
+              .topK=${this.topK}
+              .seed=${this.seed}
+              .bpm=${this.bpm}
+              .density=${this.density}
+              .densityAuto=${this.densityAuto}
+              .brightness=${this.brightness}
+              .brightnessAuto=${this.brightnessAuto}
+              .scale=${this.scale}
+              .musicGenerationMode=${this.musicGenerationMode}
             ></custom-prompt-creator>
           </div>
         </div>
-
-        <!-- Новый аккордеон для настроек генерации -->
-        <generation-settings-panel
-          .temperature=${this.temperature}
-          .guidance=${this.guidance}
-          .topK=${this.topK}
-          .seed=${this.seed}
-          .bpm=${this.bpm}
-          .density=${this.density}
-          .densityAuto=${this.densityAuto}
-          .brightness=${this.brightness}
-          .brightnessAuto=${this.brightnessAuto}
-          .scale=${this.scale}
-          .musicGenerationMode=${this.musicGenerationMode}
-          @setting-changed=${this.handleGenerationSettingChanged}
-        ></generation-settings-panel>
       </div>
 
       <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
