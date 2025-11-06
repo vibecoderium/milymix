@@ -78,7 +78,7 @@ export class ActivePromptsDisplay extends LitElement {
           if (this.activeKnobTextTimeout) {
             clearTimeout(this.activeKnobTextTimeout);
           }
-          this.activeKnobTextTimeout = setTimeout(() => {
+          this.activeKnobTextTimeout = window.setTimeout(() => {
             this.activeKnobText = null;
           }, 3000); // Скрываем текст через 3 секунды
         }

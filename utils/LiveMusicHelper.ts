@@ -48,7 +48,7 @@ export class LiveMusicHelper extends EventTarget {
     density: 0.50,
     brightness: 0.50,
     scale: undefined, // 'Auto' will be undefined
-    musicGenerationMode: 'QUALITY', // Convert 'Quality' to 'QUALITY' enum
+    musicGenerationMode: 'QUALITY' as any, // Convert 'Quality' to 'QUALITY' enum
   };
 
   constructor(ai: GoogleGenAI, model: string) {
@@ -112,7 +112,6 @@ export class LiveMusicHelper extends EventTarget {
   private async connect(): Promise<LiveMusicSession> {
     this.sessionPromise = this.ai.live.music.connect({
       model: this.model,
-      generationConfig: this.generationConfig, // Передаем generationConfig здесь
       callbacks: {
         onmessage: async (e: LiveMusicServerMessage) => {
           if (e.setupComplete) {
@@ -209,8 +208,7 @@ export class LiveMusicHelper extends EventTarget {
     this.setPlaybackState('loading');
     this.session = await this.getSession();
 
-    // Удален вызов this.session.setGenerationConfig(this.generationConfig);
-    // Конфигурация теперь передается при подключении в методе connect().
+    await this.session.setGenerationConfig(this.generationConfig);
 
     this.preMasterNode = this.audioContext.createGain();
     // Connect source to the start of the EQ chain
@@ -318,15 +316,15 @@ export class LiveMusicHelper extends EventTarget {
   public async setGenerationConfig(config: Partial<LiveMusicGenerationConfig>) {
     // Map 'Auto' string to undefined for seed, bpm, scale
     const mappedConfig: Partial<LiveMusicGenerationConfig> = { ...config };
-    if (mappedConfig.seed === 'Auto') mappedConfig.seed = undefined;
-    if (mappedConfig.bpm === 'Auto') mappedConfig.bpm = undefined;
-    if (mappedConfig.scale === 'Auto') mappedConfig.scale = undefined;
+    if ((mappedConfig.seed as any) === 'Auto') mappedConfig.seed = undefined;
+    if ((mappedConfig.bpm as any) === 'Auto') mappedConfig.bpm = undefined;
+    if ((mappedConfig.scale as any) === 'Auto') mappedConfig.scale = undefined;
     // Convert 'Quality', 'Diversity', 'Vocalization' to uppercase enum values
     if (mappedConfig.musicGenerationMode) {
-        mappedConfig.musicGenerationMode = mappedConfig.musicGenerationMode.toUpperCase() as 'QUALITY' | 'DIVERSITY' | 'VOCALIZATION';
+        mappedConfig.musicGenerationMode = (mappedConfig.musicGenerationMode as string).toUpperCase() as any;
     }
 
     this.generationConfig = { ...this.generationConfig, ...mappedConfig };
-    // Изменения в generationConfig теперь будут применяться при следующем вызове connect() (т.е. при запуске новой сессии).
+    // Обновленная конфигурация будет применена при следующем вызове play().
   }
 }
