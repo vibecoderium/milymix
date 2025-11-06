@@ -27,10 +27,11 @@ export class PlayPauseButton extends LitElement {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 60%; /* Размер логотипа относительно кнопки */
-      height: 60%;
+      width: 50%; /* Уменьшен размер логотипа */
+      height: 50%; /* Уменьшен размер логотипа */
       object-fit: contain;
       transition: transform 0.5s cubic-bezier(0.25, 1.56, 0.32, 0.99);
+      border-radius: 50%; /* Сделано круглым */
     }
     :host(:hover) .logo-image:not(.loading) { /* Только масштабирование, если не загружается */
       transform: translate(-50%, -50%) scale(1.2);
