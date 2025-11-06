@@ -184,7 +184,7 @@ export class PromptDjMidi extends LitElement {
       visibility: hidden; /* Hide content completely when collapsed */
     }
     .accordion-item.active .accordion-content {
-      max-height: 1000px; /* A large enough value to show content */
+      max-height: 500vh; /* A large enough value to show content and prevent clipping */
       opacity: 1;
       visibility: visible;
     }
@@ -583,6 +583,15 @@ export class PromptDjMidi extends LitElement {
     this.activeCategories = newActiveCategories;
   }
 
+  private toggleSelectStyleAccordion() {
+    const isOpening = !this.showSelectStyleAccordion;
+    this.showSelectStyleAccordion = isOpening;
+    if (isOpening) {
+      // When opening the main accordion, collapse all sub-accordions.
+      this.activeCategories = new Set();
+    }
+  }
+
   private handleEqualizerToggle() {
     this.showEqualizer = !this.showEqualizer;
   }
@@ -797,7 +806,7 @@ export class PromptDjMidi extends LitElement {
       <div id="main-area">
         <!-- Main "Select Style" Accordion -->
         <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
-          <button class="accordion-header" @click=${() => this.showSelectStyleAccordion = !this.showSelectStyleAccordion}>
+          <button class="accordion-header" @click=${this.toggleSelectStyleAccordion}>
             <span>Выбрать стиль</span>
             <span class="chevron">${this.showSelectStyleAccordion ? '−' : '+'}</span>
           </button>
