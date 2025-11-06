@@ -89,6 +89,7 @@ export class ChatAssistant extends LitElement {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       this.recognition = new SpeechRecognition();
+      this.recognition.lang = 'ru-RU';
       this.recognition.continuous = false;
       this.recognition.interimResults = true;
 
