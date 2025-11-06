@@ -208,7 +208,7 @@ export class LiveMusicHelper extends EventTarget {
     this.setPlaybackState('loading');
     this.session = await this.getSession();
 
-    await this.session.setMusicGenerationConfig(this.generationConfig);
+    await this.session.setGenerationConfig(this.generationConfig);
 
     this.preMasterNode = this.audioContext.createGain();
     // Connect source to the start of the EQ chain
