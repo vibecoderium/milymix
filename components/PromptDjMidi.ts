@@ -7,7 +7,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js'; // Импортируем classMap
 
-import { throttle } from '../utils/throttle';
+// import { throttle } from '../utils/throttle'; // Удален импорт throttle
 
 import './PromptController';
 import './PlayPauseButton';
@@ -289,6 +289,23 @@ export class PromptDjMidi extends LitElement {
       height: 51vmin; /* Увеличено в 3 раза */
       max-width: 300px; /* Увеличено в 3 раза */
       max-height: 300px; /* Увеличено в 3 раза */
+      border-radius: 50%; /* Делаем контейнер круглым */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1vmin; /* Отступ между кнопкой и текстом */
+    }
+    #central-play-button-container play-pause-button {
+      width: 100%; /* Кнопка занимает всю ширину контейнера */
+      height: 100%; /* Кнопка занимает всю высоту контейнера */
+    }
+    .play-button-text {
+      color: #fff;
+      font-size: clamp(16px, 3vmin, 24px); /* Адаптивный размер шрифта */
+      font-weight: 600;
+      text-shadow: 0 0 5px rgba(0,0,0,0.5);
+      pointer-events: none; /* Чтобы не мешать кликам по кнопке */
     }
     button {
       font: inherit;
@@ -789,6 +806,20 @@ export class PromptDjMidi extends LitElement {
     `;
   }
 
+  private getPlayButtonText() {
+    switch (this.playbackState) {
+      case 'stopped':
+      case 'paused':
+        return 'Start';
+      case 'playing':
+        return 'Playing';
+      case 'loading':
+        return 'Loading...';
+      default:
+        return 'Start';
+    }
+  }
+
   override render() {
     const bg = styleMap({
       backgroundImage: this.makeBackground(),
@@ -876,6 +907,7 @@ export class PromptDjMidi extends LitElement {
 
       <div id="central-play-button-container">
         <play-pause-button .playbackState=${this.playbackState} @click=${this.playPause}></play-pause-button>
+        <span class="play-button-text">${this.getPlayButtonText()}</span>
       </div>
 
       <preset-manager
