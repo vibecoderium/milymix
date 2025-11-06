@@ -131,12 +131,6 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
     }
 
-    #accordions {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 1vmin;
-    }
     .accordion-item {
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
@@ -195,6 +189,13 @@ export class PromptDjMidi extends LitElement {
       height: 100%;
       box-sizing: border-box;
       padding: 1.5vmin;
+    }
+    .inner-accordions-wrapper { /* Новый стиль для контейнера внутренних аккордеонов */
+      display: flex;
+      flex-direction: column;
+      gap: 1vmin;
+      padding: 1.5vmin; /* Отступы внутри главного аккордеона */
+      box-sizing: border-box;
     }
     #now-playing-container {
       position: fixed; /* Сделано фиксированным */
@@ -393,7 +394,7 @@ export class PromptDjMidi extends LitElement {
   @state() private activeCategories = new Set<string>();
   @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
-  // Removed @state() private showSelectStyleAccordion = false;
+  @state() private showSelectStyleAccordion = false; // Состояние для главного аккордеона "Выбрать стиль"
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
   @state() private currentEditingPromptText = ''; // Новое состояние для текста редактируемого стиля
 
@@ -583,7 +584,13 @@ export class PromptDjMidi extends LitElement {
     this.activeCategories = newActiveCategories;
   }
 
-  // Removed handleMainAccordionToggle()
+  private handleMainAccordionToggle() {
+    this.showSelectStyleAccordion = !this.showSelectStyleAccordion;
+    if (this.showSelectStyleAccordion) {
+      // When the main accordion opens, collapse all inner categories
+      this.activeCategories = new Set();
+    }
+  }
 
   private handleEqualizerToggle() {
     this.showEqualizer = !this.showEqualizer;
@@ -797,8 +804,17 @@ export class PromptDjMidi extends LitElement {
       </div>
 
       <div id="main-area">
-        <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
-          ${this.renderAccordions()}
+        <!-- Main "Select Style" Accordion -->
+        <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
+          <button class="accordion-header" @click=${this.handleMainAccordionToggle}>
+            <span>Выбрать стиль</span>
+            <span class="chevron">${this.showSelectStyleAccordion ? '−' : '+'}</span>
+          </button>
+          <div class="accordion-content">
+            <div class="inner-accordions-wrapper" @edit-prompt=${this.handleEditPromptRequest}>
+              ${this.renderAccordions()}
+            </div>
+          </div>
         </div>
 
         <!-- Панель создания пользовательских стилей -->
