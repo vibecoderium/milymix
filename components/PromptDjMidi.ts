@@ -778,7 +778,7 @@ export class PromptDjMidi extends LitElement {
     return html`
       <div id="background" style=${bgStyle}></div>
       <div id="header">
-        <img src="/logob.png" alt="Logo" class="header-logo">
+        <img src="/logow.png" alt="Logo" class="header-logo">
         <span class="app-title">Milymix</span>
         <button class="header-button" @click=${this.handleEqualizerToggle} title="Graphic Equalizer">
           ${this.renderEqualizerIcon()}
