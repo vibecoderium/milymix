@@ -4,7 +4,6 @@
  */
 import { svg, css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import type { PlaybackState } from '../types';
 
 @customElement('play-pause-button')
@@ -21,40 +20,47 @@ export class PlayPauseButton extends LitElement {
       justify-content: center;
       pointer-events: none;
       aspect-ratio: 1; /* Гарантируем, что хост всегда квадратный */
+      width: 100%;
+      height: 100%;
     }
-    /* Удалены старые стили для svg на ховере */
+    .button-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5vmin;
+      position: relative;
+      z-index: 2;
+    }
     .logo-image {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100%; /* Изменено на 100% */
-      height: 100%; /* Изменено на 100% */
-      object-fit: cover; /* Изменено на cover */
-      transition: transform 0.5s cubic-bezier(0.25, 1.56, 0.32, 0.99);
-      border-radius: 50%; /* Сделано круглым */
+      width: 8vmin;
+      height: 8vmin;
+      object-fit: contain;
+      border-radius: 50%;
     }
-    :host(:hover) .logo-image:not(.loading) { /* Только масштабирование, если не загружается */
-      transform: translate(-50%, -50%) scale(1.2);
-    }
-    .logo-image.loading {
-      animation: spin linear 1s infinite;
+    .start-text {
+      color: #fff;
+      font-size: 4vmin;
+      font-weight: 600;
+      text-transform: uppercase;
+      -webkit-font-smoothing: antialiased;
     }
     .hitbox {
       pointer-events: all;
       position: absolute;
-      width: 65%;
-      aspect-ratio: 1;
-      top: 50%; /* Centered vertically */
-      left: 50%; /* Centered horizontally */
-      transform: translate(-50%, -50%); /* Adjust for its own size */
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
       border-radius: 50%;
       cursor: pointer;
+      z-index: 1;
     }
-    /* Удалены старые стили для .loader */
-    @keyframes spin {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(359deg); }
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
   `;
 
@@ -146,17 +152,13 @@ export class PlayPauseButton extends LitElement {
     </svg>`;
   }
 
-  // Удалены методы renderPause, renderPlay, renderLoading
-
   override render() {
-    const logoClasses = {
-      'logo-image': true,
-      'loading': this.playbackState === 'loading'
-    };
-
     return html`
       ${this.renderSvgBackground()}
-      <img src="/logow.png" alt="Logo" class=${classMap(logoClasses)} />
+      <div class="button-content">
+        <img src="/logow.png" alt="Logo" class="logo-image" />
+        <span class="start-text">Start</span>
+      </div>
       <div class="hitbox"></div>
     `;
   }
