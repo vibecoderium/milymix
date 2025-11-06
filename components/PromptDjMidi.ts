@@ -122,7 +122,7 @@ export class PromptDjMidi extends LitElement {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
-      gap: 1.5vmin;
+      gap: 3px; /* Уменьшено до 3px */
       padding: 1.5vmin;
       padding-top: 9vmin; /* Отступ сверху для фиксированной шапки */
       padding-bottom: 49vmin; /* Увеличено для новой высоты нижних фиксированных блоков */
@@ -135,7 +135,7 @@ export class PromptDjMidi extends LitElement {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 1vmin;
+      gap: 3px; /* Уменьшено до 3px */
     }
     .accordion-item {
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -157,7 +157,7 @@ export class PromptDjMidi extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1vh 2vw;
+      padding: 3px 5px; /* Уменьшено до 3px 5px */
       font-size: clamp(14px, 2vh, 18px);
       font-weight: 500;
       background: none;
