@@ -124,8 +124,8 @@ export class PromptDjMidi extends LitElement {
       flex-direction: column;
       gap: 3px; /* Уменьшено до 3px */
       padding: 1.5vmin;
-      padding-top: 9vmin; /* Отступ сверху для фиксированной шапки */
-      padding-bottom: 49vmin; /* Увеличено для новой высоты нижних фиксированных блоков */
+      padding-top: 36vmin; /* Отступ сверху для фиксированной шапки и кнопки play */
+      padding-bottom: 64.5vmin; /* Отступ снизу для футера, now-playing и аккордеонов */
       overflow-y: auto; /* Разрешаем прокрутку только для этой области */
       width: 100%;
       box-sizing: border-box;
@@ -224,6 +224,7 @@ export class PromptDjMidi extends LitElement {
       border-top: 1px solid rgba(255, 255, 255, 0.2); /* Верхняя граница */
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      height: 36vmin; /* Фиксированная высота */
     }
     .master-controls-bottom {
       display: flex;
@@ -270,7 +271,7 @@ export class PromptDjMidi extends LitElement {
       display: flex;
       align-items: center;
       gap: 1.5vmin;
-      z-index: 95; /* Ниже модальных окон, выше других фиксированных элементов */
+      z-index: 80; /* Ниже now-playing-container и аккордеонов */
       padding: 0.75vmin; /* Отступы подвала */
       box-sizing: border-box;
       background-color: rgba(20, 20, 20, 0.7);
@@ -281,14 +282,30 @@ export class PromptDjMidi extends LitElement {
     }
     #central-play-button-container {
       position: fixed;
-      top: 50%;
+      top: 9vmin; /* Сразу под шапкой */
       left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 98; /* Выше футера, но ниже модальных окон */
-      width: 25.5vmin; /* Уменьшено в 2 раза */
-      height: 25.5vmin; /* Уменьшено в 2 раза */
-      max-width: 150px; /* Уменьшено в 2 раза */
-      max-height: 150px; /* Уменьшено в 2 раза */
+      transform: translateX(-50%); /* Центрирование по горизонтали */
+      z-index: 20; /* Выше основного контента, но ниже модальных окон */
+      width: 25.5vmin;
+      height: 25.5vmin;
+      max-width: 150px;
+      max-height: 150px;
+    }
+    #bottom-accordions-wrapper { /* Новый контейнер для аккордеонов */
+      position: fixed;
+      bottom: calc(17vmin + 36vmin); /* Над футером и now-playing-container */
+      left: 0;
+      width: 100%;
+      z-index: 92; /* Выше now-playing-container */
+      background-color: rgba(20, 20, 20, 0.7);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 1.5vmin;
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
     button {
       font: inherit;
@@ -806,7 +823,20 @@ export class PromptDjMidi extends LitElement {
         </button>
       </div>
 
+      <div id="central-play-button-container">
+        <play-pause-button .playbackState=${this.playbackState} @click=${this.playPause}></play-pause-button>
+      </div>
+
       <div id="main-area">
+        <!-- Main content area, now empty as accordions moved to bottom -->
+      </div>
+
+      <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
+        <span>${this.currentEditingPromptText}</span>
+      </div>
+
+      <!-- Новый контейнер для аккордеонов внизу -->
+      <div id="bottom-accordions-wrapper">
         <!-- Main "Select Style" Accordion -->
         <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
           <button class="accordion-header" @click=${this.handleMainAccordionToggle}>
@@ -846,10 +876,6 @@ export class PromptDjMidi extends LitElement {
         </div>
       </div>
 
-      <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
-        <span>${this.currentEditingPromptText}</span>
-      </div>
-
       <!-- Перемещенный блок now-playing-container -->
       <div id="now-playing-container">
         <active-prompts-display
@@ -872,10 +898,6 @@ export class PromptDjMidi extends LitElement {
 
       <div id="footer">
         <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
-      </div>
-
-      <div id="central-play-button-container">
-        <play-pause-button .playbackState=${this.playbackState} @click=${this.playPause}></play-pause-button>
       </div>
 
       <preset-manager
