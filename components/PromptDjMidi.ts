@@ -177,7 +177,7 @@ export class PromptDjMidi extends LitElement {
       overflow: hidden;
       transition: opacity 0.4s ease-in-out, max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
       opacity: 0;
-      height: auto;
+      /* height: auto; */ /* Удалено, чтобы избежать конфликтов с max-height */
       max-height: 0px;
       visibility: hidden;
       padding: 0 1.5vmin 1.5vmin 1.5vmin;
@@ -433,6 +433,10 @@ export class PromptDjMidi extends LitElement {
         );
       }
     });
+    // Убедимся, что главный аккордеон "Выбрать стиль" изначально свернут
+    this.showSelectStyleAccordion = false;
+    // Убедимся, что все вложенные аккордеоны категорий также свернуты
+    this.activeCategory = null;
   }
 
   connectedCallback() {
