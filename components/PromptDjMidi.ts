@@ -196,35 +196,6 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       padding: 1.5vmin;
     }
-
-    /* New styles for unified prompt display */
-    #unified-prompt-display {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 2vmin; /* Gap between category sections */
-      padding: 1.5vmin;
-      box-sizing: border-box;
-      background-color: rgba(20, 20, 20, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    .category-section {
-      display: flex;
-      flex-direction: column;
-      gap: 1vmin; /* Gap between title and grid */
-    }
-    .category-title {
-      color: #fff;
-      font-size: clamp(16px, 2.5vmin, 24px);
-      font-weight: 600;
-      padding: 0.5vmin 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 1vmin;
-    }
-
     #now-playing-container {
       position: fixed; /* Сделано фиксированным */
       bottom: 17vmin; /* Над футером */
@@ -419,7 +390,7 @@ export class PromptDjMidi extends LitElement {
 
   @state() private editingPromptId: string | null = null;
   @state() private editorWeight = 0;
-  // Removed @state() private activeCategories = new Set<string>();
+  @state() private activeCategories = new Set<string>();
   @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
   // Removed @state() private showSelectStyleAccordion = false;
@@ -602,7 +573,16 @@ export class PromptDjMidi extends LitElement {
     return obj;
   }
 
-  // Removed handleAccordionToggle()
+  private handleAccordionToggle(categoryName: string) {
+    const newActiveCategories = new Set(this.activeCategories);
+    if (newActiveCategories.has(categoryName)) {
+      newActiveCategories.delete(categoryName);
+    } else {
+      newActiveCategories.add(categoryName);
+    }
+    this.activeCategories = newActiveCategories;
+  }
+
   // Removed handleMainAccordionToggle()
 
   private handleEqualizerToggle() {
@@ -817,15 +797,8 @@ export class PromptDjMidi extends LitElement {
       </div>
 
       <div id="main-area">
-        <div id="unified-prompt-display" @edit-prompt=${this.handleEditPromptRequest}>
-          ${this.promptCategories.map(category => html`
-            <div class="category-section">
-              <h3 class="category-title">${category.name}</h3>
-              <div class="accordion-grid">
-                ${this.renderPromptsForCategory(category)}
-              </div>
-            </div>
-          `)}
+        <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
+          ${this.renderAccordions()}
         </div>
 
         <!-- Панель создания пользовательских стилей -->
@@ -911,6 +884,25 @@ export class PromptDjMidi extends LitElement {
         </div>
       </div>
       `;
+  }
+
+  private renderAccordions() {
+    return this.promptCategories.map(category => {
+      const isActive = this.activeCategories.has(category.name);
+      return html`
+        <div class="accordion-item ${isActive ? 'active' : ''}">
+          <button class="accordion-header" @click=${() => this.handleAccordionToggle(category.name)}>
+            <span>${category.name}</span>
+            <span class="chevron">${isActive ? '−' : '+'}</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-grid">
+              ${this.renderPromptsForCategory(category)}
+            </div>
+          </div>
+        </div>
+      `;
+    });
   }
 
   private renderPromptsForCategory(category: PromptCategory) {
