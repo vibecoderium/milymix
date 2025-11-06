@@ -7,7 +7,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js'; // Импортируем classMap
 
-// import { throttle } from '../utils/throttle'; // Удален импорт throttle
+import { throttle } from '../utils/throttle';
 
 import './PromptController';
 import './PlayPauseButton';
@@ -194,7 +194,7 @@ export class PromptDjMidi extends LitElement {
       gap: 3px; /* Уменьшено до 3px */
       height: 100%;
       box-sizing: border-box;
-      padding: 3px; /* Уменьшено до 3px */
+      padding: 0px; /* Установлено на 0px */
     }
     .category-section { /* New style for inner category sections */
       display: flex;
@@ -206,7 +206,7 @@ export class PromptDjMidi extends LitElement {
       font-size: clamp(16px, 2.5vmin, 22px);
       font-weight: 500;
       color: #fff;
-      padding: 3px 3px; /* Уменьшено до 3px */
+      padding: 3px 0px; /* Горизонтальный padding установлен на 0px */
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     #now-playing-container {
