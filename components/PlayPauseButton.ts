@@ -43,7 +43,9 @@ export class PlayPauseButton extends LitElement {
       position: absolute;
       width: 65%;
       aspect-ratio: 1;
-      top: 9%;
+      top: 50%; /* Centered vertically */
+      left: 50%; /* Centered horizontally */
+      transform: translate(-50%, -50%); /* Adjust for its own size */
       border-radius: 50%;
       cursor: pointer;
     }
@@ -58,33 +60,27 @@ export class PlayPauseButton extends LitElement {
     return html` <svg
       width="140"
       height="140"
-      viewBox="0 -10 140 150"
+      viewBox="0 0 140 140"
       fill="none"
       xmlns="http://www.w3.org/2000/svg">
-      <rect
-        x="22"
-        y="6"
-        width="96"
-        height="96"
-        rx="48"
+      <circle
+        cx="70"
+        cy="70"
+        r="48"
         fill="black"
         fill-opacity="0.05" />
-      <rect
-        x="23.5"
-        y="7.5"
-        width="93"
-        height="93"
-        rx="46.5"
+      <circle
+        cx="70"
+        cy="70"
+        r="46.5"
         stroke="black"
         stroke-opacity="0.3"
         stroke-width="3" />
       <g filter="url(#filter0_ddi_1048_7373)">
-        <rect
-          x="25"
-          y="9"
-          width="90"
-          height="90"
-          rx="45"
+        <circle
+          cx="70"
+          cy="70"
+          r="45"
           fill="white"
           fill-opacity="0.05"
           shape-rendering="crispEdges" />
