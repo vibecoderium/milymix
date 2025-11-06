@@ -259,17 +259,15 @@ export class CustomPromptCreator extends LitElement {
         }
         .settings-accordion-content {
             overflow: hidden;
-            transition: opacity 0.4s ease-in-out, max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease-in-out;
             opacity: 0;
-            height: 0; /* Изменено с 'auto' на '0' */
-            max-height: 0px;
+            max-height: 0px; /* Start collapsed */
             visibility: hidden;
             padding: 0 1.5vmin 1.5vmin 1.5vmin; /* Отступы для содержимого */
         }
         .settings-accordion-item.active .settings-accordion-content {
             opacity: 1;
             visibility: visible;
-            height: auto; /* Добавлено */
             max-height: 9999px; /* Большое значение для динамической высоты */
         }
     `;
