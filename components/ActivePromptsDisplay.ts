@@ -17,7 +17,7 @@ export class ActivePromptsDisplay extends LitElement {
             display: flex;
             flex-direction: column; /* Изменено на колонку */
             gap: 1.5vmin; /* Отступ между заголовком и ручками */
-            padding: 1.5vmin; /* Общий отступ для всего блока */
+            padding: 0 1.5vmin 0 1.5vmin; /* Удалены верхний и нижний отступы, боковые сохранены */
             box-sizing: border-box;
             background-color: rgba(20, 20, 20, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -34,7 +34,7 @@ export class ActivePromptsDisplay extends LitElement {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            padding: 0.5vmin 0; /* Вертикальные отступы для заголовка */
+            padding: 0; /* Удалены все отступы */
             transition: opacity 0.3s ease-out;
             opacity: 1;
         }
@@ -45,7 +45,7 @@ export class ActivePromptsDisplay extends LitElement {
             display: flex;
             flex-wrap: wrap;
             gap: 4vmin; /* Зазор между кружками */
-            padding: 4.5vmin; /* Отступы вокруг ручек внутри обертки */
+            padding: 4.5vmin 4.5vmin 0 4.5vmin; /* Удален нижний отступ, остальные сохранены */
             align-items: center; /* Выравнивание по центру */
             justify-content: center; /* Выравнивание по центру */
             width: 100%;
