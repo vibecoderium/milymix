@@ -27,9 +27,9 @@ export class PlayPauseButton extends LitElement {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 50%; /* Уменьшен размер логотипа */
-      height: 50%; /* Уменьшен размер логотипа */
-      object-fit: contain;
+      width: 100%; /* Изменено на 100% */
+      height: 100%; /* Изменено на 100% */
+      object-fit: cover; /* Изменено на cover */
       transition: transform 0.5s cubic-bezier(0.25, 1.56, 0.32, 0.99);
       border-radius: 50%; /* Сделано круглым */
     }
