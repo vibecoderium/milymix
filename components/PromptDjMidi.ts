@@ -285,10 +285,10 @@ export class PromptDjMidi extends LitElement {
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 98; /* Выше футера, но ниже модальных окон */
-      width: 51vmin; /* Увеличено в 3 раза */
-      height: 51vmin; /* Увеличено в 3 раза */
-      max-width: 300px; /* Увеличено в 3 раза */
-      max-height: 300px; /* Увеличено в 3 раза */
+      width: 25.5vmin; /* Уменьшено в 2 раза */
+      height: 25.5vmin; /* Уменьшено в 2 раза */
+      max-width: 150px; /* Уменьшено в 2 раза */
+      max-height: 150px; /* Уменьшено в 2 раза */
     }
     button {
       font: inherit;
