@@ -14,9 +14,15 @@ import './PlayPauseButton';
 import './PresetManager';
 import './VolumeEditor';
 import './ChatAssistant';
+// import './SynthPanel'; // Удален импорт SynthPanel
 import './ActivePromptsDisplay';
 import './MasterControls';
+// import './ProfileHeader'; // Удален импорт ProfileHeader
+import './ActivePromptKnob';
+// import './WeightKnob'; // Удален импорт WeightKnob
+// import './VerticalSlider'; // Удален импорт VerticalSlider
 import './HorizontalSlider'; // Импортируем новый компонент HorizontalSlider
+// import './SaveIcon'; // Удален импорт SaveIcon
 import './CustomPromptCreator'; // Импортируем новый компонент
 
 import type { CustomPromptCreator } from './CustomPromptCreator';
@@ -35,6 +41,7 @@ interface PromptCategory {
 
 /** The grid of prompt inputs. */
 @customElement('prompt-dj-midi')
+// Fix: The class must extend LitElement to be a valid web component.
 export class PromptDjMidi extends LitElement {
   static override styles = css`
     :host {
@@ -384,12 +391,13 @@ export class PromptDjMidi extends LitElement {
   @state() private editingPromptId: string | null = null;
   @state() private editorWeight = 0;
   @state() private activeCategories = new Set<string>();
-  @state() private showEqualizer = false;
-  @state() private showCustomCreator = false;
-  @state() private masterVolume = 0.8;
-  @state() private currentEditingPromptText = '';
+  @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
+  @state() private showCustomCreator = false; // Состояние для нового аккордеона
+  @state() private masterVolume = 0.8; // Новое состояние для общей громкости
+  @state() private currentEditingPromptText = ''; // Новое состояние для текста редактируемого стиля
+  // @state() private showSelectStyleAccordion = false; // УДАЛЕНО: Больше не нужен главный аккордеон "Выбрать стиль"
 
-  // Generation settings states
+  // New generation settings states
   @state() private temperature = 1.1;
   @state() private guidance = 4.0;
   @state() private topK = 40;
