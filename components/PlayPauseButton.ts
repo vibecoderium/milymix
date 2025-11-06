@@ -20,6 +20,7 @@ export class PlayPauseButton extends LitElement {
       align-items: center;
       justify-content: center;
       pointer-events: none;
+      aspect-ratio: 1; /* Гарантируем, что хост всегда квадратный */
     }
     /* Удалены старые стили для svg на ховере */
     .logo-image {
