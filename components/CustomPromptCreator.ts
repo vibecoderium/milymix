@@ -237,7 +237,7 @@ export class CustomPromptCreator extends LitElement {
             -webkit-backdrop-filter: blur(10px);
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             flex-shrink: 0;
-            margin-top: 2.5vmin; /* Отступ от кнопки "Добавить в микс" */
+            margin-top: 10px; /* Отступ от кнопки "Добавить в микс" */
         }
         .settings-accordion-item.active .settings-accordion-content {
             opacity: 1;
