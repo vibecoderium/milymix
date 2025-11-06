@@ -61,25 +61,30 @@ export class PlayPauseButton extends LitElement {
       viewBox="0 -10 140 150"
       fill="none"
       xmlns="http://www.w3.org/2000/svg">
-      <circle
-        cx="70"
-        cy="54"
-        r="48"
+      <rect
+        x="22"
+        y="6"
+        width="96"
+        height="96"
+        rx="48"
         fill="black"
         fill-opacity="0.05" />
-      <circle
-        cx="70"
-        cy="54"
-        r="46.5"
+      <rect
+        x="23.5"
+        y="7.5"
+        width="93"
+        height="93"
+        rx="46.5"
         stroke="black"
         stroke-opacity="0.3"
-        stroke-width="3"
-        fill="none" />
+        stroke-width="3" />
       <g filter="url(#filter0_ddi_1048_7373)">
-        <circle
-          cx="70"
-          cy="54"
-          r="45"
+        <rect
+          x="25"
+          y="9"
+          width="90"
+          height="90"
+          rx="45"
           fill="white"
           fill-opacity="0.05"
           shape-rendering="crispEdges" />
