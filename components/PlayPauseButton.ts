@@ -22,34 +22,86 @@ export class PlayPauseButton extends LitElement {
       aspect-ratio: 1; /* Гарантируем, что хост всегда квадратный */
       border-radius: 50%; /* Делаем сам компонент круглым */
       overflow: hidden; /* Обрезаем все, что выходит за круг */
+      background-color: rgba(0,0,0,0.2); /* Добавляем легкий фон для кнопки */
+      transition: background-color 0.2s ease-in-out;
     }
-    .logo-image {
+    :host(:hover) {
+      background-color: rgba(255,255,255,0.1); /* Изменение фона при наведении */
+    }
+    .icon-container {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 100%; /* Изменено на 100% */
-      height: 100%; /* Изменено на 100% */
-      object-fit: cover; /* Изменено на cover */
-      transition: transform 0.5s cubic-bezier(0.25, 1.56, 0.32, 0.99);
-      border-radius: 50%; /* Сделано круглым */
+      width: 60%; /* Размер иконки относительно кнопки */
+      height: 60%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff; /* Цвет иконок */
     }
-    :host(:hover) .logo-image { /* Масштабирование при наведении, без вращения */
-      transform: translate(-50%, -50%) scale(1.1);
+    .icon-container svg {
+      fill: currentColor;
+      width: 100%;
+      height: 100%;
     }
-    /* Удалена анимация вращения для .logo-image.loading */
-    /* Удален @keyframes spin */
+    .loading-spinner {
+      width: 60%;
+      height: 60%;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
     .hitbox {
       pointer-events: all;
       position: absolute;
-      width: 100%; /* Расширяем hitbox на весь круг */
+      width: 100%;
       height: 100%;
       top: 0;
       left: 0;
       border-radius: 50%;
       cursor: pointer;
     }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   `;
+
+  private renderPlayIcon() {
+    return svg`<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+  }
+
+  private renderPauseIcon() {
+    return svg`<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+  }
+
+  private renderLoadingIcon() {
+    return html`<div class="loading-spinner"></div>`;
+  }
+
+  private renderCurrentStateIcon() {
+    switch (this.playbackState) {
+      case 'playing':
+        return this.renderPauseIcon();
+      case 'loading':
+        return this.renderLoadingIcon();
+      case 'stopped':
+      case 'paused':
+      default:
+        return this.renderPlayIcon();
+    }
+  }
+
+  override render() {
+    return html`
+      ${this.renderSvgBackground()}
+      <div class="icon-container">
+        ${this.renderCurrentStateIcon()}
+      </div>
+      <div class="hitbox"></div>
+    `;
+  }
 
   private renderSvgBackground() {
     return html` <svg
@@ -137,19 +189,6 @@ export class PlayPauseButton extends LitElement {
         </filter>
       </defs>
     </svg>`;
-  }
-
-  override render() {
-    const logoClasses = {
-      'logo-image': true,
-      // 'loading': this.playbackState === 'loading' // Удалена привязка к состоянию загрузки для вращения
-    };
-
-    return html`
-      ${this.renderSvgBackground()}
-      <img src="/logow.png" alt="Logo" class=${classMap(logoClasses)} />
-      <div class="hitbox"></div>
-    `;
   }
 }
 

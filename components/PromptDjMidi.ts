@@ -851,7 +851,6 @@ export class PromptDjMidi extends LitElement {
                 .seed=${this.seed}
                 .bpm=${this.bpm}
                 .density=${this.density}
-                .densityAuto=${this.densityAuto}
                 .brightness=${this.brightness}
                 .brightnessAuto=${this.brightnessAuto}
                 .scale=${this.scale}
