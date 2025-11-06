@@ -124,8 +124,8 @@ export class PromptDjMidi extends LitElement {
       flex-direction: column;
       gap: 3px; /* Уменьшено до 3px */
       padding: 1.5vmin;
-      padding-top: 36vmin; /* Отступ сверху для фиксированной шапки и кнопки play */
-      padding-bottom: 64.5vmin; /* Отступ снизу для футера, now-playing и аккордеонов */
+      padding-top: 34.5vmin; /* Отступ сверху для фиксированной шапки и кнопки play */
+      padding-bottom: 60vmin; /* Отступ снизу для футера, now-playing и аккордеонов */
       overflow-y: auto; /* Разрешаем прокрутку только для этой области */
       width: 100%;
       box-sizing: border-box;
