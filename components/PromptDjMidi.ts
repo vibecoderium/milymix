@@ -205,7 +205,6 @@ export class PromptDjMidi extends LitElement {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(11vmin, 1fr));
       gap: 3px;
-      height: 100%;
       box-sizing: border-box;
       padding: 0px;
     }
