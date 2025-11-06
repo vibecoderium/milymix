@@ -191,22 +191,22 @@ export class PromptDjMidi extends LitElement {
     .accordion-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(11vmin, 1fr));
-      gap: 1vmin;
+      gap: 3px; /* Уменьшено до 3px */
       height: 100%;
       box-sizing: border-box;
-      padding: 1.5vmin;
+      padding: 3px; /* Уменьшено до 3px */
     }
     .category-section { /* New style for inner category sections */
       display: flex;
       flex-direction: column;
-      gap: 1vmin;
-      margin-bottom: 2vmin;
+      gap: 3px; /* Уменьшено до 3px */
+      margin-bottom: 3px; /* Уменьшено до 3px */
     }
     .category-title { /* New style for inner category titles */
       font-size: clamp(16px, 2.5vmin, 22px);
       font-weight: 500;
       color: #fff;
-      padding: 0.5vmin 1.5vmin;
+      padding: 3px 3px; /* Уменьшено до 3px */
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     #now-playing-container {
