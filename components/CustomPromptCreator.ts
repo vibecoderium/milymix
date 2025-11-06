@@ -131,14 +131,15 @@ export class CustomPromptCreator extends LitElement {
             font-weight: 500;
         }
         .add-button {
-            padding: 1.2vmin 2.5vmin;
+            padding: 2vmin 4vmin; /* Увеличиваем отступы */
             border-radius: 4px;
             border: none;
             cursor: pointer;
             background: #3c8ce4;
             color: #fff;
             font-weight: 600;
-            font-size: 1.8vmin;
+            font-size: 2.5vmin; /* Увеличиваем размер шрифта */
+            min-width: 20vmin; /* Добавляем минимальную ширину */
             /* margin-top: 1vmin; */ /* Удален, теперь управляется action-row */
         }
         .action-row { /* Новый стиль для строки с ручкой и кнопкой */
@@ -237,6 +238,12 @@ export class CustomPromptCreator extends LitElement {
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             flex-shrink: 0;
             margin-top: 2.5vmin; /* Отступ от кнопки "Добавить в микс" */
+        }
+        .settings-accordion-item.active .settings-accordion-content {
+            opacity: 1;
+            visibility: visible;
+            height: auto; /* Добавлено */
+            max-height: 9999px; /* Большое значение для динамической высоты */
         }
         .settings-accordion-header {
             width: 100%;
