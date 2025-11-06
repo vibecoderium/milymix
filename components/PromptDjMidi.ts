@@ -770,7 +770,7 @@ export class PromptDjMidi extends LitElement {
 
   override render() {
     const bgStyle = styleMap({
-      backgroundImage: `url('/logow.png'), ${this.makeBackground()}`,
+      backgroundImage: `url('/logob.png'), ${this.makeBackground()}`,
     });
 
     const promptToEdit = this.editingPromptId ? this.prompts.get(this.editingPromptId) : null;
@@ -778,7 +778,7 @@ export class PromptDjMidi extends LitElement {
     return html`
       <div id="background" style=${bgStyle}></div>
       <div id="header">
-        <img src="/logow.png" alt="Logo" class="header-logo">
+        <img src="/logob.png" alt="Logo" class="header-logo">
         <span class="app-title">Milymix</span>
         <button class="header-button" @click=${this.handleEqualizerToggle} title="Graphic Equalizer">
           ${this.renderEqualizerIcon()}
