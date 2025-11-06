@@ -52,20 +52,19 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       position: relative; /* For modals */
       background: #111;
-      overflow: hidden; /* Prevent host scrolling */
+      overflow-y: auto; /* Разрешаем прокрутку */
     }
     #background {
       will-change: background-image;
-      position: absolute;
+      position: fixed; /* Фон остается на месте */
       height: 100%;
       width: 100%;
       z-index: -1;
       background: #111;
     }
     #header {
-      position: fixed; /* Прикрепляем к верху */
+      position: sticky; /* Приклеиваем к верху */
       top: 0;
-      left: 0;
       width: 100%;
       height: 9vmin; /* Высота шапки */
       display: flex;
@@ -118,17 +117,11 @@ export class PromptDjMidi extends LitElement {
       fill: currentColor; /* Используем цвет текста кнопки */
     }
     
-    #main-area {
-      flex-grow: 1;
+    #accordions-container {
+      padding: 1.5vmin;
       display: flex;
       flex-direction: column;
-      gap: 3px; /* Уменьшено до 3px */
-      padding: 1.5vmin;
-      padding-top: 36vmin; /* Отступ сверху для фиксированной шапки и кнопки play */
-      padding-bottom: 64.5vmin; /* Отступ снизу для футера, now-playing и аккордеонов */
-      overflow-y: auto; /* Разрешаем прокрутку только для этой области */
-      width: 100%;
-      box-sizing: border-box;
+      gap: 3px;
     }
 
     #accordions {
@@ -209,22 +202,21 @@ export class PromptDjMidi extends LitElement {
       padding: 3px 0px; /* Горизонтальный padding установлен на 0px */
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
+    #bottom-sticky-container {
+      position: sticky;
+      bottom: 0;
+      z-index: 80;
+    }
     #now-playing-container {
-      position: fixed; /* Сделано фиксированным */
-      bottom: 17vmin; /* Над футером */
-      left: 0;
-      width: 100%;
       display: flex;
       flex-direction: column;
       gap: 1.5vmin;
-      z-index: 90; /* Ниже модальных окон, выше основного контента */
       padding: 1.5vmin; /* Отступы внутри контейнера */
       box-sizing: border-box;
       background-color: rgba(20, 20, 20, 0.7); /* Фон для всего блока */
       border-top: 1px solid rgba(255, 255, 255, 0.2); /* Верхняя граница */
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      height: 36vmin; /* Фиксированная высота */
     }
     .master-controls-bottom {
       display: flex;
@@ -263,15 +255,10 @@ export class PromptDjMidi extends LitElement {
       flex-shrink: 0;
     }
     #footer {
-      position: fixed; /* Прикрепляем к низу */
-      bottom: 0;
-      left: 0;
-      width: 100%;
       height: 17vmin; /* Увеличена высота подвала в 2 раза */
       display: flex;
       align-items: center;
       gap: 1.5vmin;
-      z-index: 80; /* Ниже now-playing-container и аккордеонов */
       padding: 0.75vmin; /* Отступы подвала */
       box-sizing: border-box;
       background-color: rgba(20, 20, 20, 0.7);
@@ -281,31 +268,12 @@ export class PromptDjMidi extends LitElement {
       flex-shrink: 0;
     }
     #central-play-button-container {
-      position: fixed;
-      top: 9vmin; /* Сразу под шапкой */
-      left: 50%;
-      transform: translateX(-50%); /* Центрирование по горизонтали */
-      z-index: 20; /* Выше основного контента, но ниже модальных окон */
       width: 25.5vmin;
       height: 25.5vmin;
       max-width: 150px;
       max-height: 150px;
-    }
-    #bottom-accordions-wrapper { /* Новый контейнер для аккордеонов */
-      position: fixed;
-      bottom: calc(17vmin + 36vmin); /* Над футером и now-playing-container */
-      left: 0;
-      width: 100%;
-      z-index: 92; /* Выше now-playing-container */
-      background-color: rgba(20, 20, 20, 0.7);
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 1.5vmin;
-      box-sizing: border-box;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      margin: 2vmin auto; /* Центрирование и отступ */
+      flex-shrink: 0; /* Предотвращаем сжатие */
     }
     button {
       font: inherit;
@@ -388,7 +356,7 @@ export class PromptDjMidi extends LitElement {
 
     #editing-prompt-display {
       position: fixed;
-      bottom: 47.5vmin; /* Отступ от низа, учитывая новую высоту подвала и now-playing-container */
+      bottom: 54vmin; /* Отступ от низа, чтобы быть над sticky-контейнером */
       left: 0;
       width: 100%;
       background-color: rgba(20, 20, 20, 0.9);
@@ -404,6 +372,7 @@ export class PromptDjMidi extends LitElement {
       transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
       opacity: 0;
       visibility: hidden;
+      pointer-events: none; /* Не мешает прокрутке */
     }
     #editing-prompt-display.showing {
       opacity: 1;
@@ -827,16 +796,7 @@ export class PromptDjMidi extends LitElement {
         <play-pause-button .playbackState=${this.playbackState} @click=${this.playPause}></play-pause-button>
       </div>
 
-      <div id="main-area">
-        <!-- Main content area, now empty as accordions moved to bottom -->
-      </div>
-
-      <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
-        <span>${this.currentEditingPromptText}</span>
-      </div>
-
-      <!-- Новый контейнер для аккордеонов внизу -->
-      <div id="bottom-accordions-wrapper">
+      <div id="accordions-container">
         <!-- Main "Select Style" Accordion -->
         <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
           <button class="accordion-header" @click=${this.handleMainAccordionToggle}>
@@ -876,28 +836,33 @@ export class PromptDjMidi extends LitElement {
         </div>
       </div>
 
-      <!-- Перемещенный блок now-playing-container -->
-      <div id="now-playing-container">
-        <active-prompts-display
-          .prompts=${this.prompts}
-          .audioLevel=${this.audioLevel}
-          @edit-prompt=${this.handleEditPromptRequest}
-          @weight-changed=${this.handleActivePromptWeightChange}
-        ></active-prompts-display>
-        
-        <div class="master-controls-bottom">
-          <div class="master-volume-horizontal-control">
-            <span class="master-volume-label">Volume</span>
-            <horizontal-slider
-              .value=${this.masterVolume * 2}
-              @input=${this.handleMasterVolumeChange}
-            ></horizontal-slider>
-          </div>
-        </div>
+      <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
+        <span>${this.currentEditingPromptText}</span>
       </div>
 
-      <div id="footer">
-        <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
+      <div id="bottom-sticky-container">
+        <div id="now-playing-container">
+          <active-prompts-display
+            .prompts=${this.prompts}
+            .audioLevel=${this.audioLevel}
+            @edit-prompt=${this.handleEditPromptRequest}
+            @weight-changed=${this.handleActivePromptWeightChange}
+          ></active-prompts-display>
+          
+          <div class="master-controls-bottom">
+            <div class="master-volume-horizontal-control">
+              <span class="master-volume-label">Volume</span>
+              <horizontal-slider
+                .value=${this.masterVolume * 2}
+                @input=${this.handleMasterVolumeChange}
+              ></horizontal-slider>
+            </div>
+          </div>
+        </div>
+
+        <div id="footer">
+          <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
+        </div>
       </div>
 
       <preset-manager
