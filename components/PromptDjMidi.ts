@@ -182,7 +182,7 @@ export class PromptDjMidi extends LitElement {
       max-height: 0; /* Start collapsed */
       opacity: 0;
       visibility: hidden; /* Hide content completely when collapsed */
-      padding: 0 1.5vmin 1.5vmin 1.5vmin;
+      /* Removed padding from here */
     }
     .accordion-item.active .accordion-content {
       max-height: 1000px; /* A large enough value to show content */
@@ -195,6 +195,7 @@ export class PromptDjMidi extends LitElement {
       gap: 1vmin;
       height: 100%;
       box-sizing: border-box;
+      padding: 1.5vmin; /* Moved padding here */
     }
     #now-playing-container {
       position: fixed; /* Сделано фиксированным */
@@ -393,9 +394,9 @@ export class PromptDjMidi extends LitElement {
   @state() private activeCategories = new Set<string>();
   @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
+  @state() private showSelectStyleAccordion = false; // Состояние для главного аккордеона "Выбрать стиль"
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
   @state() private currentEditingPromptText = ''; // Новое состояние для текста редактируемого стиля
-  // @state() private showSelectStyleAccordion = false; // УДАЛЕНО: Больше не нужен главный аккордеон "Выбрать стиль"
 
   // New generation settings states
   @state() private temperature = 1.1;
@@ -581,6 +582,14 @@ export class PromptDjMidi extends LitElement {
       newActiveCategories.add(categoryName);
     }
     this.activeCategories = newActiveCategories;
+  }
+
+  private handleMainAccordionToggle() {
+    this.showSelectStyleAccordion = !this.showSelectStyleAccordion;
+    if (this.showSelectStyleAccordion) {
+      // When the main accordion opens, collapse all inner categories
+      this.activeCategories = new Set();
+    }
   }
 
   private handleEqualizerToggle() {
@@ -795,9 +804,17 @@ export class PromptDjMidi extends LitElement {
       </div>
 
       <div id="main-area">
-        <!-- Аккордеоны с категориями стилей музыки -->
-        <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
-          ${this.renderAccordions()}
+        <!-- Main "Select Style" Accordion -->
+        <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
+          <button class="accordion-header" @click=${this.handleMainAccordionToggle}>
+            <span>Выбрать стиль</span>
+            <span class="chevron">${this.showSelectStyleAccordion ? '−' : '+'}</span>
+          </button>
+          <div class="accordion-content">
+            <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
+              ${this.renderAccordions()}
+            </div>
+          </div>
         </div>
 
         <!-- Панель создания пользовательских стилей -->
