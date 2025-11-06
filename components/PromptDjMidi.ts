@@ -171,21 +171,23 @@ export class PromptDjMidi extends LitElement {
       font-size: clamp(16px, 2.5vh, 20px);
       font-weight: 300;
       color: rgba(255, 255, 255, 0.7);
+      transition: transform 0.3s ease-in-out;
+    }
+    .accordion-item.active .chevron {
+      transform: rotate(180deg);
     }
     .accordion-content {
       overflow: hidden;
-      transition: opacity 0.4s ease-in-out, max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease-in-out;
+      max-height: 0; /* Start collapsed */
       opacity: 0;
-      height: 0; /* Изменено с 'auto' на '0' */
-      max-height: 0px;
-      visibility: hidden;
+      visibility: hidden; /* Hide content completely when collapsed */
       padding: 0 1.5vmin 1.5vmin 1.5vmin;
     }
     .accordion-item.active .accordion-content {
+      max-height: 1000px; /* A large enough value to show content */
       opacity: 1;
       visibility: visible;
-      height: auto; /* Добавлено */
-      max-height: 9999px;
     }
     .accordion-grid {
       display: grid;
