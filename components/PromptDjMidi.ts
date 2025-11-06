@@ -48,11 +48,11 @@ export class PromptDjMidi extends LitElement {
       height: 100vh;
       width: 100vw;
       display: flex;
-      flex-direction: column; /* Основной flex-контейнер */
+      flex-direction: column;
       box-sizing: border-box;
       position: relative;
       background: #111;
-      overflow: hidden; /* Сам хост не прокручивается, прокручивается внутренний контент */
+      overflow: hidden; /* Prevent host from scrolling */
     }
     #background {
       position: fixed;
@@ -62,7 +62,7 @@ export class PromptDjMidi extends LitElement {
       background: #111;
     }
     #header {
-      flex-shrink: 0; /* Фиксированная высота */
+      flex-shrink: 0;
       width: 100%;
       height: 9vmin;
       display: flex;
@@ -114,13 +114,10 @@ export class PromptDjMidi extends LitElement {
       fill: currentColor;
     }
 
-    #main-content-wrapper { /* Новый контейнер для прокручиваемого контента */
-      flex-grow: 1; /* Занимает все доступное вертикальное пространство */
-      overflow-y: auto; /* Включает прокрутку */
-      display: flex;
-      flex-direction: column; /* Располагает дочерние элементы вертикально */
-      gap: 3px; /* Отступ между кнопкой воспроизведения и аккордеонами */
-      padding: 1.5vmin; /* Отступы вокруг прокручиваемого контента */
+    #main-scroll-area { /* The scrollable part */
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 1.5vmin;
       box-sizing: border-box;
     }
 
@@ -129,17 +126,35 @@ export class PromptDjMidi extends LitElement {
       height: 25.5vmin;
       max-width: 150px;
       max-height: 150px;
-      margin: 2vmin auto; /* Центрирование с вертикальным отступом */
-      flex-shrink: 0; /* Предотвращаем сжатие */
-      border-radius: 50%; /* Обеспечиваем круглую форму контейнера */
-      overflow: hidden; /* Обрезаем содержимое по круглой форме */
+      margin: 2vmin auto;
+      flex-shrink: 0;
+      border-radius: 50%;
+      overflow: hidden;
     }
 
-    #accordions-container { /* Теперь внутри main-content-wrapper, поэтому прокручивается */
+    #bottom-panels-container { /* The fixed bottom part */
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column-reverse; /* Stacks items from bottom to top */
+      gap: 3px; /* Strict 3px gap */
+      padding: 1.5vmin;
+      background-color: rgba(20, 20, 20, 0.7);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    #accordions-container {
       display: flex;
       flex-direction: column;
       gap: 3px;
+    }
+    
+    #accordions {
       width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
     .accordion-item {
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -214,23 +229,6 @@ export class PromptDjMidi extends LitElement {
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    #bottom-panels-container { /* Фиксирован внизу */
-      flex-shrink: 0; /* Фиксированная высота */
-      display: flex;
-      flex-direction: column;
-      gap: 3px; /* Строгий отступ 3px между дочерними панелями */
-      padding: 1.5vmin; /* Отступы вокруг всего нижнего блока */
-      background-color: rgba(20, 20, 20, 0.7);
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    
-    #now-playing-container {
-      display: flex;
-      flex-direction: column;
-      gap: 3px; /* Строгий отступ 3px между active-prompts-display и master-controls-bottom */
-    }
     .master-controls-bottom {
       display: flex;
       align-items: center;
@@ -355,7 +353,7 @@ export class PromptDjMidi extends LitElement {
 
     #editing-prompt-display {
       position: fixed;
-      bottom: 50vmin; /* Примерное значение, чтобы быть над нижними панелями */
+      bottom: 50vmin;
       left: 0;
       width: 100%;
       background-color: rgba(20, 20, 20, 0.9);
@@ -791,13 +789,37 @@ export class PromptDjMidi extends LitElement {
         </button>
       </div>
 
-      <div id="main-content-wrapper"> <!-- Scrollable content starts here -->
+      <div id="main-scroll-area">
         <div id="central-play-button-container">
           <play-pause-button 
             .playbackState=${this.playbackState} 
             @click=${this.playPause}
           ></play-pause-button>
         </div>
+      </div>
+
+      <div id="bottom-panels-container">
+        <!-- HTML order is reversed, but visually correct due to flex-direction: column-reverse -->
+        <div id="footer">
+          <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
+        </div>
+
+        <div class="master-controls-bottom">
+          <div class="master-volume-horizontal-control">
+            <span class="master-volume-label">Volume</span>
+            <horizontal-slider
+              .value=${this.masterVolume * 2}
+              @input=${this.handleMasterVolumeChange}
+            ></horizontal-slider>
+          </div>
+        </div>
+
+        <active-prompts-display
+          .prompts=${this.prompts}
+          .audioLevel=${this.audioLevel}
+          @edit-prompt=${this.handleEditPromptRequest}
+          @weight-changed=${this.handleActivePromptWeightChange}
+        ></active-prompts-display>
 
         <div id="accordions-container">
           <!-- Main "Select Style" Accordion -->
@@ -838,32 +860,7 @@ export class PromptDjMidi extends LitElement {
             </div>
           </div>
         </div>
-      </div> <!-- End of main-content-wrapper -->
-
-      <div id="bottom-panels-container"> <!-- Fixed bottom panels start here -->
-        <div id="now-playing-container">
-          <active-prompts-display
-            .prompts=${this.prompts}
-            .audioLevel=${this.audioLevel}
-            @edit-prompt=${this.handleEditPromptRequest}
-            @weight-changed=${this.handleActivePromptWeightChange}
-          ></active-prompts-display>
-          
-          <div class="master-controls-bottom">
-            <div class="master-volume-horizontal-control">
-              <span class="master-volume-label">Volume</span>
-              <horizontal-slider
-                .value=${this.masterVolume * 2}
-                @input=${this.handleMasterVolumeChange}
-              ></horizontal-slider>
-            </div>
-          </div>
-        </div>
-
-        <div id="footer">
-          <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
-        </div>
-      </div> <!-- End of bottom-panels-container -->
+      </div>
 
       <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
         <span>${this.currentEditingPromptText}</span>
