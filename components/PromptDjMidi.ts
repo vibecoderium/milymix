@@ -48,11 +48,11 @@ export class PromptDjMidi extends LitElement {
       height: 100vh;
       width: 100vw;
       display: flex;
-      flex-direction: column;
+      flex-direction: column; /* Основной flex-контейнер */
       box-sizing: border-box;
       position: relative;
       background: #111;
-      overflow: hidden; /* Prevent host from scrolling */
+      overflow: hidden; /* Сам хост не прокручивается, прокручивается внутренний контент */
     }
     #background {
       position: fixed;
@@ -62,7 +62,7 @@ export class PromptDjMidi extends LitElement {
       background: #111;
     }
     #header {
-      flex-shrink: 0;
+      flex-shrink: 0; /* Фиксированная высота */
       width: 100%;
       height: 9vmin;
       display: flex;
@@ -114,47 +114,40 @@ export class PromptDjMidi extends LitElement {
       fill: currentColor;
     }
 
-    #main-scroll-area { /* The scrollable part */
-      flex-grow: 1;
-      overflow-y: auto;
-      padding: 1.5vmin;
+    #main-layout-container { /* Контейнер для прокручиваемого и фиксированного нижнего контента */
+      flex-grow: 1; /* Занимает все доступное вертикальное пространство */
+      display: flex;
+      flex-direction: column;
+      padding: 1.5vmin; /* Отступы вокруг всего контента, кроме шапки */
       box-sizing: border-box;
+      gap: 3px; /* Отступ между прокручиваемым контентом и фиксированными нижними панелями */
+    }
+
+    #scrollable-content { /* Прокручиваемая центральная область */
+      flex-grow: 1; /* Занимает все доступное пространство в main-layout-container */
+      overflow-y: auto; /* Включает прокрутку */
+      display: flex;
+      flex-direction: column;
+      gap: 3px; /* Отступ между кнопкой воспроизведения и аккордеонами */
     }
 
     #central-play-button-container {
+      flex-shrink: 0; /* Предотвращаем сжатие */
       width: 25.5vmin;
       height: 25.5vmin;
       max-width: 150px;
       max-height: 150px;
-      margin: 2vmin auto;
-      flex-shrink: 0;
-      border-radius: 50%;
-      overflow: hidden;
+      margin: 2vmin auto; /* Центрирование с вертикальным отступом */
+      border-radius: 50%; /* Обеспечиваем круглую форму контейнера */
+      overflow: hidden; /* Обрезаем содержимое по круглой форме */
     }
 
-    #bottom-panels-container { /* The fixed bottom part */
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column-reverse; /* Stacks items from bottom to top */
-      gap: 3px; /* Strict 3px gap */
-      padding: 1.5vmin;
-      background-color: rgba(20, 20, 20, 0.7);
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    
-    #accordions-container {
+    #accordions-container { /* Теперь внутри scrollable-content, поэтому прокручивается */
       display: flex;
       flex-direction: column;
       gap: 3px;
-    }
-    
-    #accordions {
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      flex-grow: 1; /* Позволяет аккордеонам занимать оставшееся пространство в scrollable-content */
     }
     .accordion-item {
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -203,7 +196,7 @@ export class PromptDjMidi extends LitElement {
       visibility: hidden;
     }
     .accordion-item.active .accordion-content {
-      max-height: 1000px;
+      max-height: 1000px; /* Достаточно большое значение для раскрытия */
       opacity: 1;
       visibility: visible;
     }
@@ -229,6 +222,24 @@ export class PromptDjMidi extends LitElement {
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
+    #fixed-bottom-panels { /* Фиксированный нижний блок */
+      flex-shrink: 0; /* Предотвращаем сжатие */
+      display: flex;
+      flex-direction: column-reverse; /* Располагает элементы снизу вверх */
+      gap: 3px; /* Строгий отступ 3px между дочерними панелями */
+      background-color: rgba(20, 20, 20, 0.7);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 1.5vmin; /* Отступы вокруг всего нижнего блока */
+      box-sizing: border-box;
+    }
+    
+    #now-playing-container { /* Панель активных ручек звука и громкости */
+      display: flex;
+      flex-direction: column;
+      gap: 3px; /* Строгий отступ 3px между active-prompts-display и master-controls-bottom */
+    }
     .master-controls-bottom {
       display: flex;
       align-items: center;
@@ -260,7 +271,7 @@ export class PromptDjMidi extends LitElement {
       max-width: 100%;
     }
     
-    #footer {
+    #footer { /* Панель ввода текста */
       height: 17vmin;
       display: flex;
       align-items: center;
@@ -353,7 +364,7 @@ export class PromptDjMidi extends LitElement {
 
     #editing-prompt-display {
       position: fixed;
-      bottom: 50vmin;
+      bottom: 50vmin; /* Примерное значение, чтобы быть над нижними панелями */
       left: 0;
       width: 100%;
       background-color: rgba(20, 20, 20, 0.9);
@@ -789,73 +800,76 @@ export class PromptDjMidi extends LitElement {
         </button>
       </div>
 
-      <div id="main-scroll-area">
-        <div id="central-play-button-container">
-          <play-pause-button 
-            .playbackState=${this.playbackState} 
-            @click=${this.playPause}
-          ></play-pause-button>
-        </div>
-      </div>
-
-      <div id="bottom-panels-container">
-        <!-- HTML order is reversed, but visually correct due to flex-direction: column-reverse -->
-        <div id="footer">
-          <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
-        </div>
-
-        <div class="master-controls-bottom">
-          <div class="master-volume-horizontal-control">
-            <span class="master-volume-label">Volume</span>
-            <horizontal-slider
-              .value=${this.masterVolume * 2}
-              @input=${this.handleMasterVolumeChange}
-            ></horizontal-slider>
+      <div id="main-layout-container">
+        <div id="scrollable-content">
+          <div id="central-play-button-container">
+            <play-pause-button 
+              .playbackState=${this.playbackState} 
+              @click=${this.playPause}
+            ></play-pause-button>
           </div>
         </div>
 
-        <active-prompts-display
-          .prompts=${this.prompts}
-          .audioLevel=${this.audioLevel}
-          @edit-prompt=${this.handleEditPromptRequest}
-          @weight-changed=${this.handleActivePromptWeightChange}
-        ></active-prompts-display>
+        <div id="fixed-bottom-panels">
+          <!-- HTML order is reversed for visual order: footer (bottom), master-controls-bottom, active-prompts-display, accordions-container (top) -->
+          <div id="footer">
+            <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
+          </div>
 
-        <div id="accordions-container">
-          <!-- Main "Select Style" Accordion -->
-          <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
-            <button class="accordion-header" @click=${this.handleMainAccordionToggle}>
-              <span>Выбрать стиль</span>
-              <span class="chevron">${this.showSelectStyleAccordion ? '−' : '+'}</span>
-            </button>
-            <div class="accordion-content">
-              <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
-                ${this.renderCategoriesAsSections()}
-              </div>
+          <div class="master-controls-bottom">
+            <div class="master-volume-horizontal-control">
+              <span class="master-volume-label">Volume</span>
+              <horizontal-slider
+                .value=${this.masterVolume * 2}
+                @input=${this.handleMasterVolumeChange}
+              ></horizontal-slider>
             </div>
           </div>
 
-          <!-- Панель создания пользовательских стилей -->
-          <div class="accordion-item ${this.showCustomCreator ? 'active' : ''}">
-            <button class="accordion-header" @click=${() => this.showCustomCreator = !this.showCustomCreator}>
-              <span>Создать свой стиль</span>
-              <span class="chevron">${this.showCustomCreator ? '−' : '+'}</span>
-            </button>
-            <div class="accordion-content">
-              <custom-prompt-creator 
-                @create-custom-prompt=${this.handleCreateCustomPrompt}
-                @update-generation-settings=${this.handleUpdateGenerationSettings}
-                .temperature=${this.temperature}
-                .guidance=${this.guidance}
-                .topK=${this.topK}
-                .seed=${this.seed}
-                .bpm=${this.bpm}
-                .density=${this.density}
-                .brightness=${this.brightness}
-                .brightnessAuto=${this.brightnessAuto}
-                .scale=${this.scale}
-                .musicGenerationMode=${this.musicGenerationMode}
-              ></custom-prompt-creator>
+          <active-prompts-display
+            .prompts=${this.prompts}
+            .audioLevel=${this.audioLevel}
+            @edit-prompt=${this.handleEditPromptRequest}
+            @weight-changed=${this.handleActivePromptWeightChange}
+          ></active-prompts-display>
+
+          <div id="accordions-container">
+            <!-- Main "Select Style" Accordion -->
+            <div class="accordion-item ${this.showSelectStyleAccordion ? 'active' : ''}">
+              <button class="accordion-header" @click=${this.handleMainAccordionToggle}>
+                <span>Выбрать стиль</span>
+                <span class="chevron">${this.showSelectStyleAccordion ? '−' : '+'}</span>
+              </button>
+              <div class="accordion-content">
+                <div id="accordions" @edit-prompt=${this.handleEditPromptRequest}>
+                  ${this.renderCategoriesAsSections()}
+                </div>
+              </div>
+            </div>
+
+            <!-- Панель создания пользовательских стилей -->
+            <div class="accordion-item ${this.showCustomCreator ? 'active' : ''}">
+              <button class="accordion-header" @click=${() => this.showCustomCreator = !this.showCustomCreator}>
+                <span>Создать свой стиль</span>
+                <span class="chevron">${this.showCustomCreator ? '−' : '+'}</span>
+              </button>
+              <div class="accordion-content">
+                <custom-prompt-creator 
+                  @create-custom-prompt=${this.handleCreateCustomPrompt}
+                  @update-generation-settings=${this.handleUpdateGenerationSettings}
+                  .temperature=${this.temperature}
+                  .guidance=${this.guidance}
+                  .topK=${this.topK}
+                  .seed=${this.seed}
+                  .bpm=${this.bpm}
+                  .density=${this.density}
+                  .densityAuto=${this.densityAuto}
+                  .brightness=${this.brightness}
+                  .brightnessAuto=${this.brightnessAuto}
+                  .scale=${this.scale}
+                  .musicGenerationMode=${this.musicGenerationMode}
+                ></custom-prompt-creator>
+              </div>
             </div>
           </div>
         </div>
