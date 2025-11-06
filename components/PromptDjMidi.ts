@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, svg } from 'lit'; // Добавлен svg
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js'; // Импортируем classMap
@@ -96,18 +96,27 @@ export class PromptDjMidi extends LitElement {
       background: none;
       border: none;
       color: #fff;
-      font-size: clamp(20px, 3.5vmin, 30px);
+      /* font-size: clamp(20px, 3.5vmin, 30px); */ /* Удалено, так как теперь используется SVG */
       cursor: pointer;
       padding: 0.5vmin;
       margin-left: auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 50%;
+      border-radius: 4px; /* Сделано квадратным */
       transition: background-color 0.2s;
+      width: 5vmin; /* Задаем фиксированную ширину для квадратной кнопки */
+      height: 5vmin; /* Задаем фиксированную высоту для квадратной кнопки */
+      min-width: 30px; /* Минимальный размер для кнопки */
+      min-height: 30px; /* Минимальный размер для кнопки */
     }
     .header-button:hover {
       background-color: rgba(255, 255, 255, 0.1);
+    }
+    .header-button svg { /* Стили для SVG внутри кнопки */
+      width: 100%;
+      height: 100%;
+      fill: currentColor; /* Используем цвет текста кнопки */
     }
     
     #main-area {
@@ -752,6 +761,14 @@ export class PromptDjMidi extends LitElement {
     this.dispatchEvent(new CustomEvent(e.type, { detail: (e as CustomEvent).detail }));
   }
 
+  private renderEqualizerIcon() {
+    return svg`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M10 20H14V4H10V20ZM4 20H8V12H4V20ZM16 20H20V7H16V20Z"></path>
+      </svg>
+    `;
+  }
+
   override render() {
     const bg = styleMap({
       backgroundImage: this.makeBackground(),
@@ -765,7 +782,7 @@ export class PromptDjMidi extends LitElement {
         <img src="/logow.png" alt="Logo" class="header-logo">
         <span class="app-title">Milymix</span>
         <button class="header-button" @click=${this.handleEqualizerToggle} title="Graphic Equalizer">
-          &#x1F39B;
+          ${this.renderEqualizerIcon()}
         </button>
       </div>
 
