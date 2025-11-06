@@ -4,6 +4,7 @@
  */
 import { svg, css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import type { PlaybackState } from '../types';
 
 @customElement('play-pause-button')
@@ -20,13 +21,22 @@ export class PlayPauseButton extends LitElement {
       justify-content: center;
       pointer-events: none;
     }
-    :host(:hover) svg {
-      transform: scale(1.2);
-    }
-    svg {
-      width: 100%;
-      height: 100%;
+    /* Удалены старые стили для svg на ховере */
+    .logo-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60%; /* Размер логотипа относительно кнопки */
+      height: 60%;
+      object-fit: contain;
       transition: transform 0.5s cubic-bezier(0.25, 1.56, 0.32, 0.99);
+    }
+    :host(:hover) .logo-image:not(.loading) { /* Только масштабирование, если не загружается */
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+    .logo-image.loading {
+      animation: spin linear 1s infinite;
     }
     .hitbox {
       pointer-events: all;
@@ -37,21 +47,14 @@ export class PlayPauseButton extends LitElement {
       border-radius: 50%;
       cursor: pointer;
     }
-    .loader {
-      stroke: #ffffff;
-      stroke-width: 3;
-      stroke-linecap: round;
-      animation: spin linear 1s infinite;
-      transform-origin: center;
-      transform-box: fill-box;
-    }
+    /* Удалены старые стили для .loader */
     @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(359deg); }
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(359deg); }
     }
   `;
 
-  private renderSvg() {
+  private renderSvgBackground() {
     return html` <svg
       width="140"
       height="140"
@@ -86,7 +89,6 @@ export class PlayPauseButton extends LitElement {
           fill-opacity="0.05"
           shape-rendering="crispEdges" />
       </g>
-      ${this.renderIcon()}
       <defs>
         <filter
           id="filter0_ddi_1048_7373"
@@ -135,14 +137,8 @@ export class PlayPauseButton extends LitElement {
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-            result="hardAlpha" />
-          <feOffset dy="3" />
-          <feGaussianBlur stdDeviation="1.5" />
-          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0" />
+            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0"
+            result="effect3_innerShadow_1048_7373" />
           <feBlend
             mode="normal"
             in2="shape"
@@ -152,34 +148,19 @@ export class PlayPauseButton extends LitElement {
     </svg>`;
   }
 
-  private renderPause() {
-    return svg`<path
-      d="M75.0037 69V39H83.7537V69H75.0037ZM56.2537 69V39H65.0037V69H56.2537Z"
-      fill="#FEFEFE"
-    />`;
-  }
-
-  private renderPlay() {
-    return svg`<path d="M60 71.5V36.5L87.5 54L60 71.5Z" fill="#FEFEFE" />`;
-  }
-
-  private renderLoading() {
-    return svg`<path shape-rendering="crispEdges" class="loader" d="M70,74.2L70,74.2c-10.7,0-19.5-8.7-19.5-19.5l0,0c0-10.7,8.7-19.5,19.5-19.5
-            l0,0c10.7,0,19.5,8.7,19.5,19.5l0,0"/>`;
-  }
-
-  private renderIcon() {
-    if (this.playbackState === 'playing') {
-      return this.renderPause();
-    } else if (this.playbackState === 'loading') {
-      return this.renderLoading();
-    } else {
-      return this.renderPlay();
-    }
-  }
+  // Удалены методы renderPause, renderPlay, renderLoading
 
   override render() {
-    return html`${this.renderSvg()}<div class="hitbox"></div>`;
+    const logoClasses = {
+      'logo-image': true,
+      'loading': this.playbackState === 'loading'
+    };
+
+    return html`
+      ${this.renderSvgBackground()}
+      <img src="/logow.png" alt="Logo" class=${classMap(logoClasses)} />
+      <div class="hitbox"></div>
+    `;
   }
 }
 

@@ -7,7 +7,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js'; // Импортируем classMap
 
-// import { throttle } from '../utils/throttle'; // Удален импорт throttle
+import { throttle } from '../utils/throttle';
 
 import './PromptController';
 import './PlayPauseButton';
@@ -285,10 +285,10 @@ export class PromptDjMidi extends LitElement {
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 98; /* Выше футера, но ниже модальных окон */
-      width: 17vmin; /* Сохраняет размер кнопки */
-      height: 17vmin;
-      max-width: 100px;
-      max-height: 100px;
+      width: 51vmin; /* Увеличено в 3 раза */
+      height: 51vmin; /* Увеличено в 3 раза */
+      max-width: 300px; /* Увеличено в 3 раза */
+      max-height: 300px; /* Увеличено в 3 раза */
     }
     button {
       font: inherit;
