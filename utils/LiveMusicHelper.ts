@@ -208,7 +208,8 @@ export class LiveMusicHelper extends EventTarget {
     this.setPlaybackState('loading');
     this.session = await this.getSession();
 
-    await this.session.setMusicGenerationConfig(this.generationConfig);
+    // Fix: Wrap generationConfig in an object with the key 'musicGenerationConfig'
+    await this.session.setMusicGenerationConfig({ musicGenerationConfig: this.generationConfig });
 
     this.preMasterNode = this.audioContext.createGain();
     // Connect source to the start of the EQ chain
@@ -319,7 +320,7 @@ export class LiveMusicHelper extends EventTarget {
     if ((mappedConfig.seed as any) === 'Auto') mappedConfig.seed = undefined;
     if ((mappedConfig.bpm as any) === 'Auto') mappedConfig.bpm = undefined;
     if ((mappedConfig.scale as any) === 'Auto') mappedConfig.scale = undefined;
-    // Convert 'Quality', 'Diversity', 'Vocalization' to uppercase enum values
+    // Convert 'Quality', 'Diversity', 'Vocalisation' to uppercase enum values
     if (mappedConfig.musicGenerationMode) {
         mappedConfig.musicGenerationMode = (mappedConfig.musicGenerationMode as string).toUpperCase() as any;
     }
