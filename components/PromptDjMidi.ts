@@ -203,7 +203,7 @@ export class PromptDjMidi extends LitElement {
     }
     .accordion-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(11vmin, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(19vmin, 1fr));
       gap: 3px;
       box-sizing: border-box;
       padding: 0px;

@@ -21,6 +21,9 @@ function hexToRgb(hex: string): { r: number, g: number, b: number } | null {
 // Fix: The class must extend LitElement to be a valid web component.
 export class PromptController extends LitElement {
   static override styles = css`
+    :host {
+      display: flex;
+    }
     .prompt-button {
       width: 100%;
       height: 100%;
