@@ -41,9 +41,9 @@ export class CustomPromptCreator extends LitElement {
             justify-content: center; /* Центрируем элементы */
         }
         .input-label {
-            font-size: 1.6vmin;
-            color: #ccc;
-            font-weight: 500;
+            font-size: 1.8vmin;
+            color: #fff;
+            font-weight: 600;
             white-space: nowrap;
             flex-shrink: 0;
         }
@@ -74,24 +74,29 @@ export class CustomPromptCreator extends LitElement {
             color: #fff;
             font-size: 1.6vmin;
         }
-        input[type="color"] {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            width: 5vmin;
-            height: 5vmin;
-            background-color: transparent;
-            border: none;
+        .color-picker-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 7vmin;
+            height: 7vmin;
+            font-size: 4vmin;
             cursor: pointer;
-            flex-shrink: 0; /* Предотвращаем сжатие */
+            border-radius: 8px;
+            background-color: #333;
+            border: 1px solid #555;
+            transition: background-color 0.2s;
+            user-select: none;
         }
-        input[type="color"]::-webkit-color-swatch {
-            border-radius: 50%;
-            border: 2px solid #fff;
+        .color-picker-label:hover {
+            background-color: #444;
         }
-        input[type="color"]::-moz-color-swatch {
-            border-radius: 50%;
-            border: 2px solid #fff;
+        .color-picker-input {
+            width: 0;
+            height: 0;
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
         }
         .details-grid, .settings-grid {
             display: grid;
@@ -415,12 +420,15 @@ export class CustomPromptCreator extends LitElement {
                         .value=${this.text}
                         @input=${(e: InputEvent) => this.text = (e.target as HTMLInputElement).value}
                     >
-                    <input 
-                        type="color" 
-                        title="Выбрать цвет"
-                        .value=${this.color}
-                        @input=${(e: InputEvent) => this.color = (e.target as HTMLInputElement).value}
-                    >
+                    <label class="color-picker-label" title="Выбрать цвет">
+                        🎨
+                        <input 
+                            type="color"
+                            class="color-picker-input"
+                            .value=${this.color}
+                            @input=${(e: InputEvent) => this.color = (e.target as HTMLInputElement).value}
+                        >
+                    </label>
                 </div>
                 <div class="action-row">
                     <div class="knob-and-label">
