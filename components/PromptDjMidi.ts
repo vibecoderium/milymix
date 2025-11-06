@@ -70,11 +70,11 @@ export class PromptDjMidi extends LitElement {
       height: 9vmin; /* Высота шапки */
       display: flex;
       align-items: center;
-      gap: 3px; /* Уменьшено до 3px */
+      gap: 1.5vmin;
       z-index: 10;
       flex-shrink: 0;
       background-color: rgba(20, 20, 20, 0.7);
-      padding: 0 3px; /* Уменьшено до 3px */
+      padding: 0 1.5vmin;
       box-sizing: border-box;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
@@ -97,7 +97,7 @@ export class PromptDjMidi extends LitElement {
       border: none;
       color: #fff;
       cursor: pointer;
-      padding: 3px; /* Уменьшено до 3px */
+      padding: 0.5vmin;
       margin-left: auto;
       display: flex;
       align-items: center;
@@ -123,7 +123,7 @@ export class PromptDjMidi extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 3px; /* Уменьшено до 3px */
-      padding: 3px; /* Уменьшено до 3px */
+      padding: 1.5vmin;
       padding-top: 9vmin; /* Отступ сверху для фиксированной шапки */
       padding-bottom: 49vmin; /* Увеличено для новой высоты нижних фиксированных блоков */
       overflow-y: auto; /* Разрешаем прокрутку только для этой области */
@@ -216,9 +216,9 @@ export class PromptDjMidi extends LitElement {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 3px; /* Уменьшено до 3px */
+      gap: 1.5vmin;
       z-index: 90; /* Ниже модальных окон, выше основного контента */
-      padding: 3px; /* Уменьшено до 3px */
+      padding: 1.5vmin; /* Отступы внутри контейнера */
       box-sizing: border-box;
       background-color: rgba(20, 20, 20, 0.7); /* Фон для всего блока */
       border-top: 1px solid rgba(255, 255, 255, 0.2); /* Верхняя граница */
@@ -228,22 +228,22 @@ export class PromptDjMidi extends LitElement {
     .master-controls-bottom {
       display: flex;
       align-items: center;
-      gap: 3px; /* Уменьшено до 3px */
+      gap: 1.5vmin;
       width: 100%;
       background-color: rgba(20, 20, 20, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
-      padding: 3px; /* Уменьшено до 3px */
+      padding: 1.5vmin;
       box-sizing: border-box;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
     .master-volume-horizontal-control {
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px; /* Уменьшено до 3px */
-      flex-grow: 1;
+      gap: 0.5vmin;
     }
     .master-volume-label {
       font-size: 4.8vmin;
@@ -269,9 +269,9 @@ export class PromptDjMidi extends LitElement {
       height: 17vmin; /* Увеличена высота подвала в 2 раза */
       display: flex;
       align-items: center;
-      gap: 3px; /* Уменьшено до 3px */
+      gap: 1.5vmin;
       z-index: 95; /* Ниже модальных окон, выше других фиксированных элементов */
-      padding: 3px; /* Уменьшено до 3px */
+      padding: 0.75vmin; /* Отступы подвала */
       box-sizing: border-box;
       background-color: rgba(20, 20, 20, 0.7);
       backdrop-filter: blur(10px);
@@ -374,7 +374,7 @@ export class PromptDjMidi extends LitElement {
       font-size: clamp(20px, 4vmin, 32px);
       font-weight: 600;
       text-align: center;
-      padding: 3px; /* Уменьшено до 3px */
+      padding: 1.5vmin;
       box-sizing: border-box;
       z-index: 99;
       backdrop-filter: blur(10px);
@@ -506,30 +506,22 @@ export class PromptDjMidi extends LitElement {
     () => {
       const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 
-      const MAX_WEIGHT = 2.0; // Changed from 0.5 to 2.0
+      const MAX_WEIGHT = 0.5;
       const MAX_ALPHA = 0.6;
 
       const bg: string[] = [];
       const numPrompts = this.prompts.size;
-      // Handle case where numPrompts is 0 or 1 to avoid division by zero or incorrect positioning
-      const numCols = numPrompts > 0 ? Math.ceil(Math.sqrt(numPrompts)) : 1;
+      const numCols = Math.ceil(Math.sqrt(numPrompts));
 
       [...this.prompts.values()].forEach((p, i) => {
-        // Calculate alpha based on weight, scaling it from 0-2 to 0-1, then applying MAX_ALPHA
-        const normalizedWeight = p.weight / MAX_WEIGHT; // 0 to 1
-        const alphaPct = clamp01(normalizedWeight) * MAX_ALPHA;
+        const alphaPct = clamp01(p.weight / MAX_WEIGHT) * MAX_ALPHA;
         const alpha = Math.round(alphaPct * 0xff)
           .toString(16)
           .padStart(2, '0');
 
-        // The stop value for the radial gradient, also scaled from 0-2 to 0-1
-        const stop = p.weight / 2; 
-        
-        // Calculate position for the radial gradient
-        // Ensure numCols - 1 is not zero for single prompt
-        const x = numCols > 1 ? (i % numCols) / (numCols - 1) : 0.5;
-        const y = numCols > 1 ? Math.floor(i / numCols) / (numCols - 1) : 0.5;
-        
+        const stop = p.weight / 2;
+        const x = (i % numCols) / (numCols - 1);
+        const y = Math.floor(i / numCols) / (numCols - 1);
         const s = `radial-gradient(circle at ${x * 100}% ${y * 100}%, ${p.color}${alpha} 0px, ${p.color}00 ${stop * 100}%)`;
 
         bg.push(s);
