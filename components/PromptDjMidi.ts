@@ -96,7 +96,6 @@ export class PromptDjMidi extends LitElement {
       background: none;
       border: none;
       color: #fff;
-      /* font-size: clamp(20px, 3.5vmin, 30px); */ /* Удалено, так как теперь используется SVG */
       cursor: pointer;
       padding: 0.5vmin;
       margin-left: auto;
@@ -177,7 +176,7 @@ export class PromptDjMidi extends LitElement {
       overflow: hidden;
       transition: opacity 0.4s ease-in-out, max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
       opacity: 0;
-      height: auto;
+      height: 0; /* Изменено с 'auto' на '0' */
       max-height: 0px;
       visibility: hidden;
       padding: 0 1.5vmin 1.5vmin 1.5vmin;
@@ -185,6 +184,7 @@ export class PromptDjMidi extends LitElement {
     .accordion-item.active .accordion-content {
       opacity: 1;
       visibility: visible;
+      height: auto; /* Добавлено */
       max-height: 9999px;
     }
     .accordion-grid {
