@@ -196,7 +196,6 @@ const PROMPT_CATEGORIES = [
       { color: '#ff6666', text: 'Биты и высокие басы' },
       { color: '#66ccff', text: 'Четкие инструментальные биты' },
       { color: '#cc66ff', text: 'Андеграунд 80-х' },
-      { color: '#ffff00', text: 'Дагестанская лезгинка' },
     ]
   },
   {
@@ -210,6 +209,7 @@ const PROMPT_CATEGORIES = [
       { color: '#ff25f6', text: 'K-Pop' },
       { color: '#cc0000', text: 'Tango' },
       { color: '#33cc33', text: 'Celtic Folk' },
+      { color: '#ffff00', text: 'Лезгинка' },
     ]
   },
   {
