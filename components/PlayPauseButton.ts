@@ -8,7 +8,6 @@ import { classMap } from 'lit/directives/class-map.js';
 import type { PlaybackState } from '../types';
 
 @customElement('play-pause-button')
-// Fix: The class must extend LitElement to be a valid web component.
 export class PlayPauseButton extends LitElement {
 
   @property({ type: String }) playbackState: PlaybackState = 'stopped';
@@ -17,11 +16,24 @@ export class PlayPauseButton extends LitElement {
     :host {
       position: relative;
       display: flex;
+      flex-direction: column; /* Для размещения текста под кнопкой */
       align-items: center;
       justify-content: center;
       pointer-events: none;
+      width: 100%; /* Занимает всю доступную ширину контейнера */
+      height: 100%; /* Занимает всю доступную высоту контейнера */
     }
-    /* Удалены старые стили для svg на ховере */
+    .button-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      aspect-ratio: 1; /* Делает контейнер квадратным */
+      border-radius: 50%; /* Делает контейнер круглым */
+      pointer-events: all; /* Разрешает события на кнопке */
+      cursor: pointer;
+    }
     .logo-image {
       position: absolute;
       top: 50%;
@@ -32,22 +44,27 @@ export class PlayPauseButton extends LitElement {
       object-fit: contain;
       transition: transform 0.5s cubic-bezier(0.25, 1.56, 0.32, 0.99);
     }
-    :host(:hover) .logo-image:not(.loading) { /* Только масштабирование, если не загружается */
+    .button-wrapper:hover .logo-image:not(.loading) { /* Только масштабирование, если не загружается */
       transform: translate(-50%, -50%) scale(1.2);
     }
     .logo-image.loading {
       animation: spin linear 1s infinite;
     }
     .hitbox {
-      pointer-events: all;
       position: absolute;
-      width: 65%;
-      aspect-ratio: 1;
-      top: 9%;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
-      cursor: pointer;
+      /* background: rgba(255,0,0,0.1); /* Для отладки */ */
     }
-    /* Удалены старые стили для .loader */
+    .button-text {
+      margin-top: 1vmin; /* Отступ текста от кнопки */
+      color: #fff;
+      font-size: clamp(16px, 2.5vmin, 24px);
+      font-weight: 600;
+      text-transform: uppercase;
+      pointer-events: none; /* Текст не должен перехватывать клики */
+    }
     @keyframes spin {
       from { transform: translate(-50%, -50%) rotate(0deg); }
       to { transform: translate(-50%, -50%) rotate(359deg); }
@@ -148,8 +165,6 @@ export class PlayPauseButton extends LitElement {
     </svg>`;
   }
 
-  // Удалены методы renderPause, renderPlay, renderLoading
-
   override render() {
     const logoClasses = {
       'logo-image': true,
@@ -157,9 +172,12 @@ export class PlayPauseButton extends LitElement {
     };
 
     return html`
-      ${this.renderSvgBackground()}
-      <img src="/logow.png" alt="Logo" class=${classMap(logoClasses)} />
-      <div class="hitbox"></div>
+      <div class="button-wrapper" @click=${() => this.dispatchEvent(new CustomEvent('click'))}>
+        ${this.renderSvgBackground()}
+        <img src="/logow.png" alt="Logo" class=${classMap(logoClasses)} />
+        <div class="hitbox"></div>
+      </div>
+      <span class="button-text">Start</span>
     `;
   }
 }
