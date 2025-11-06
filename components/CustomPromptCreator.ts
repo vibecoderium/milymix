@@ -41,7 +41,7 @@ export class CustomPromptCreator extends LitElement {
             justify-content: center; /* Центрируем элементы */
         }
         .input-label {
-            font-size: 1.8vmin;
+            font-size: clamp(14px, 2vh, 18px);
             color: #fff;
             font-weight: 600;
             white-space: nowrap;
