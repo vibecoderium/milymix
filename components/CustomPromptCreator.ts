@@ -13,7 +13,7 @@ export class CustomPromptCreator extends LitElement {
     static override styles = css`
         :host {
             display: block;
-            /* padding: 1.5vmin; */ /* Удалено, теперь управляется родительским аккордеоном */
+            padding: 1.5vmin;
             box-sizing: border-box;
             width: 100%;
         }
