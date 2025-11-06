@@ -388,7 +388,7 @@ export class PromptDjMidi extends LitElement {
 
   @state() private editingPromptId: string | null = null;
   @state() private editorWeight = 0;
-  @state() private activeCategory: string | null = null;
+  @state() private activeCategories = new Set<string>();
   @state() private showEqualizer = false; // Состояние для отображения модального окна эквалайзера
   @state() private showCustomCreator = false; // Состояние для нового аккордеона
   @state() private masterVolume = 0.8; // Новое состояние для общей громкости
@@ -572,7 +572,13 @@ export class PromptDjMidi extends LitElement {
   }
 
   private handleAccordionToggle(categoryName: string) {
-    this.activeCategory = this.activeCategory === categoryName ? null : categoryName;
+    const newActiveCategories = new Set(this.activeCategories);
+    if (newActiveCategories.has(categoryName)) {
+      newActiveCategories.delete(categoryName);
+    } else {
+      newActiveCategories.add(categoryName);
+    }
+    this.activeCategories = newActiveCategories;
   }
 
   private handleEqualizerToggle() {
@@ -887,7 +893,7 @@ export class PromptDjMidi extends LitElement {
 
   private renderAccordions() {
     return this.promptCategories.map(category => {
-      const isActive = this.activeCategory === category.name;
+      const isActive = this.activeCategories.has(category.name);
       return html`
         <div class="accordion-item ${isActive ? 'active' : ''}">
           <button class="accordion-header" @click=${() => this.handleAccordionToggle(category.name)}>
