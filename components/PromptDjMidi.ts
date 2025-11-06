@@ -52,7 +52,7 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       position: relative;
       background: #111;
-      overflow: hidden; /* Prevent host from scrolling */
+      overflow-y: auto; /* Разрешаем прокрутку для всего компонента */
     }
     #background {
       position: fixed;
@@ -62,7 +62,8 @@ export class PromptDjMidi extends LitElement {
       background: #111;
     }
     #header {
-      flex-shrink: 0;
+      position: sticky; /* Приклеиваем к верху */
+      top: 0;
       width: 100%;
       height: 9vmin;
       display: flex;
@@ -74,6 +75,7 @@ export class PromptDjMidi extends LitElement {
       box-sizing: border-box;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      flex-shrink: 0;
     }
     .header-logo {
       height: calc(100% - 6px);
@@ -114,9 +116,11 @@ export class PromptDjMidi extends LitElement {
       fill: currentColor;
     }
 
-    #main-scroll-area { /* The scrollable part */
-      flex-grow: 1;
-      overflow-y: auto;
+    #main-content-area { /* Область для прокручиваемого контента */
+      flex-grow: 1; /* Занимает все доступное пространство */
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
       padding: 1.5vmin;
       box-sizing: border-box;
     }
@@ -132,7 +136,9 @@ export class PromptDjMidi extends LitElement {
       overflow: hidden;
     }
 
-    #bottom-panels-container { /* The fixed bottom part */
+    #bottom-panels-container { /* Нижний блок, который будет приклеен */
+      position: sticky;
+      bottom: 0;
       flex-shrink: 0;
       display: flex;
       flex-direction: column-reverse; /* Stacks items from bottom to top */
@@ -142,6 +148,7 @@ export class PromptDjMidi extends LitElement {
       border-top: 1px solid rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      z-index: 10; /* Должен быть выше основного контента */
     }
     
     #accordions-container {
@@ -789,37 +796,13 @@ export class PromptDjMidi extends LitElement {
         </button>
       </div>
 
-      <div id="main-scroll-area">
+      <div id="main-content-area">
         <div id="central-play-button-container">
           <play-pause-button 
             .playbackState=${this.playbackState} 
             @click=${this.playPause}
           ></play-pause-button>
         </div>
-      </div>
-
-      <div id="bottom-panels-container">
-        <!-- HTML order is reversed, but visually correct due to flex-direction: column-reverse -->
-        <div id="footer">
-          <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
-        </div>
-
-        <div class="master-controls-bottom">
-          <div class="master-volume-horizontal-control">
-            <span class="master-volume-label">Volume</span>
-            <horizontal-slider
-              .value=${this.masterVolume * 2}
-              @input=${this.handleMasterVolumeChange}
-            ></horizontal-slider>
-          </div>
-        </div>
-
-        <active-prompts-display
-          .prompts=${this.prompts}
-          .audioLevel=${this.audioLevel}
-          @edit-prompt=${this.handleEditPromptRequest}
-          @weight-changed=${this.handleActivePromptWeightChange}
-        ></active-prompts-display>
 
         <div id="accordions-container">
           <!-- Main "Select Style" Accordion -->
@@ -851,6 +834,7 @@ export class PromptDjMidi extends LitElement {
                 .seed=${this.seed}
                 .bpm=${this.bpm}
                 .density=${this.density}
+                .densityAuto=${this.densityAuto}
                 .brightness=${this.brightness}
                 .brightnessAuto=${this.brightnessAuto}
                 .scale=${this.scale}
@@ -859,6 +843,30 @@ export class PromptDjMidi extends LitElement {
             </div>
           </div>
         </div>
+      </div>
+
+      <div id="bottom-panels-container">
+        <!-- HTML order is reversed, but visually correct due to flex-direction: column-reverse -->
+        <div id="footer">
+          <chat-assistant @submit-prompt=${this.handleAssistantPrompt}></chat-assistant>
+        </div>
+
+        <div class="master-controls-bottom">
+          <div class="master-volume-horizontal-control">
+            <span class="master-volume-label">Volume</span>
+            <horizontal-slider
+              .value=${this.masterVolume * 2}
+              @input=${this.handleMasterVolumeChange}
+            ></horizontal-slider>
+          </div>
+        </div>
+
+        <active-prompts-display
+          .prompts=${this.prompts}
+          .audioLevel=${this.audioLevel}
+          @edit-prompt=${this.handleEditPromptRequest}
+          @weight-changed=${this.handleActivePromptWeightChange}
+        ></active-prompts-display>
       </div>
 
       <div id="editing-prompt-display" class=${classMap({ 'showing': !!this.editingPromptId })}>
