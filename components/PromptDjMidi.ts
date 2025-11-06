@@ -48,7 +48,7 @@ export class PromptDjMidi extends LitElement {
       display: flex;
       flex-direction: column; /* Основной flex-контейнер */
       min-height: 100vh; /* Allow host to grow if content is larger than viewport */
-      width: 100vw; /* Use viewport width */
+      width: 100%; /* Use viewport width */
       box-sizing: border-box;
       position: relative;
     }
@@ -260,7 +260,7 @@ export class PromptDjMidi extends LitElement {
       display: flex;
       align-items: center;
       gap: 1.5vmin;
-      padding: 0.75vmin;
+      padding: 0.75vmin 1.5vmin;
       box-sizing: border-box;
       background-color: rgba(20, 20, 20, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.2);
