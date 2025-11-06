@@ -7,7 +7,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js'; // Импортируем classMap
 
-import { throttle } from '../utils/throttle';
+// import { throttle } from '../utils/throttle'; // Удален импорт throttle
 
 import './PromptController';
 import './PlayPauseButton';
@@ -502,7 +502,7 @@ export class PromptDjMidi extends LitElement {
   }
 
   /** Generates radial gradients for each prompt based on weight and color. */
-  private readonly makeBackground = throttle(
+  private readonly makeBackground = 
     () => {
       const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 
@@ -528,9 +528,7 @@ export class PromptDjMidi extends LitElement {
       });
 
       return bg.join(', ');
-    },
-    30, // don't re-render more than once every XXms
-  );
+    };
 
   private toggleShowMidi() {
     return this.setShowMidi(!this.showMidi);
